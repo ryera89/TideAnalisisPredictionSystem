@@ -3,19 +3,19 @@
 
 #include <QDialog>
 #include "linenumbereditor.h" //Custom Text Editor with line Numbers
-#include <QLabel>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QGridLayout>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QGroupBox>
-#include <QComboBox>
-#include <QIntValidator>
-
-#include <QString>
-#include <QStringList>
+class QLabel;
+class QLineEdit;
+class QPushButton;
+class QGridLayout;
+class QVBoxLayout;
+class QHBoxLayout;
+class QGroupBox;
+class QComboBox;
+class QString;
+class QStringList;
+class QIntValidator;
 #include <QVector>
+
 
 //TODO que el dialogo salga mas grande
 

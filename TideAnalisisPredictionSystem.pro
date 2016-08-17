@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui charts qml quick
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -13,6 +13,62 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+    include/loadDialog/linenumbereditor.cpp \
+    include/loadDialog/loaddialog.cpp \
+    include/mainComponents/centralwidget.cpp \
+    include/mainComponents/spmchart.cpp \
+    include/mainComponents/spmmainwindow.cpp \
+    include/maths/common_math_algorithms.cpp \
+    include/maths/fft.cpp \
+    include/maths/gauss_jordan.cpp \
+    include/maths/ludcmp.cpp \
+    include/maths/math_function_utils.cpp \
+    include/maths/matrix.cpp \
+    include/maths/minsqr.cpp \
+    include/maths/numericalvector.cpp \
+    include/maths/slice_iter.cpp \
+    include/maths/statisticalfacilities.cpp \
+    include/maths/tridiagonal.cpp \
+    include/measurement/measurement.cpp \
+    include/model_view/tablemodel.cpp \
+    include/model_view/tidaltabledelegate.cpp \
+    include/ChartModelMapper/xytidalchartmodelmapper.cpp \
+    include/mainComponents/customchartview.cpp \
+    include/measurement/tidaldata.cpp \
+    include/mainComponents/customtableview.cpp \
+    include/model_view/readonlytablemodel.cpp \
+    include/model_view/hourlytidaltablemodel.cpp \
+    include/TablaHorariaDeMarea/tablahorariademarea.cpp \
+    include/TablaHorariaDeMarea/tablahorariawidget.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += \
+    include/loadDialog/linenumbereditor.h \
+    include/loadDialog/loaddialog.h \
+    include/mainComponents/centralwidget.h \
+    include/mainComponents/spmchart.h \
+    include/mainComponents/spmmainwindow.h \
+    include/maths/common_math_algorithms.h \
+    include/maths/fft.h \
+    include/maths/gauss_jordan.h \
+    include/maths/ludcmp.h \
+    include/maths/math_function_utils.h \
+    include/maths/matrix.h \
+    include/maths/minsqr.h \
+    include/maths/numericalvector.h \
+    include/maths/slice_iter.h \
+    include/maths/statisticalfacilities.h \
+    include/maths/tridiagonal.h \
+    include/measurement/measurement.h \
+    include/model_view/tablemodel.h \
+    include/model_view/tidaltabledelegate.h \
+    include/ChartModelMapper/xytidalchartmodelmapper.h \
+    include/mainComponents/customchartview.h \
+    include/measurement/tidaldata.h \
+    include/mainComponents/customtableview.h \
+    include/model_view/readonlytablemodel.h \
+    include/model_view/hourlytidaltablemodel.h \
+    include/TablaHorariaDeMarea/tablahorariademarea.h \
+    include/TablaHorariaDeMarea/tablahorariawidget.h
+
+RESOURCES += \
+    images.qrc

@@ -1,5 +1,18 @@
 #include "loaddialog.h"
 
+#include <QLineEdit>
+#include <QPushButton>
+#include <QGridLayout>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGroupBox>
+#include <QComboBox>
+#include <QIntValidator>
+
+#include <QLabel>
+#include <QString>
+#include <QStringList>
+#include <QVector>
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>

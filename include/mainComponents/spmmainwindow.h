@@ -7,6 +7,8 @@
 
 #include "centralwidget.h"
 #include "include/loadDialog/loaddialog.h"
+#include "include/TablaHorariaDeMarea/tablahorariawidget.h"
+#include "include/measurement/tidaldata.h"
 
 
 class SPMmainWindow : public QMainWindow
@@ -15,10 +17,17 @@ class SPMmainWindow : public QMainWindow
 public:
     explicit SPMmainWindow(QWidget *parent = 0);
 
+    TidalData* datosDeMarea() const{return m_datosDeMarea;}
+    QAbstractTableModel* model()const{return m_tidalTableModel;}
+
 signals:
 
 public slots:
     void loadDataFile();
+    void crearTablaHoraria();
+
+    void recieveData(const QVector<QStringList> &data, int dateField, int timeField,
+                     int heightField, const QString &dateFormat, const QString &timeFormat);
 
 protected slots:
     //void gettingData(const QVector<QStringList> &data, int dateField, int timeField, int heightField);
@@ -27,6 +36,8 @@ private:
 
      CentralWidget *m_central;
      LoadDialog *m_loadDialog;
+     TablaHorariaWidget *m_tablaHorariaWidget;
+
 
 
      /*************************ACTIONS*************************************************/
@@ -42,12 +53,17 @@ private:
      //QAction *m_exportAction;
      QAction *m_exitAction;
 
+     //View Actions-----------------------------------------------------------------------
+
+     QAction *m_tablaHorariadeMareaAction;
+
 
      /***********************************************************************************/
 
 
      /************************MENUS******************************************************/
      QMenu *m_fileMenu;
+     QMenu *m_viewMenu;
      //QMenu *m_importSubMenu;
 
      /***********************************************************************************/
@@ -58,6 +74,10 @@ private:
 
      void createActions();
      void createMenus();
+
+     //DOnde se almacenan los datos
+     TidalData *m_datosDeMarea;
+     ReadOnlyTableModel *m_tidalTableModel;
 
 };
 

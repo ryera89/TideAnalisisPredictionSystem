@@ -2,7 +2,8 @@
 #define TIDALTABLEDELEGATE_H
 
 #include <QStyledItemDelegate>
-#include <QPainter>
+class QPainter;
+
 
 class TidalTableDelegate : public QStyledItemDelegate
 {
@@ -15,9 +16,11 @@ public:
 
     void setEditorData(QWidget *editor, const QModelIndex &index) const;
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const;
+
 private slots:
     void commitAndCloseDateEditor();
     void commitAndCloseTimeEditor();
+    void commitAndCloseLevelEditor();
 private:
     enum field{dateColumn, timeColumn, levelColumn}; //Seccion de la tabla.
 

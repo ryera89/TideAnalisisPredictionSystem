@@ -4,3 +4,5 @@ SPMChart::SPMChart(QGraphicsItem *parent):QChart(parent)
 {
 
 }
+
+

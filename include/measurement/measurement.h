@@ -2,9 +2,23 @@
 #define MEASUREMENT_H
 #include <QCoreApplication>
 
-
 #include <QDate>
 #include <QTime>
+
+class TidalTimeLevel{
+private:
+    double m_seaLevel;
+    QTime m_time;
+
+public:
+    TidalTimeLevel(const QTime &time, const double seaLevel):m_time(time),m_seaLevel(seaLevel){}
+
+    void setTime(const QTime &time);
+    void setSeaLevel(const double &level);
+
+    QTime time() const {return m_time;}
+    double seaLevel() const {return m_seaLevel;}
+};
 
 class TidesMeasurement{
 private:
@@ -25,6 +39,8 @@ public:
     qreal seaLevel() const {return m_seaLevel;}
     QDate measurementDate() const {return m_date;}
     QTime measurementTime() const {return m_time;}
+
+    TidalTimeLevel dateMeasurement() const;
 };
 
 

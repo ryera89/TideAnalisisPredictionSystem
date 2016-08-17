@@ -1,18 +1,18 @@
 #include "tablemodel.h"
 
+
 TableModel::TableModel(QObject *parent): QAbstractTableModel(parent)
 {
     headers << "Fecha" << "Hora" << "Nivel del Mar";
-
-
+    measurements.resize(100);
 }
 
-int TableModel::rowCount(const QModelIndex /*&parent*/) const
+int TableModel::rowCount(const QModelIndex& /*parent*/) const
 {
     return measurements.size();
 }
 
-int TableModel::columnCount(const QModelIndex &parent) const
+int TableModel::columnCount(const QModelIndex& /*parent*/) const
 {
     return 3;
 }
@@ -48,12 +48,12 @@ QVariant TableModel::headerData(int section, Qt::Orientation orientation, int ro
            return headers[section];
         }
         if (orientation == Qt::Vertical){
-            return section;
+            return section + 1;
         }
     }
+
     return QVariant();
 }
-
 bool TableModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     if (index.isValid() && role == Qt::EditRole){

@@ -3,6 +3,9 @@
 #include <QTime>
 #include <QDateEdit>
 #include <QTimeEdit>
+#include <QLineEdit>
+#include <QPainter>
+
 TidalTableDelegate::TidalTableDelegate(QObject *parent): QStyledItemDelegate(parent)
 {
 
@@ -22,7 +25,7 @@ void TidalTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 
         if (myOption.state & QStyle::State_Selected){
-            painter->fillPath(myOption.rect,myOption.palette.highlight());
+            painter->fillRect(myOption.rect,myOption.palette.highlight());
             painter->setPen(myOption.palette.highlightedText().color());
         }else{
             painter->setPen(myOption.palette.windowText().color());
@@ -43,7 +46,7 @@ void TidalTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
             painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 
             if (myOption.state & QStyle::State_Selected){
-                painter->fillPath(myOption.rect,myOption.palette.highlight());
+                painter->fillRect(myOption.rect,myOption.palette.highlight());
                 painter->setPen(myOption.palette.highlightedText().color());
             }else{
                 painter->setPen(myOption.palette.windowText().color());
@@ -63,7 +66,7 @@ void TidalTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
                 painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
 
                 if (myOption.state & QStyle::State_Selected){
-                    painter->fillPath(myOption.rect,myOption.palette.highlight());
+                    painter->fillRect(myOption.rect,myOption.palette.highlight());
                     painter->setPen(myOption.palette.highlightedText().color());
                 }else{
                     painter->setPen(myOption.palette.windowText().color());
@@ -95,8 +98,16 @@ QWidget *TidalTableDelegate::createEditor(QWidget *parent, const QStyleOptionVie
         connect(timeEdit,SIGNAL(editingFinished()),this,SLOT(commitAndCloseTimeEditor()));
         return timeEdit;
     }
+    if (index.column() == levelColumn){
+        QLineEdit *levelEdit = new QLineEdit(parent);
+        QDoubleValidator *validator = new QDoubleValidator;
+        levelEdit->setValidator(validator);
 
-    return QStyledItemDelegate::createEditor(parent,option,index)
+        connect(levelEdit,SIGNAL(editingFinished()),this,SLOT(commitAndCloseLevelEditor()));
+        return levelEdit;
+    }
+
+    return QStyledItemDelegate::createEditor(parent,option,index);
 }
 
 void TidalTableDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
@@ -110,9 +121,15 @@ void TidalTableDelegate::setEditorData(QWidget *editor, const QModelIndex &index
         QTime time = index.model()->data(index).toTime();
         QTimeEdit *timeEditor = qobject_cast<QTimeEdit*>(editor);
         timeEditor->setTime(time);
+    }else if (index.column() == levelColumn){
+        double value = index.model()->data(index).toDouble();
+        QLineEdit *levelEditor = qobject_cast<QLineEdit*>(editor);
+
+        levelEditor->setText(QString::number(value));
     }else{
         QStyledItemDelegate::setEditorData(editor,index);
     }
+
 }
 
 void TidalTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
@@ -125,9 +142,13 @@ void TidalTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
         QTimeEdit *timeEditor = qobject_cast<QTimeEdit*>(editor);
         timeEditor->interpretText();
         model->setData(index,timeEditor->time());
-    }else{
+    }else if (index.column() == levelColumn){
         //WARNING: Puede estar mal y quizas se deba incluir el campo del nivel
-        QStyledItemDelegate::setModelData(editor,model,index);
+       QLineEdit *levelEditor = qobject_cast<QLineEdit*>(editor);
+       model->setData(index,levelEditor->text().toDouble());
+
+    }else{
+         QStyledItemDelegate::setModelData(editor,model,index);
     }
 
 }
@@ -142,6 +163,13 @@ void TidalTableDelegate::commitAndCloseDateEditor()
 void TidalTableDelegate::commitAndCloseTimeEditor()
 {
     QTimeEdit *editor = qobject_cast<QTimeEdit *>(sender());
+    emit commitData(editor);
+    emit closeEditor(editor);
+}
+
+void TidalTableDelegate::commitAndCloseLevelEditor()
+{
+    QLineEdit *editor = qobject_cast<QLineEdit*>(sender());
     emit commitData(editor);
     emit closeEditor(editor);
 }

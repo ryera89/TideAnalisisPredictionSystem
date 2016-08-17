@@ -28,6 +28,11 @@ void TidesMeasurement::setMeasurementTime(const QTime &time)
     m_time = time;
 }
 
+TidalTimeLevel TidesMeasurement::dateMeasurement() const
+{
+   return TidalTimeLevel(m_time,m_seaLevel);
+}
+
 /*void TidesMeasurement::setLabelDate(const QString &newLabel)
 {
     if (m_labelDate == newLabel) return;
@@ -59,3 +64,15 @@ uint TidesMeasurement :: m_fieldNumber = 3;
 QString TidesMeasurement :: m_labelDate = "Fecha";
 QString TidesMeasurement :: m_labelTime = "Hora";
 QString TidesMeasurement :: m_labelSeaLevel = "Nivel del Mar";*/
+
+
+
+void TidalTimeLevel::setTime(const QTime &time)
+{
+    if (m_time != time) m_time = time;
+}
+
+void TidalTimeLevel::setSeaLevel(const double &level)
+{
+    m_seaLevel = level;
+}

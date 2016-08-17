@@ -3,14 +3,16 @@
 
 #include <QWidget>
 
-#include "tidesdatatable.h"
-#include "freqeditor.h"
+class QTableView;
 #include <QHBoxLayout>
 #include "spmchart.h"
 #include <QPlainTextEdit>
 #include "include/model_view/tablemodel.h"
 #include "include/model_view/tidaltabledelegate.h"
-#include <QTableView>
+#include "include/model_view/readonlytablemodel.h"
+#include "customchartview.h"
+#include <iostream>
+
 
 class CentralWidget : public QWidget
 {
@@ -23,25 +25,34 @@ signals:
 public slots:
     //void loadData(const QString &filePath);
     //void loadDataInTable(const QVector<TidesMeasurement> &measurements);
-    void recieveData(const QVector<QStringList> &data, int dateField, int timeField, int heightField, const QString &dateFormat, const QString &timeFormat);
+    //void loadDataChart(); //Funcion para actualizar la grafica.
+    //void updateDataInChartWhenRowIsEliminated(int i, int cont); //Slot para modificar la tabla cuando se elimina una fila
     //void  checkDateTimeStringFormat(const QString &dateFormat, const QString &timeFormat);
 
-    void loadDataChart(); //Funcion para actualizar la grafica.
-    //void updateDataInChartWhenRowIsEliminated(int i, int cont); //Slot para modificar la tabla cuando se elimina una fila
+    QSplineSeries* chartSerie() const{return m_series;}
+    void updateSerieData(int row);
+    void setSeriesData();
+
+    QTableView* tableView() const{return m_tidalTableView;}
+
 
 private:
-    //TidesDataTable *m_dataTable;  //Tabla donde se muestran los datos de las mediciones.
+    //Table Facilities
     QTableView *m_tidalTableView;
-    TableModel *m_tidalTableModel;
-    //TidalTableDelegate *m_tidalTableDelegate;
+
+
+
+    //Chart Facilities
 
     SPMChart *m_tideChart;
-    QChartView *m_tideChartView;
-    //QPlainTextEdit *m_edit;
+    customChartView *m_tideChartView;
+
     QDateTimeAxis *m_timeAxis;
+    //QValueAxis *m_yAxis;
+
     QSplineSeries *m_series;
 
-    //FreqEditor *m_freqEditor;  //NOTE: freq editor remover luego
+    void settingUpTable();
 
 };
 

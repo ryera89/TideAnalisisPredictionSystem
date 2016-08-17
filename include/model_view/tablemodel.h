@@ -1,12 +1,16 @@
 #ifndef TABLEMODEL_H
 #define TABLEMODEL_H
 
+
 #include <QAbstractTableModel>
-#include <measurement.h>
+#include "include/measurement/measurement.h"
 #include <QVector>
+#include <QModelIndex>
+
 
 class TableModel : public QAbstractTableModel
 {
+    Q_OBJECT
 public:
     TableModel(QObject *parent = 0);
 
@@ -15,6 +19,7 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+
 
     //Para habilitar edicion
     bool setData(const QModelIndex &index, const QVariant &value, int role);
@@ -39,12 +44,6 @@ public:
 private:
     QVector<TidesMeasurement> measurements;
     QStringList headers;
-
-
-
-
-
-
 };
 
 #endif // TABLEMODEL_H
