@@ -17,13 +17,13 @@ CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
     //TODO: BUSCAR COMO ORDENAR ESTO
 
     m_tideChart = new SPMChart;
-    m_tideChart->setTheme(QChart::ChartThemeDark);
-    m_tideChart->setAnimationOptions(QChart::AllAnimations);
+    m_tideChart->setTheme(QChart::ChartThemeQt);
+
+    //m_tideChart->setAnimationOptions(QChart::AllAnimations);
 
     m_series = new QSplineSeries;
     //XYTidalChartModelMapper *mapper = new XYTidalChartModelMapper(m_tidalTableModel,m_series);
-    //connect(mapper,SIGNAL(chartSeriesSeted()),this,SLOT(setSeriesData()));
-    //connect(mapper,SIGNAL(chartSeriesUpdated(int)),this,SLOT(updateSerieData(int)));
+
 
     m_tideChartView = new customChartView(m_tideChart,this);
 
@@ -38,6 +38,8 @@ CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
     m_tideChart->createDefaultAxes();
 
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
+
+    m_tideChartView->chart()->axisX(m_series)->setTitleText(tr("Tiempo"));
 
     //m_freqEditor = new FreqEditor;
 

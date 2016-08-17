@@ -8,6 +8,8 @@ TablaHorariaWidget::TablaHorariaWidget(QWidget *parent) : QWidget(parent)
     mainLayout->addWidget(m_tablaHoraria);
 
     this->setLayout(mainLayout);
+
+    this->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void TablaHorariaWidget::loadTableData(TidalData *m_data)

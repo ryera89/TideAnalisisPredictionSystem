@@ -7,6 +7,7 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
 {
     m_central = new CentralWidget(this);
     m_loadDialog = 0;
+    m_tablaHorariaWidget = 0;
     setCentralWidget(m_central);
 
     m_datosDeMarea = new TidalData(QVector<TidesMeasurement>(100));
@@ -20,6 +21,10 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
          width += m_central->tableView()->columnWidth(i);
     }
     m_central->tableView()->setFixedWidth(width);
+
+    mapper = new XYTidalChartModelMapper(m_tidalTableModel,m_central->chartSerie());
+    connect(mapper,SIGNAL(chartSeriesSeted()),m_central,SLOT(setSeriesData()));
+    connect(mapper,SIGNAL(chartSeriesUpdated(int)),m_central,SLOT(updateSerieData(int)));
 
     //this->layout()->addWidget(m_dataTable);
     //this->layout()->addWidget(m_freqEditor);
@@ -53,6 +58,9 @@ void SPMmainWindow::loadDataFile()
 void SPMmainWindow::crearTablaHoraria()
 {
     m_tablaHorariaWidget = new TablaHorariaWidget;
+    m_tablaHorariaWidget->loadTableData(this->datosDeMarea());
+
+    m_tablaHorariaWidget->show();
 
 }
 
@@ -150,7 +158,7 @@ void SPMmainWindow::createActions()
     m_tablaHorariadeMareaAction = new QAction(tr("Tabla Horaria"),this);
     //icon
     m_tablaHorariadeMareaAction->setToolTip(tr("Muestra la tabla horaria de marea"));
-    //connect(m_tablaHorariadeMareaAction,SIGNAL(triggered(bool)),
+    connect(m_tablaHorariadeMareaAction,SIGNAL(triggered(bool)),this,SLOT(crearTablaHoraria()));
     //NOTE: Faltan muchas mas acciones
 
 }
@@ -171,4 +179,7 @@ void SPMmainWindow::createMenus()
     //m_importSubMenu->addAction(m_importFrom_TXT_Action);
 
     m_fileMenu->addAction(m_exitAction);
+
+    m_viewMenu = menuBar()->addMenu(tr("Ver"));
+    m_viewMenu->addAction(m_tablaHorariadeMareaAction);
 }

@@ -9,6 +9,7 @@
 #include "include/loadDialog/loaddialog.h"
 #include "include/TablaHorariaDeMarea/tablahorariawidget.h"
 #include "include/measurement/tidaldata.h"
+#include "include/ChartModelMapper/xytidalchartmodelmapper.h"
 
 
 class SPMmainWindow : public QMainWindow
@@ -78,6 +79,7 @@ private:
      //DOnde se almacenan los datos
      TidalData *m_datosDeMarea;
      ReadOnlyTableModel *m_tidalTableModel;
+     XYTidalChartModelMapper *mapper;
 
 };
 

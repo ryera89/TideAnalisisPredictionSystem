@@ -87,7 +87,7 @@ void TidalData::settingUpData()
                 ++aux;
                 ++measurementNumber;
 
-                if (aux > maxMeasurementNumberPerDay) maxMeasurementNumberPerDay = aux;
+                if (measurementNumber > maxMeasurementNumberPerDay) maxMeasurementNumberPerDay = measurementNumber;
             }else break;
         }
         QDate date1 = m_measurementDates.at(k);
@@ -104,7 +104,7 @@ void TidalData::settingUpData()
         m_dateSums[date1] = suma;
 
         //hash[date1] = suma/(aux + 1);
-        m_meanSeaLevel[date1] = suma/(aux + 1);
+        m_meanSeaLevel[date1] = suma/measurementNumber;
 
         //QHash<QDate,int> hash1;
         //hash1[date1] = measurementNumber;
