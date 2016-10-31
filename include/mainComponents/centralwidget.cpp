@@ -2,61 +2,14 @@
 #include <QTableView>
 #include "include/measurement/measurement.h"
 #include "include/ChartModelMapper/xytidalchartmodelmapper.h"
-
+#include "displayeddatalabels.h"
+#include <QSpinBox>
+#include <QSlider>
 //TODO: Revisar todo el codigo pues hay que modificarlo.
 
 CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
 {
-    //QVector<TidesMeasurement> measurement = readTidesDataFromCVSFile("files/prueba7.csv"); //NOTE: probando remover despues
-    //m_dataTable = new TidesDataTable(this);
-
-    //m_tidalTableModel = new ReadOnlyTableModel;
-
-    settingUpTable();
-
-    //TODO: BUSCAR COMO ORDENAR ESTO
-
-    m_tideChart = new SPMChart;
-    m_tideChart->setTheme(QChart::ChartThemeQt);
-
-    //m_tideChart->setAnimationOptions(QChart::AllAnimations);
-
-    m_series = new QSplineSeries;
-    //XYTidalChartModelMapper *mapper = new XYTidalChartModelMapper(m_tidalTableModel,m_series);
-
-
-    m_tideChartView = new customChartView(m_tideChart,this);
-
-    //m_tideChartView->setRubberBand(QChartView::RectangleRubberBand);
-    //m_tideChartView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-
-    m_timeAxis = new QDateTimeAxis;
-    m_timeAxis->setFormat("dd/MM/yyyy h:mm:ss");
-
-    //NOTE: Valorar Remover esto
-    m_tideChart->addSeries(m_series);
-    m_tideChart->createDefaultAxes();
-
-    m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
-
-    m_tideChartView->chart()->axisX(m_series)->setTitleText(tr("Tiempo"));
-
-    //m_freqEditor = new FreqEditor;
-
-    QHBoxLayout *mainLayout = new QHBoxLayout;
-
-    mainLayout->addWidget(m_tidalTableView);
-    //QVBoxLayout *rigthLayout = new QVBoxLayout; //NOTE: Probando el edit
-    //m_edit = new QPlainTextEdit(this);                                //NOTE: creando el edit
-    //rigthLayout->addWidget(m_tideChartView);
-    //rigthLayout->addWidget(m_edit);
-    mainLayout->addWidget(m_tideChartView);
-
-    this->setLayout(mainLayout);
-
-    //Connections
-
-    //connect(m_dataTable,SIGNAL(rowEliminated(int,int)),this,SLOT(updateDataInChartWhenRowIsEliminated(int,int)));
+    createComponents();
 }
 
 /*void CentralWidget::loadDataChart()
@@ -135,7 +88,7 @@ void CentralWidget::loadDataInTable(const QVector<TidesMeasurement> &measurement
     //Esto  es lo que se cambiaria
    m_tidalTableModel->setMeasurements(measurements);
 
-   /*m_tideChartView->chart()->removeSeries(m_series);
+   m_tideChartView->chart()->removeSeries(m_series);
    m_tideChartView->chart()->removeAxis(m_timeAxis);
 
    m_timeAxis->setRange(QDateTime::fromMSecsSinceEpoch(m_series->at(0).x()),QDateTime::fromMSecsSinceEpoch(m_series->at(m_series->count() - 1).x()));
@@ -160,33 +113,167 @@ void CentralWidget::updateSerieData(int row)
 void CentralWidget::setSeriesData()
 {
     //NOTE: Si luego hay problemas es por haber comentariado esto
+    m_series->clear();
+    m_tideChartView->chart()->removeAxis(m_timeAxis);
+    m_tideChartView->chart()->removeAllSeries();
+
+    m_series = new QSplineSeries;
+
+    int rowNumber = m_tidalTableModel->rowCount(QModelIndex());
+    //int columnNumber = m_model->columnCount(QModelIndex());
+
+    QList<QPointF> datos;
+    for (int i = 0; i < rowNumber; ++i){
+        double y_value;
+        QDateTime x_value;
+        x_value.setDate(m_tidalTableModel->measurementData().at(i).measurementDate());
+        x_value.setTime(m_tidalTableModel->measurementData().at(i).measurementTime());
+        y_value = m_tidalTableModel->measurementData().at(i).seaLevel();
+
+        datos.append(QPointF(x_value.toMSecsSinceEpoch(),y_value));
+    }
+
+    //m_series->chart()->axisX(m_series)->setRange(QDateTime::fromMSecsSinceEpoch(datos.first().x()),QDateTime::fromMSecsSinceEpoch(datos.last().x()));
+    m_series->append(datos);
+
 
     //m_tideChartView->chart()->removeSeries(m_series);
     //m_tideChartView->chart()->removeAxis(m_timeAxis);
 
-    m_timeAxis->setRange(QDateTime::fromMSecsSinceEpoch(m_series->at(0).x()),QDateTime::fromMSecsSinceEpoch(m_series->at(m_series->count() - 1).x()));
+    m_timeAxis->setRange(QDateTime::fromMSecsSinceEpoch(m_series->at(0).x()),QDateTime::fromMSecsSinceEpoch(m_series->at(0).x() + 24*3600*1000));
 
     //m_tideChartView->chart()->addSeries(m_series);
     //m_tideChartView->chart()->createDefaultAxes();
 
-    //m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
+    m_tideChartView->chart()->addSeries(m_series);
+    m_tideChartView->chart()->createDefaultAxes();
+    m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
+
+    m_mapper->setSeries(m_series);
+}
+void CentralWidget::createComponents()
+{
+    //QVector<TidesMeasurement> measurement = readTidesDataFromCVSFile("files/prueba7.csv"); //NOTE: probando remover despues
+    //m_dataTable = new TidesDataTable(this);
+
+    //m_tidalTableModel = new ReadOnlyTableModel;
+
+    settingUpTable();
+
+    //TODO: BUSCAR COMO ORDENAR ESTO
+
+    m_tideChart = new SPMChart;
+    m_tideChart->setTheme(QChart::ChartThemeDark);
+
+    //m_tideChart->setAnimationOptions(QChart::AllAnimations);
+
+    m_series = new QSplineSeries;
+    m_mapper = new XYTidalChartModelMapper(m_tidalTableModel,m_series);
+    connect(m_tidalTableModel,SIGNAL(modelReset()),this,SLOT(setSeriesData()));
+
+
+    m_tideChartView = new customChartView(m_tideChart,this);
+
+    //m_tideChartView->setRubberBand(QChartView::RectangleRubberBand);
+    //m_tideChartView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+    m_timeAxis = new QDateTimeAxis;
+    m_timeAxis->setFormat("d/M/yy h:mm");
+
+    //NOTE: Valorar Remover esto
+    m_tideChart->addSeries(m_series);
+    m_tideChart->createDefaultAxes();
+
+    m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
+
+    m_tideChartView->chart()->axisX(m_series)->setTitleText(tr("Tiempo"));
+
+
+    //Display facilities
+    m_rangeSlider =  new QSlider(Qt::Horizontal,this);
+    m_rangeSpinBox = new QSpinBox(this);
+
+    m_rangeSlider->setMinimum(1);
+    m_rangeSpinBox->setMinimum(1);
+
+    connect(m_rangeSpinBox,SIGNAL(valueChanged(int)),m_rangeSlider,SLOT(setValue(int)));
+    connect(m_rangeSlider,SIGNAL(valueChanged(int)),m_rangeSpinBox,SLOT(setValue(int)));
+
+    QHBoxLayout *rangeLayout = new QHBoxLayout;
+    rangeLayout->addWidget(m_rangeSlider);
+    rangeLayout->addWidget(m_rangeSpinBox);
+
+    QGroupBox *rangeGroupBox = new QGroupBox(this);
+    rangeGroupBox->setLayout(rangeLayout);
+    rangeGroupBox->setFixedWidth(200);
+
+    m_selectionIniDDLabel = new DisplayedDataLabels(this);
+    m_selectionIniDDLabel->setLabel(tr("Inicio"));
+    m_selectionEndDDLabel = new DisplayedDataLabels(this);
+    m_selectionEndDDLabel->setLabel(tr("Fin"));
+
+    QHBoxLayout *selectionLayout = new QHBoxLayout;
+    selectionLayout->addWidget(m_selectionIniDDLabel);
+    selectionLayout->addWidget(m_selectionEndDDLabel);
+
+    QGroupBox *selectionGroupBox = new QGroupBox(tr("Seleccion"),this);
+    selectionGroupBox->setAlignment(Qt::AlignCenter);
+    selectionGroupBox->setLayout(selectionLayout);
+
+    m_cursorPosDDLabel = new DisplayedDataLabels(this);
+    m_cursorPosDDLabel->setLabel(tr("Posicion"));
+
+    QHBoxLayout *cursorLayout =  new QHBoxLayout;
+    cursorLayout->addWidget(m_cursorPosDDLabel);
+
+    QGroupBox *cursorGroupBox = new QGroupBox(tr("Cursor"),this);
+    cursorGroupBox->setAlignment(Qt::AlignCenter);
+    cursorGroupBox->setLayout(cursorLayout);
+
+    QHBoxLayout *displayLayout = new QHBoxLayout;
+    displayLayout->addWidget(selectionGroupBox);
+    displayLayout->addWidget(cursorGroupBox);
+
+    QGroupBox *displayGroupBox = new QGroupBox;
+    displayGroupBox->setLayout(displayLayout);
+
+    QHBoxLayout *leftLayout = new QHBoxLayout;
+    leftLayout->addWidget(rangeGroupBox);
+    leftLayout->addWidget(displayGroupBox);
+
+    QVBoxLayout *rigthLayout = new QVBoxLayout;
+    rigthLayout->addLayout(leftLayout);
+    rigthLayout->addWidget(m_tideChartView);
+
+    QHBoxLayout *mainLayout = new QHBoxLayout;
+
+    mainLayout->addWidget(m_tidalTableView);
+    //QVBoxLayout *rigthLayout = new QVBoxLayout; //NOTE: Probando el edit
+    //m_edit = new QPlainTextEdit(this);                                //NOTE: creando el edit
+    //rigthLayout->addWidget(m_tideChartView);
+    //rigthLayout->addWidget(m_edit);
+    mainLayout->addLayout(rigthLayout);
+
+    this->setLayout(mainLayout);
+
+    //Connections
+
+    //connect(m_dataTable,SIGNAL(rowEliminated(int,int)),this,SLOT(updateDataInChartWhenRowIsEliminated(int,int)));
 }
 
 void CentralWidget::settingUpTable()
 {
     m_tidalTableView = new QTableView;
-
+    m_tidalTableModel = new ReadOnlyTableModel;
     m_tidalTableView->setItemDelegate(new TidalTableDelegate);
-    //m_tidalTableView->setModel(m_tidalTableModel);
+    m_tidalTableView->setModel(m_tidalTableModel);
     m_tidalTableView->setAlternatingRowColors(true);
-    //m_tidalTableView->setBackgroundRole(QPalette::Dark);
-    //m_tidalTableView->setAutoFillBackground(true);
 
-    /*int width = 20 + m_tidalTableView->verticalHeader()->width();
+    int width = 20 + m_tidalTableView->verticalHeader()->width();
     for (int i = 0; i < m_tidalTableModel->columnCount(QModelIndex()); ++i){
          width += m_tidalTableView->columnWidth(i);
     }
-    m_tidalTableView->setFixedWidth(width);*/
+    m_tidalTableView->setFixedWidth(width);
 }
 
 

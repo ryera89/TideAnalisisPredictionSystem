@@ -143,7 +143,6 @@ void TidalTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
         timeEditor->interpretText();
         model->setData(index,timeEditor->time());
     }else if (index.column() == levelColumn){
-        //WARNING: Puede estar mal y quizas se deba incluir el campo del nivel
        QLineEdit *levelEditor = qobject_cast<QLineEdit*>(editor);
        model->setData(index,levelEditor->text().toDouble());
 

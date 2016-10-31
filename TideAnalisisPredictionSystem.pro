@@ -39,7 +39,42 @@ SOURCES += main.cpp\
     include/model_view/readonlytablemodel.cpp \
     include/model_view/hourlytidaltablemodel.cpp \
     include/TablaHorariaDeMarea/tablahorariademarea.cpp \
-    include/TablaHorariaDeMarea/tablahorariawidget.cpp
+    include/TablaHorariaDeMarea/tablahorariawidget.cpp \
+    include/EditionComponents/editiontable.cpp \
+    include/EditionComponents/manualdataintroductionwidget.cpp \
+    include/ProjectMetaData/metadatadialog.cpp \
+    include/ProjectMetaData/metadatawidget.cpp \
+    include/ProjectMetaData/projectmetadata.cpp \
+    include/HarmonicConstantsModule/Model_View/mylistmodeldelegate.cpp \
+    include/HarmonicConstantsModule/Model_View/mylistview.cpp \
+    include/HarmonicConstantsModule/SchemeConfigDialog/schemeconfigdialog.cpp \
+    include/HarmonicConstantsModule/schemewidget.cpp \
+    include/HarmonicConstantsModule/tidalschemeselectionwidget.cpp \
+    mainwindow.cpp \
+    include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.cpp \
+    include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytablemodel.cpp \
+    include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytabledelegate.cpp \
+    include/HarmonicConstantsModule/FrequencyEditor/freqeditor.cpp \
+    include/EditionComponents/myheader.cpp \
+    include/HarmonicConstantsModule/Model_View/harmonicconstantfulltablemodel.cpp \
+    include/maths/minimoscuadradosbookcopy.cpp \
+    include/maths/svd.cpp \
+    include/mainComponents/displayeddatalabels.cpp \
+    include/hpm.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/hpm.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/duracionvaciante.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/duracionllenante.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/crecimientomareasemidiurna.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/crecimientomareaparactica.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/creciemientomareadiurna.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/alturapromediomarea.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/alturasemimarea.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/pleabajamedia.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/semidiurnalrelation.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/amplitudrelation.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/horapuesto.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/horacotidianasemidiurna.cpp \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/horacotidianadiurna.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -68,7 +103,50 @@ HEADERS  += \
     include/model_view/readonlytablemodel.h \
     include/model_view/hourlytidaltablemodel.h \
     include/TablaHorariaDeMarea/tablahorariademarea.h \
-    include/TablaHorariaDeMarea/tablahorariawidget.h
+    include/TablaHorariaDeMarea/tablahorariawidget.h \
+    include/EditionComponents/editiontable.h \
+    include/EditionComponents/manualdataintroductionwidget.h \
+    include/ProjectMetaData/metadatawidget.h \
+    include/ProjectMetaData/metadatadialog.h \
+    include/ProjectMetaData/projectmetadata.h \
+    include/HarmonicConstantsModule/Model_View/mylistmodeldelegate.h \
+    include/HarmonicConstantsModule/Model_View/mylistview.h \
+    include/HarmonicConstantsModule/SchemeConfigDialog/schemeconfigdialog.h \
+    include/HarmonicConstantsModule/schemewidget.h \
+    include/HarmonicConstantsModule/tidalschemeselectionwidget.h \
+    mainwindow.h \
+    include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h \
+    include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytablemodel.h \
+    include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytabledelegate.h \
+    include/HarmonicConstantsModule/FrequencyEditor/freqeditor.h \
+    include/EditionComponents/myheader.h \
+    include/HarmonicConstantsModule/Model_View/harmonicconstantfulltablemodel.h \
+    include/maths/minimoscuadradosbookcopy.h \
+    include/maths/svd.h \
+    include/maths/fitsvd.h \
+    include/mainComponents/displayeddatalabels.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/hpm.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/duracionvaciante.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/duracionllenante.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/crecimientomareasemidiurna.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/crecimientomareaparactica.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/creciemientomareadiurna.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/alturapromediomarea.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/alturasemimarea.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/pleabajamedia.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/semidiurnalrelation.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/amplitudrelation.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/horapuesto.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/horacotidianasemidiurna.h \
+    include/NonHarmonicConstantsModule/NonHarmonicConstants/horacotidianadiurna.h
 
 RESOURCES += \
     images.qrc
+
+DISTFILES += \
+    TideAnalisisPredictionSystem.pro.aV1876 \
+    button.qml \
+    images/add.png \
+    images/analisis.png \
+    images/configure.png \
+    images/erase.png

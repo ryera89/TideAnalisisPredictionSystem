@@ -13,12 +13,23 @@ class QTableView;
 #include "customchartview.h"
 #include <iostream>
 
+class DisplayedDataLabels;
+class QSpinBox;
+class QSlider;
+
+class XYTidalChartModelMapper;
 
 class CentralWidget : public QWidget
 {
     Q_OBJECT
 public:
     explicit CentralWidget(QWidget *parent = 0);
+
+    QSplineSeries* chartSerie() const{return m_series;}
+    QTableView* tableView() const{return m_tidalTableView;}
+    QChartView* chartView() const{return m_tideChartView;}
+    ReadOnlyTableModel* tableModel() const{return m_tidalTableModel;}
+
 
 signals:
 
@@ -29,18 +40,14 @@ public slots:
     //void updateDataInChartWhenRowIsEliminated(int i, int cont); //Slot para modificar la tabla cuando se elimina una fila
     //void  checkDateTimeStringFormat(const QString &dateFormat, const QString &timeFormat);
 
-    QSplineSeries* chartSerie() const{return m_series;}
+
     void updateSerieData(int row);
     void setSeriesData();
-
-    QTableView* tableView() const{return m_tidalTableView;}
 
 
 private:
     //Table Facilities
     QTableView *m_tidalTableView;
-
-
 
     //Chart Facilities
 
@@ -49,9 +56,22 @@ private:
 
     QDateTimeAxis *m_timeAxis;
     //QValueAxis *m_yAxis;
-
     QSplineSeries *m_series;
 
+    //Display Facilities
+    QSlider *m_rangeSlider;
+    QSpinBox *m_rangeSpinBox;
+    //DisplayedDataLabels *m_rangeIniDDLabel;
+    //DisplayedDataLabels *m_rangeEndDDLabel;
+    DisplayedDataLabels *m_selectionIniDDLabel;
+    DisplayedDataLabels *m_selectionEndDDLabel;
+    DisplayedDataLabels *m_cursorPosDDLabel;
+
+    //Storage and sync facilities
+    ReadOnlyTableModel *m_tidalTableModel;
+    XYTidalChartModelMapper *m_mapper;
+
+    void createComponents();
     void settingUpTable();
 
 };

@@ -14,7 +14,9 @@ class QComboBox;
 class QString;
 class QStringList;
 class QIntValidator;
+
 #include <QVector>
+#include "include/measurement/measurement.h"
 
 
 //TODO que el dialogo salga mas grande
@@ -27,6 +29,12 @@ public:
     LoadDialog(QWidget *parent = 0);
     LoadDialog(const QString &filePath, QWidget *parent = 0);
     ~LoadDialog();
+
+    QVector<TidesMeasurement> measurementsData() const {return measurements;}
+    QString loacationName() const;
+    QString equipmentID() const;
+    QString latitud() const;
+    QString longitud() const;
 
     //QString getLocationName() const {return m_locationLineEdit->text();} //Obtiene el nombre de la localizacion
     //QString getEquipmentId() const {return m_equipmentIDLineEdit->text();} //Retorna el id del equipo
@@ -45,7 +53,9 @@ public slots:
     void fillFirstAndLastDataPoints();
 
 signals:
-    void dataGeted(const QVector<QStringList>&, int, int, int, const QString &dateFormat, const QString &timeFormat);
+    void importButtonClicked();
+
+    //void dataGeted(const QVector<QStringList>&, int, int, int, const QString &dateFormat, const QString &timeFormat);
 
     void sendLocationName(const QString &);
     void sendEquipmentID(const QString &);
@@ -54,6 +64,8 @@ signals:
     //void sendDateTimeStringFormat(const QString &dateFormat, const QString &timeFormat); //signal para transmitir el formato
 
 private:
+    QVector<TidesMeasurement> measurements;
+
     QPushButton* m_importButton;
     QPushButton* m_cancelButton;
 

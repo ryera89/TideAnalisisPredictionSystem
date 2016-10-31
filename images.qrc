@@ -2,5 +2,12 @@
     <qresource prefix="/">
         <file>images/arrow_left.png</file>
         <file>images/arrow_right.png</file>
+        <file>images/Erase.png</file>
+        <file>images/No.png</file>
+        <file>images/OK.png</file>
+        <file>images/Remove.png</file>
+        <file>images/add.png</file>
+        <file>images/analisis.png</file>
+        <file>images/configure.png</file>
     </qresource>
 </RCC>

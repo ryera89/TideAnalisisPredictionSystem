@@ -1,6 +1,9 @@
 #ifndef TABLAHORARIADEMAREA_H
 #define TABLAHORARIADEMAREA_H
 
+
+//TODO: Arreglar lo del tiempo que no coincide con las mediciones.
+
 #include <QTableWidget>
 #include <include/measurement/tidaldata.h>
 class TablaHorariaDeMarea : public QTableWidget
@@ -11,11 +14,11 @@ public:
 
 
 public slots:
-    void loadData(TidalData *m_data);
+    void loadData(const TidalData &m_data);
 
 private:
-    void createTable(TidalData *m_data);
-    void populateTable(TidalData *m_data);
+    void createTable(const TidalData &m_data);
+    void populateTable(const TidalData &m_data);
     //TidalData *m_data;
 };
 

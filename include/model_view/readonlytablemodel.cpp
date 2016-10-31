@@ -3,11 +3,12 @@
 
 int ReadOnlyTableModel::rowCount(const QModelIndex &parent) const
 {
-    return m_data->m_measurements.size();
+    return m_data.size();
 }
 
 int ReadOnlyTableModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     return 3;
 }
 
@@ -21,11 +22,11 @@ QVariant ReadOnlyTableModel::data(const QModelIndex &index, int role) const
         if (role == Qt::DisplayRole){
             switch (index.column()) {
             case 0:
-                return m_data->m_measurements[index.row()].measurementDate();
+                return m_data[index.row()].measurementDate();
             case 1:
-                return m_data->m_measurements[index.row()].measurementTime();
+                return m_data[index.row()].measurementTime();
             case 2:
-                return m_data->m_measurements[index.row()].seaLevel();
+                return m_data[index.row()].seaLevel();
             default:
                 return QVariant();
             }
@@ -49,14 +50,12 @@ QVariant ReadOnlyTableModel::headerData(int section, Qt::Orientation orientation
     return QVariant();
 }
 
-void ReadOnlyTableModel::setDataSource(const QVector<TidesMeasurement> &measurement)
+void ReadOnlyTableModel::setMeasurements(const QVector<TidesMeasurement> &measurement)
 {
     beginResetModel();
-    m_data->setDataSource(measurement);
+    m_data = measurement;
     endResetModel();
 }
-
-
 
 /*void ReadOnlyTableModel::setMeasurements(const QVector<TidesMeasurement> &measurement)
 {

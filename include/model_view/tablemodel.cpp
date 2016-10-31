@@ -5,6 +5,10 @@ TableModel::TableModel(QObject *parent): QAbstractTableModel(parent)
 {
     headers << "Fecha" << "Hora" << "Nivel del Mar";
     measurements.resize(100);
+
+    for (int i = 0; i < measurements.size(); ++i){
+        measurements[i].setSeaLevel(0.0);
+    }
 }
 
 int TableModel::rowCount(const QModelIndex& /*parent*/) const
@@ -90,20 +94,40 @@ bool TableModel::insertRows(int row, int count, const QModelIndex &parent)
 {
     beginInsertRows(parent,row,row+count-1);
     for (int i = 0; i < count; ++i ){
-        measurements.insert(row,TidesMeasurement());
+        measurements.insert(row,TidesMeasurement(0.0,QDate(),QTime()));
         ++row;
     }
     endInsertRows();
     return true;
 }
 
+bool TableModel::insertRow(int row, const QModelIndex &parent)
+{
+    beginInsertRows(parent,row,row);
+    measurements.insert(row,TidesMeasurement(0.0,QDate(),QTime()));
+    endInsertRows();
+    return true;
+}
+
 bool TableModel::removeRows(int row, int count, const QModelIndex &parent)
 {
-    beginRemoveRows(parent, row, row+count-1);
-    for (int i = 0; i < count; ++i ){
+    //if (!parent.isValid()) return false;
+    //int r = row;
+
+    beginRemoveRows(parent, row, row+count);
+    for (int i = row; i <= row+count; ++i ){
         measurements.remove(row);
-        ++row;
     }
+    endRemoveRows();
+    return true;
+}
+
+bool TableModel::removeRow(int row, const QModelIndex &parent)
+{
+    //if (!parent.isValid()) return false;
+
+    beginRemoveRows(parent,row,row);
+    measurements.remove(row);
     endRemoveRows();
     return true;
 }

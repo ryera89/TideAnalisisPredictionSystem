@@ -8,12 +8,10 @@ class ReadOnlyTableModel : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    ReadOnlyTableModel(TidalData *data, QObject *parent = 0): QAbstractTableModel(parent){
+    ReadOnlyTableModel(QObject *parent = 0): QAbstractTableModel(parent){
         headers << "Fecha" << "Hora" << "Nivel del Mar";
-        m_data = data;
-        //setDataSource(data->m_measurements);
+        m_data = QVector<TidesMeasurement>(100);
     }
-
 
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
@@ -21,10 +19,12 @@ public:
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-    void setDataSource(const QVector<TidesMeasurement> &measurement);
+    void setMeasurements(const QVector<TidesMeasurement> &measurement);
+
+    QVector<TidesMeasurement> measurementData() const{return m_data;}
 
 private:
-    TidalData *m_data;
+    QVector<TidesMeasurement> m_data;
     QStringList headers;
 };
 

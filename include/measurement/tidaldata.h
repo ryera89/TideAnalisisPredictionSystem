@@ -13,7 +13,7 @@
 class TidalData
 {
 public:
-    //explicit TidalData(){}
+    explicit TidalData(){}
     TidalData(const QVector<TidesMeasurement> &measurements);
 
     QVector<TidesMeasurement> m_measurements;
@@ -31,6 +31,7 @@ public:
     int maxMeasurementNumberPerDay;
 
     void setDataSource(const QVector<TidesMeasurement> &measurement);
+    //QVector<TidesMeasurement> data() const {return m_measurements;}
 
 
 private:

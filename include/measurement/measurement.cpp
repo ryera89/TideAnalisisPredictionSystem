@@ -3,7 +3,12 @@
 
 
 TidesMeasurement::TidesMeasurement(const qreal &seaLevel, const QDate &measurementDate,
-                                                   const QTime &measurementTime):  m_seaLevel(seaLevel), m_date(measurementDate), m_time(measurementTime){
+                                   const QTime &measurementTime):  m_seaLevel(seaLevel), m_date(measurementDate), m_time(measurementTime){
+}
+
+bool TidesMeasurement::isValid() const
+{
+    return (m_date.isValid() && m_time.isValid());
 }
 
 

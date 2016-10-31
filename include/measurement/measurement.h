@@ -4,11 +4,12 @@
 
 #include <QDate>
 #include <QTime>
+#include <QDateTime>
 
 class TidalTimeLevel{
 private:
-    double m_seaLevel;
     QTime m_time;
+    double m_seaLevel;
 
 public:
     TidalTimeLevel(const QTime &time, const double seaLevel):m_time(time),m_seaLevel(seaLevel){}
@@ -30,6 +31,8 @@ public:
     TidesMeasurement(const qreal &seaLevel,const QDate &measurementDate,
                              const QTime &measurementTime);
 
+    bool isValid() const;
+
     //Write Functions
     void setSeaLevel(const qreal &value);
     void setMeasurementDate(const QDate &date);
@@ -39,6 +42,8 @@ public:
     qreal seaLevel() const {return m_seaLevel;}
     QDate measurementDate() const {return m_date;}
     QTime measurementTime() const {return m_time;}
+
+    QDateTime measurementDateTime() const{return QDateTime(m_date,m_time);}
 
     TidalTimeLevel dateMeasurement() const;
 };

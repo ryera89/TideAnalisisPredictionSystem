@@ -55,12 +55,34 @@ LoadDialog::~LoadDialog()
 
 }
 
+QString LoadDialog::loacationName() const
+{
+    return m_locationLineEdit->text();
+}
+
+QString LoadDialog::equipmentID() const
+{
+    return m_equipmentIDLineEdit->text();
+}
+
+QString LoadDialog::latitud() const
+{
+    return m_latitudLineEdit->text();
+}
+
+QString LoadDialog::longitud() const
+{
+    return m_longitudLineEdit->text();
+}
+
 //TODO: ProgressBar vinculada al futuro padre del dialog
 //TODO: Agregar comprobacion de que si en la ultima linea coincide en la cantidad de campos con la primera
 //TODO: Ver como integramos cuando los edit de separadores no esten vacios.
 //TODO: agregar que los numeros de campo tienen que ser diferentes.
 void LoadDialog::getDataPoints()   //Retorna un Vector StringList con los datos de interes si algo falla retorna un Vector vacio
 {
+    measurements.clear();
+
     if (m_dateFormatLineEdit->text().isEmpty() || m_timeFormatLineEdit->text().isEmpty()){
         QMessageBox::critical(this,tr("Error"),tr("Falla al cargar datos."
                                                   " Formatos de fecha y hora no validos."));
@@ -97,13 +119,25 @@ void LoadDialog::getDataPoints()   //Retorna un Vector StringList con los datos 
             int heightField  = m_fieldHeightEdit->text().toInt(&heightOk);
 
             if (dateOk && timeOk && heightOk){
-                emit dataGeted(pointsOfData, dateField, timeField, heightField, m_dateFormatLineEdit->text(), m_timeFormatLineEdit->text());  //Emit the signal for connect with the main module
-                emit sendLocationName(m_locationLineEdit->text());
-                emit sendEquipmentID(m_equipmentIDLineEdit->text());
-                emit sendLatitud(m_latitudLineEdit->text());
-                emit sendLongitud(m_longitudLineEdit->text());
-                //emit sendDateTimeStringFormat(m_dateFormatLineEdit->text,m_timeFormatLineEdit->text());
-                this->close();
+                for (int i = 0; i < pointsOfData.size(); ++i){
+                    if (dateField <= pointsOfData[i].size() && timeField <= pointsOfData[i].size() && heightField <= pointsOfData[i].size()){ //Chequea que el campo exista
+
+                        QDate date = QDate::fromString(pointsOfData[i].at(dateField - 1),m_dateFormatLineEdit->text());
+                        QTime time = QTime::fromString(pointsOfData[i].at(timeField - 1), m_timeFormatLineEdit->text());
+
+                        //TODO: Crear un chequeo para comprobar si se estan cargando bien los datos.
+
+                        bool d_ok;
+                        QVariant heightVariant = pointsOfData[i].at(heightField - 1);
+                        double height = heightVariant.toDouble(&d_ok);
+
+                        if (date.isValid() && time.isValid() && d_ok){
+                            measurements.push_back(TidesMeasurement(height,date,time));
+                        }
+
+                    }
+
+                }
                 return;
             }
             QMessageBox::critical(this,tr("Error"),tr("Falla al cargar datos."
@@ -269,6 +303,8 @@ void LoadDialog::settingUpEveryThing()
     m_importButton = new QPushButton(tr("Importar"),this);
     m_importButton->setDisabled(true);
     connect(m_importButton,SIGNAL(clicked(bool)),this,SLOT(getDataPoints()));
+    connect(m_importButton,SIGNAL(clicked(bool)),this,SIGNAL(importButtonClicked()));
+
     m_cancelButton = new QPushButton(tr("Cancel"),this);
     connect(m_cancelButton,SIGNAL(clicked(bool)),this,SLOT(close()));
 

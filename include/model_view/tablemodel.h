@@ -27,8 +27,10 @@ public:
 
     //Deben estar conectados a la vista
     bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
+    bool insertRow(int row, const QModelIndex &parent);
     //bool insertColumns(int column, int count, const QModelIndex &parent);
     bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
+    bool removeRow(int row, const QModelIndex &parent);
     //bool removeColumns(int column, int count, const QModelIndex &parent);
 
     //Para importar y salvar los datos
@@ -39,7 +41,7 @@ public:
 
     void setMeasurements(const QVector<TidesMeasurement> &measurement);
 
-
+    QVector<TidesMeasurement> measurementData() const{return measurements;}
 
 private:
     QVector<TidesMeasurement> measurements;

@@ -38,6 +38,12 @@ public :
     void free(const int i){ia[i] = true;}  //Libera el parametro de a[i]
 
     void fitGJ();
+    void fitLU();
+    void fitLikeTheBook();
+
+    valarray<double> parametros() const{return a;}
+    Matrix matrizCovariante() const{return m_covar;}
+    double chiSquare() const{return m_chisq;}
 };
 
 
