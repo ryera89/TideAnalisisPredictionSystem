@@ -6,6 +6,7 @@ PMT, BMS, BMC y  BMT dependen de las constantes no armonicas
 APSS, APC, APT y HTL.*/
 
 #include <QString>
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 class AlturaPromedioMarea;
 class AlturaSemimarea;
 
@@ -23,13 +24,13 @@ public:
 
 private:
     //Pleas
-    static const QString m_namePMS = "Pleamar Media de Sicigias.";
-    static const QString m_namePMC = "Pleamar Media de Cuadratura.";
-    static const QString m_namePMT = "Pleamar Media Tropical.";
+    const QString m_namePMS = "Pleamar Media de Sicigias.";
+    const QString m_namePMC = "Pleamar Media de Cuadratura.";
+    const QString m_namePMT = "Pleamar Media Tropical.";
     //Bajas
-    static const QString m_nameBMS = "Bajamar Media de Sicigias.";
-    static const QString m_nameBMC = "Bajamar Media de Cuadraturas.";
-    static const QString m_nameBMT = "Bajamar Media Tropical.";
+    const QString m_nameBMS = "Bajamar Media de Sicigias.";
+    const QString m_nameBMC = "Bajamar Media de Cuadraturas.";
+    const QString m_nameBMT = "Bajamar Media Tropical.";
 
     //Pleamares
     double m_PMS;

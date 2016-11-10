@@ -1,6 +1,4 @@
 #include "alturapromediomarea.h"
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
-
 #include <QtMath>
 
 AlturaPromedioMarea::AlturaPromedioMarea(const HarmonicConstant &M2, const HarmonicConstant &S2,

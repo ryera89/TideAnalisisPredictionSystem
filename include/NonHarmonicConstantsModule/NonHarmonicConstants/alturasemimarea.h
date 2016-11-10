@@ -8,7 +8,7 @@ M2, K1, O1, M4 y de L (que es Altura del NMM sobre el cero de profundidad que se
 (altura del NMM con respecto al NMT o NMB ).*/
 
 #include <QString>
-
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 class HarmonicConstant;
 
 class AlturaSemimarea
@@ -22,8 +22,8 @@ public:
 
 private:
 
-    static const QString m_name = "Altura de la Semimarea";
-    static const QString m_description = "Altura media calculada utilizando solamente"
+    const QString m_name = "Altura de la Semimarea";
+    const QString m_description = "Altura media calculada utilizando solamente"
                                          " las alturas de las pleamares y bajamares.";
 
     HarmonicConstant m_M2;

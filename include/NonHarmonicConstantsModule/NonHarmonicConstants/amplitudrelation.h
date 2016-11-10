@@ -5,8 +5,7 @@
 Depende de las constantes armonicas M2, K1, O1*/
 
 #include <QString>
-
-class HarmonicConstant;
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h";
 
 class AmplitudRelation
 {
@@ -15,7 +14,7 @@ public:
 
     double amplRelation() const {return m_Relation;}
 private:
-    static const QString m_name = "Relacion de Amplitudes";
+    const QString m_name = "Relacion de Amplitudes";
 
     HarmonicConstant m_M2;
     HarmonicConstant m_K1;

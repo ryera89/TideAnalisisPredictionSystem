@@ -1,5 +1,5 @@
 #include "semidiurnalrelation.h"
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
+
 
 
 SemidiurnalRelation::SemidiurnalRelation(const HarmonicConstant &M2, const HarmonicConstant &S2):

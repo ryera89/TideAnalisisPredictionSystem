@@ -1,7 +1,5 @@
 #include "horapuesto.h"
 #include <QtMath>
-
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 #include "include/NonHarmonicConstantsModule/NonHarmonicConstants/hpm.h"
 HoraPuesto::HoraPuesto(const HarmonicConstant &M2, const HarmonicConstant &S2, const HPM &hpm):
     m_M2(M2), m_S2(S2)

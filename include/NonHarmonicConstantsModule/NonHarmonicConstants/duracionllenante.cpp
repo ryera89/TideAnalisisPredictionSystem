@@ -1,6 +1,6 @@
 #include "duracionllenante.h"
 #include <QtMath>
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
+
 
 
 DuracionLLenante::DuracionLLenante(const HarmonicConstant &M2, const HarmonicConstant &M4, const HarmonicConstant &M6):
@@ -41,7 +41,6 @@ double DuracionLLenante::shallowWaterInfluence2()
 void DuracionLLenante::calculate()
 {
     if (m_M2.frequency() == 0.0){
-        m_value = QTime();
         return;
     }
 

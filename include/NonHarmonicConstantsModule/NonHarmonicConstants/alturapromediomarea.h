@@ -6,7 +6,7 @@ APC y APT, dependen de las constantes armonicas
 M2, S2, N2, K2, K1, O1, P1, Q1, M4, M6.*/
 
 #include <QString>
-class HarmonicConstant;
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 
 class AlturaPromedioMarea
 {
@@ -22,21 +22,21 @@ public:
     double AlturaPromedioTropical() const{return m_APT;}
 
 private:
-    static const QString m_nameAPS = "Altura Promedio de la Marea Semidiurna";
-    static const QString m_nameAPSS = "Altura Promedio de la Marea en Sicigias";
-    static const QString m_nameAPC = "Altura Promedio de la Marea en Cuadratura";
-    static const QString m_nameAPT = "Altura Promedio de la Marea Tropical";
+    const QString m_nameAPS = "Altura Promedio de la Marea Semidiurna";
+    const QString m_nameAPSS = "Altura Promedio de la Marea en Sicigias";
+    const QString m_nameAPC = "Altura Promedio de la Marea en Cuadratura";
+    const QString m_nameAPT = "Altura Promedio de la Marea Tropical";
 
-    HarmonicConstant &m_M2;
-    HarmonicConstant &m_S2;
-    HarmonicConstant &m_N2;
-    HarmonicConstant &m_K2;
-    HarmonicConstant &m_K1;
-    HarmonicConstant &m_O1;
-    HarmonicConstant &m_P1;
-    HarmonicConstant &m_Q1;
-    HarmonicConstant &m_M4;
-    HarmonicConstant &m_M6;
+    HarmonicConstant m_M2;
+    HarmonicConstant m_S2;
+    HarmonicConstant m_N2;
+    HarmonicConstant m_K2;
+    HarmonicConstant m_K1;
+    HarmonicConstant m_O1;
+    HarmonicConstant m_P1;
+    HarmonicConstant m_Q1;
+    HarmonicConstant m_M4;
+    HarmonicConstant m_M6;
 
     double m_APS;  //Altura promedio de marea semidiurna
     double m_APSS; //Altura promedio de marea en sicigias

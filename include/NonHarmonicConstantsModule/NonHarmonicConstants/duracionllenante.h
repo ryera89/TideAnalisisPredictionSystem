@@ -6,7 +6,7 @@ Duracion del Llenante, depende de las constantes armonicas
 M2, M4, M6*/
 
 #include <QString>
-class HarmonicConstant;
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 
 class DuracionLLenante
 {
@@ -18,8 +18,8 @@ public:
 
 
 private:
-    static const QString m_name = "Duracion del Llenante";
-    static const QString m_description = "Valor medio del intervalo desde el momento de ocurrencia de la bajamar"
+    const QString m_name = "Duracion del Llenante";
+    const QString m_description = "Valor medio del intervalo desde el momento de ocurrencia de la bajamar"
                                          " hasta el momento de ocurrencia de la pleamar siguiente.";
 
     //Constantes armonicas que determinan esta constante no armonica

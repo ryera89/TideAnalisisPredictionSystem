@@ -2,8 +2,7 @@
 #define HORACOTIDIANASEMIDIURNA_H
 
 #include <QString>
-
-class HarmonicConstant;
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 
 
 class HoraCotidianaSemidiurna
@@ -14,7 +13,7 @@ public:
     int hours() const{return m_hours;}
     int minutes() const{return m_minutes;}
 private:
-    static const QString m_name = "Hora Cotidiana de la Marea Semidiurna";
+    const QString m_name = "Hora Cotidiana de la Marea Semidiurna";
 
     HarmonicConstant m_M2;
     HarmonicConstant m_M4;

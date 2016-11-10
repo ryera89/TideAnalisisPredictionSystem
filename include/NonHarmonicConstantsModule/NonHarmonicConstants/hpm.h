@@ -7,8 +7,7 @@ Intervalo Lunar, depende de las constantes armonicas
 M2, M4, M6*/
 
 #include <QString>
-
-class HarmonicConstant;
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 
 class HPM
 {
@@ -19,8 +18,8 @@ public:
     int minutes() const{return m_minutes;}
 
 private:
-    static const QString m_name = "Hora del Puesto Media";
-    static const QString m_description = "Intervalo de tiempo desde el momento de "
+    const QString m_name = "Hora del Puesto Media";
+    const QString m_description = "Intervalo de tiempo desde el momento de "
                                          "culminación de la luna hasta el momento de ocurrencia de la pleamar.";
 
     //Constantes armonicas que determinan esta constante no armonica

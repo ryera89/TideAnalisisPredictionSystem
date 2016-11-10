@@ -60,7 +60,6 @@ SOURCES += main.cpp\
     include/maths/minimoscuadradosbookcopy.cpp \
     include/maths/svd.cpp \
     include/mainComponents/displayeddatalabels.cpp \
-    include/hpm.cpp \
     include/NonHarmonicConstantsModule/NonHarmonicConstants/hpm.cpp \
     include/NonHarmonicConstantsModule/NonHarmonicConstants/duracionvaciante.cpp \
     include/NonHarmonicConstantsModule/NonHarmonicConstants/duracionllenante.cpp \

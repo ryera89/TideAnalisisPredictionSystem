@@ -1,5 +1,4 @@
 #include "crecimientomareasemidiurna.h"
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 #include <QtMath>
 CrecimientoMareaSemidiurna::CrecimientoMareaSemidiurna(const HarmonicConstant &M2, const HarmonicConstant &S2):
     m_M2(M2), m_S2(S2)

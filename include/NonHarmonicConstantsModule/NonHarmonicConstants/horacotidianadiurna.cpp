@@ -1,6 +1,6 @@
 #include "horacotidianadiurna.h"
 #include <QtMath>
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
+
 
 HoraCotidianaDiurna::HoraCotidianaDiurna(const HarmonicConstant &K1, const HarmonicConstant &O1,
                                          const double &longitud):

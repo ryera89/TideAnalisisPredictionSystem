@@ -6,7 +6,7 @@ Duracion del Vaciante, depende de las constantes armonicas
 M2, M4, M6*/
 
 #include <QString>
-
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 class HarmonicConstant;
 
 class DuracionVaciante
@@ -18,8 +18,8 @@ public:
     int minutes() const{return m_minutes;}
 
 private:
-    static const QString m_name = "Duracion del Vaciante";
-    static const QString m_description = "Valor medio del intervalo desde el momento de ocurrencia de la pleamar"
+    const QString m_name = "Duracion del Vaciante";
+    const QString m_description = "Valor medio del intervalo desde el momento de ocurrencia de la pleamar"
                                          " hasta el momento de ocurrencia de la bajamar siguiente.";
 
     //Constantes armonicas que determinan esta constante no armonica

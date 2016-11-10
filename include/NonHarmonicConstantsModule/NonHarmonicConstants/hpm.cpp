@@ -1,6 +1,5 @@
 #include "hpm.h"
 #include <QtMath>
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 
 
 HPM::HPM(const HarmonicConstant &M2, const HarmonicConstant &M4, const HarmonicConstant &M6):
@@ -9,10 +8,6 @@ HPM::HPM(const HarmonicConstant &M2, const HarmonicConstant &M4, const HarmonicC
     calculate();
 }
 
-QTime HPM::value() const
-{
-    return QTime;
-}
 
 double HPM::shallowWaterInfluence()
 {
@@ -32,7 +27,6 @@ double HPM::shallowWaterInfluence()
 void HPM::calculate()
 {
     if (m_M2.frequency() == 0.0){
-        m_value = QTime();
         return;
     }
     double v = shallowWaterInfluence();

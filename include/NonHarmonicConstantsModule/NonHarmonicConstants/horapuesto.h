@@ -5,8 +5,8 @@
 asi como que se toma E = HPM en la primera aproximacion*/
 
 #include <QString>
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 
-class HarmonicConstant;
 class HPM;
 class HoraPuesto
 {
@@ -19,8 +19,8 @@ public:
 
 
 private:
-    static const QString m_name = "Hora del Puesto";
-    static const QString m_description = "Valor del intervalo Lunar, cuando la Luna pasa a través del "
+   const QString m_name = "Hora del Puesto";
+   const QString m_description = "Valor del intervalo Lunar, cuando la Luna pasa a través del "
                                          "meridiano del lugar simultáneamente con el Sol, con la condición que la Luna"
                                          " y el sol se encuentran en el ecuador , a distancias medias de la tierra. "
                                          "Tomando en cuenta que la luna culmina al mediodía o a medianoche, entonces "

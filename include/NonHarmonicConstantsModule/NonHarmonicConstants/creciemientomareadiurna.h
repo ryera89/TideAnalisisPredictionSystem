@@ -6,19 +6,19 @@ Crecimiento de la marea paralactica, depende de las constantes armonicas
 O1, K1*/
 
 #include <QString>
-class HarmonicConstant;
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 
 class CreciemientoMareaDiurna
 {
 public:
-    explicit CrecimientoMareaDiurna(const HarmonicConstant &K1, const HarmonicConstant &O1);
+    explicit CreciemientoMareaDiurna(const HarmonicConstant &K1, const HarmonicConstant &O1);
 
     int days() const{return m_days;}
     int hours() const{return m_hours;}
 
 private:
-    static const QString m_name = "Crecimiento de la Marea Diurna";
-    static const QString m_description = "Intervalo de tiempo desde el momento de"
+   const QString m_name = "Crecimiento de la Marea Diurna";
+   const QString m_description = "Intervalo de tiempo desde el momento de"
                                          " momento de la mayor declinación Lunar,"
                                          " hasta el momento de coincidencia de las"
                                          " fases de las ondas K1 y O1.";

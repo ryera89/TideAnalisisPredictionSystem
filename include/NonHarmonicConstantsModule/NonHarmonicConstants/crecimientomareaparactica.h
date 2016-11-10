@@ -6,7 +6,7 @@ Crecimiento de la marea paralactica, depende de las constantes armonicas
 M2, N2*/
 
 #include <QString>
-class HarmonicConstant;
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 
 class CrecimientoMareaParactica
 {
@@ -17,9 +17,9 @@ public:
     int hours() const{return m_hours;}
 
 private:
-    static const QString m_name = "Crecimiento de la Marea Paralactica";
-    static const QString m_description = "Intervalo de tiempo desde el momento de perigeo de"
-                                         " la luna hasta el momento de cuando las fases
+    const QString m_name = "Crecimiento de la Marea Paralactica";
+    const QString m_description = "Intervalo de tiempo desde el momento de perigeo de"
+                                         " la luna hasta el momento de cuando las fases"
                                          " de las ondas M2 y N2 coinciden.";
 
     HarmonicConstant m_M2;

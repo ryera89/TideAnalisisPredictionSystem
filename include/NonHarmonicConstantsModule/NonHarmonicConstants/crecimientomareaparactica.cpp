@@ -1,6 +1,4 @@
 #include "crecimientomareaparactica.h"
-
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 #include <QtMath>
 
 CrecimientoMareaParactica::CrecimientoMareaParactica(const HarmonicConstant &M2, const HarmonicConstant &N2):

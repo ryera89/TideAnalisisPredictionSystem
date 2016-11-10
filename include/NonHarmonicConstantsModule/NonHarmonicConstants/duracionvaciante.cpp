@@ -1,5 +1,5 @@
 #include "duracionvaciante.h"
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
+
 #include <QtMath>
 
 
@@ -41,7 +41,6 @@ double DuracionVaciante::shallowWaterInfluence2()
 void DuracionVaciante::calculate()
 {
     if (m_M2.frequency() == 0.0){
-        m_value = QTime();
         return;
     }
 

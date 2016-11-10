@@ -5,8 +5,7 @@
 semidiurna lunar, depende de las constantes armonicas M2, S2*/
 
 #include <QString>
-
-class HarmonicConstant;
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 
 class SemidiurnalRelation
 {
@@ -16,8 +15,8 @@ public:
     double relationS2M2() const{return m_Relation;}
 
 private:
-    static const QString m_name = "Relacion Semidiurna";
-    static const QString m_description = "Relación entre las amplitudes medias de las ondas principal"
+    const QString m_name = "Relacion Semidiurna";
+    const QString m_description = "Relación entre las amplitudes medias de las ondas principal"
                                  " semidiurna solar y principal semidiurna lunar.";
 
     HarmonicConstant m_M2;
