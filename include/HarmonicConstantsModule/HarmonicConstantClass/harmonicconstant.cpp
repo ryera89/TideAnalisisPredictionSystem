@@ -13,8 +13,13 @@ HarmonicConstant::HarmonicConstant(const QString &name, const double &frequency,
 {
     m_amplitud = qSqrt(qPow(C,2) + qPow(S,2));
 
-    if (C != 0.0) m_phase = qRadiansToDegrees((qAtan(S/C)));
-    else m_phase = 90.0;
+    if (C != 0.0){
+        m_phase = qRadiansToDegrees((qAtan(S/C)));
+
+        if (S > 0.0 && C < 0.0) m_phase+=180;
+        if (S < 0.0 && C < 0.0) m_phase+=180;
+        if (S < 0.0 && C > 0.0) m_phase+=360;
+    }else m_phase = 90.0;
 
 }
 
@@ -25,8 +30,14 @@ void HarmonicConstant::setComponentValues(const double &C, const double &S)
 
     m_amplitud = qSqrt(qPow(C,2) + qPow(S,2));
 
-    if (C != 0.0) m_phase = qRadiansToDegrees((qAtan(S/C)));
-    else m_phase = 90.0;
+    if (C != 0.0){
+        m_phase = qRadiansToDegrees((qAtan(S/C)));
+
+        if (S > 0.0 && C < 0.0) m_phase+=180;
+        if (S < 0.0 && C < 0.0) m_phase+=180;
+        if (S < 0.0 && C > 0.0) m_phase+=360;
+
+    }else m_phase = 90.0;
 }
 
 
