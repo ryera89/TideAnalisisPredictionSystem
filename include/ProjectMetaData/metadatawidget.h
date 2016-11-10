@@ -4,7 +4,7 @@
 /*Facilities for project metadata introduction and edition*/
 
 #include <QWidget>
-
+#include "include/CoordinatesEditionWidget/mycoordinateseditorwidget.h"
 class QLineEdit;
 class QLabel;
 
@@ -17,15 +17,15 @@ public:
     QString projectName() const;
     QString stationName() const;
     QString localizationName() const;
-    QString latitud() const;
-    QString longitud() const;
+    double latitud() const;
+    double longitud() const;
     QString equipmentID() const;
 
     void setProjectName(const QString &str);
     void setStationName(const QString &str);
     void setLocalizationName(const QString &str);
-    void setLatitud(const QString &str);
-    void setLongitud(const QString &str);
+    void setLatitud(double);
+    void setLongitud(double);
     void setEquipmentID(const QString &str);
 
 signals:
@@ -43,8 +43,8 @@ private:
     QLineEdit *m_projectNameLineEdit;
     QLineEdit *m_stationNameLineEdit;
     QLineEdit *m_localizationNameLineEdit;
-    QLineEdit *m_latitudLineEdit;
-    QLineEdit *m_longitudLineEdit;
+    MyCoordinatesEditorWidget *m_latitudEdit;
+    MyCoordinatesEditorWidget *m_longitudEdit;
     QLineEdit *m_equipmentIdLineEdit;
 
     void createComponents();

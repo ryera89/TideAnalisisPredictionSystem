@@ -25,14 +25,14 @@ QString metaDataWidget::localizationName() const
     return m_localizationNameLineEdit->text();
 }
 
-QString metaDataWidget::latitud() const
+double metaDataWidget::latitud() const
 {
-    return m_latitudLineEdit->text();
+    return m_latitudEdit->coordinate();
 }
 
-QString metaDataWidget::longitud() const
+double metaDataWidget::longitud() const
 {
-    return m_longitudLineEdit->text();
+    return m_longitudEdit->coordinate();
 }
 
 QString metaDataWidget::equipmentID() const
@@ -55,14 +55,14 @@ void metaDataWidget::setLocalizationName(const QString &str)
     m_localizationNameLineEdit->setText(str);
 }
 
-void metaDataWidget::setLatitud(const QString &str)
+void metaDataWidget::setLatitud(double latitud)
 {
-    m_latitudLineEdit->setText(str);
+    m_latitudEdit->setEditorAndComboValue(latitud);
 }
 
-void metaDataWidget::setLongitud(const QString &str)
+void metaDataWidget::setLongitud(double longitud)
 {
-    m_longitudLineEdit->setText(str);
+    m_longitudEdit->setEditorAndComboValue(longitud);
 }
 
 void metaDataWidget::setEquipmentID(const QString &str)
@@ -82,10 +82,11 @@ void metaDataWidget::createComponents()
     m_localizationNameLineEdit = new QLineEdit(this);
 
     m_latitudLabel = new QLabel(tr("Latitud:"),this);
-    m_latitudLineEdit = new QLineEdit(this);
+    m_latitudEdit = new MyCoordinatesEditorWidget(this);
 
     m_longitudLabel = new QLabel(tr("Longitud:"),this);
-    m_longitudLineEdit = new QLineEdit(this);
+    m_longitudEdit = new MyCoordinatesEditorWidget(this);
+    m_longitudEdit->setHType(MyCoordinatesEditorWidget::longitud);
 
     m_equipmentIdLabel = new QLabel(tr("Equipo ID:"),this);
     m_equipmentIdLineEdit = new QLineEdit(this);
@@ -95,10 +96,10 @@ void metaDataWidget::interfazLayout()
 {
     QHBoxLayout *lat_longLayout = new QHBoxLayout;
     lat_longLayout->addWidget(m_latitudLabel);
-    lat_longLayout->addWidget(m_latitudLineEdit);
+    lat_longLayout->addWidget(m_latitudEdit);
     lat_longLayout->addStretch();
     lat_longLayout->addWidget(m_longitudLabel);
-    lat_longLayout->addWidget(m_longitudLineEdit);
+    lat_longLayout->addWidget(m_longitudEdit);
 
     QFormLayout *mainLayout = new QFormLayout;
     mainLayout->addRow(m_projectNameLabel,m_projectNameLineEdit);

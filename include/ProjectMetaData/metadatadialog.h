@@ -17,8 +17,8 @@ public:
     QString projectName() const;
     QString stationName() const;
     QString localizationName() const;
-    QString latitud() const;
-    QString longitud() const;
+    double latitud() const;
+    double longitud() const;
     QString equipmentId() const;
 
 signals:

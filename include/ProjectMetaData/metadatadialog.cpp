@@ -37,12 +37,12 @@ QString MetaDataDialog::localizationName() const
     return m_metadata->localizationName();
 }
 
-QString MetaDataDialog::latitud() const
+double MetaDataDialog::latitud() const
 {
     return m_metadata->latitud();
 }
 
-QString MetaDataDialog::longitud() const
+double MetaDataDialog::longitud() const
 {
     return m_metadata->longitud();
 }
