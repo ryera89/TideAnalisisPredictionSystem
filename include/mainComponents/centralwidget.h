@@ -13,6 +13,7 @@ class QTableView;
 #include "customchartview.h"
 #include <iostream>
 
+
 class DisplayedDataLabels;
 class QSpinBox;
 class QSlider;
@@ -25,6 +26,7 @@ class CentralWidget : public QWidget
 public:
     explicit CentralWidget(QWidget *parent = 0);
 
+    //MySeries* chartSerie() const{return m_series;}
     QSplineSeries* chartSerie() const{return m_series;}
     QTableView* tableView() const{return m_tidalTableView;}
     QChartView* chartView() const{return m_tideChartView;}
@@ -44,7 +46,8 @@ public slots:
     void updateSerieData(int row);
     void setSeriesData();
 
-
+private slots:
+    void zoomXAxis(int level);
 private:
     //Table Facilities
     QTableView *m_tidalTableView;
@@ -57,7 +60,8 @@ private:
     QDateTimeAxis *m_timeAxis;
     //QValueAxis *m_yAxis;
     QSplineSeries *m_series;
-
+    //QScatterSeries *m_scatterSerie;
+    //MySeries *m_series;
     //Display Facilities
     QSlider *m_rangeSlider;
     QSpinBox *m_rangeSpinBox;
@@ -71,8 +75,12 @@ private:
     ReadOnlyTableModel *m_tidalTableModel;
     XYTidalChartModelMapper *m_mapper;
 
+
+    int m_currentXZoomLevel;
+
     void createComponents();
     void settingUpTable();
+    void settingZoomPosibleValues();
 
 };
 

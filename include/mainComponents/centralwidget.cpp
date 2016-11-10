@@ -9,6 +9,7 @@
 
 CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
 {
+    m_currentXZoomLevel = 1;
     createComponents();
 }
 
@@ -112,12 +113,18 @@ void CentralWidget::updateSerieData(int row)
 
 void CentralWidget::setSeriesData()
 {
+    settingZoomPosibleValues();
     //NOTE: Si luego hay problemas es por haber comentariado esto
     m_series->clear();
     m_tideChartView->chart()->removeAxis(m_timeAxis);
     m_tideChartView->chart()->removeAllSeries();
 
     m_series = new QSplineSeries;
+    m_series->setPointsVisible(true);
+    //m_scatterSerie = new QScatterSeries;
+    //m_scatterSerie->setColor(Qt::red);
+    //m_scatterSerie->setMarkerSize(5);
+    //m_series = new MySeries;
 
     int rowNumber = m_tidalTableModel->rowCount(QModelIndex());
     //int columnNumber = m_model->columnCount(QModelIndex());
@@ -135,6 +142,7 @@ void CentralWidget::setSeriesData()
 
     //m_series->chart()->axisX(m_series)->setRange(QDateTime::fromMSecsSinceEpoch(datos.first().x()),QDateTime::fromMSecsSinceEpoch(datos.last().x()));
     m_series->append(datos);
+    //m_scatterSerie->append(datos);
 
 
     //m_tideChartView->chart()->removeSeries(m_series);
@@ -148,8 +156,83 @@ void CentralWidget::setSeriesData()
     m_tideChartView->chart()->addSeries(m_series);
     m_tideChartView->chart()->createDefaultAxes();
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
+    //m_tideChartView->chart()->setAxisX(m_timeAxis,m_scatterSerie);
 
     m_mapper->setSeries(m_series);
+
+
+}
+
+void CentralWidget::zoomXAxis(int level)
+{
+    if (m_series){
+        quint64 xMin = m_series->at(0).x();
+        quint64 xMax = m_series->at(m_series->count()-1).x();
+
+        quint64 showXMin = m_timeAxis->min().toMSecsSinceEpoch();
+        quint64 showXMax = m_timeAxis->max().toMSecsSinceEpoch();
+
+        quint64 interval = 24*3600*1000*qAbs(level-m_currentXZoomLevel);
+        if (m_currentXZoomLevel < level){
+            showXMin-=interval/2;
+            showXMax+=interval/2;
+
+            if (showXMin < xMin){
+                quint64 dif = xMin - showXMin;
+                showXMin = xMin;
+
+                showXMax+=dif;
+                if (showXMax > xMax){
+                    showXMax = xMax;
+                }
+            }
+
+            if (showXMax > xMax){
+                quint64 dif = showXMax - xMax;
+                showXMax = xMax;
+
+                showXMin-=dif;
+                if (showXMin < xMin){
+                    showXMin = xMin;
+                }
+            }
+        }else{
+            showXMax-=interval/2;
+            showXMin+=interval/2;
+
+            quint64 dif = showXMax - showXMin;
+            quint64 diflimit = 24*3600*1000;
+            if (dif < diflimit){
+                quint64 lim = diflimit - dif;
+                showXMin-=lim/2;
+                showXMax+=lim/2;
+
+                if (showXMin < xMin){
+                    quint64 dif = xMin - showXMin;
+                    showXMin = xMin;
+
+                    showXMax+=dif;
+                    if (showXMax > xMax){
+                        showXMax = xMax;
+                    }
+                }
+
+                if (showXMax > xMax){
+                    quint64 dif = showXMax - xMax;
+                    showXMax = xMax;
+
+                    showXMin-=dif;
+                    if (showXMin < xMin){
+                        showXMin = xMin;
+                    }
+                }
+
+            }
+        }
+
+        m_currentXZoomLevel = level;
+        m_timeAxis->setRange(QDateTime::fromMSecsSinceEpoch(showXMin),QDateTime::fromMSecsSinceEpoch(showXMax));
+    }
 }
 void CentralWidget::createComponents()
 {
@@ -168,6 +251,7 @@ void CentralWidget::createComponents()
     //m_tideChart->setAnimationOptions(QChart::AllAnimations);
 
     m_series = new QSplineSeries;
+    //m_series = new MySeries;
     m_mapper = new XYTidalChartModelMapper(m_tidalTableModel,m_series);
     connect(m_tidalTableModel,SIGNAL(modelReset()),this,SLOT(setSeriesData()));
 
@@ -198,6 +282,7 @@ void CentralWidget::createComponents()
 
     connect(m_rangeSpinBox,SIGNAL(valueChanged(int)),m_rangeSlider,SLOT(setValue(int)));
     connect(m_rangeSlider,SIGNAL(valueChanged(int)),m_rangeSpinBox,SLOT(setValue(int)));
+    connect(m_rangeSpinBox,SIGNAL(valueChanged(int)),this,SLOT(zoomXAxis(int)));
 
     QHBoxLayout *rangeLayout = new QHBoxLayout;
     rangeLayout->addWidget(m_rangeSlider);
@@ -274,6 +359,21 @@ void CentralWidget::settingUpTable()
          width += m_tidalTableView->columnWidth(i);
     }
     m_tidalTableView->setFixedWidth(width);
+}
+
+void CentralWidget::settingZoomPosibleValues()
+{
+    m_rangeSpinBox->setValue(1);
+    if (!m_tidalTableModel->measurementData().isEmpty()){
+       QDateTime ini = m_tidalTableModel->measurementData().first().measurementDateTime();
+       QDateTime end = m_tidalTableModel->measurementData().last().measurementDateTime();
+
+       quint64 days= ini.daysTo(end);
+
+       m_rangeSpinBox->setMaximum(days + 1);
+       m_rangeSlider->setMaximum(days + 1);
+    }
+
 }
 
 

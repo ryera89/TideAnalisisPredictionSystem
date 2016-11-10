@@ -681,8 +681,8 @@ void SPMmainWindow::createActions()
 
     m_chartRenderHintAction = new QAction(tr("Antialiasing"),this);
     m_chartRenderHintAction->setCheckable(true);
-    connect(m_chartRenderHintAction,SIGNAL(triggered(bool)),this,SLOT(setRenderedChartViewFlag(bool)));
-
+    connect(m_chartRenderHintAction,SIGNAL(toggled(bool)),this,SLOT(setRenderedChartViewFlag(bool)));
+    m_chartRenderHintAction->setChecked(true);
     //view Actions--------------------------------------------------
     m_tablaHorariadeMareaAction = new QAction(tr("Tabla Horaria"),this);
     //icon

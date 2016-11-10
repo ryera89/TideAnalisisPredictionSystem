@@ -64,6 +64,10 @@ void customChartView::keyPressEvent(QKeyEvent *event)
 
 void customChartView::wheelEvent(QWheelEvent *event)
 {
-  if (event->angleDelta().y() > 0) chart()->zoomIn();
-  if (event->angleDelta().y() < 0) chart()->zoomOut();
+    this->chart()->scroll(event->angleDelta().y(),0);
+}
+
+void customChartView::zoomXAxis(quint32 level)
+{
+
 }
