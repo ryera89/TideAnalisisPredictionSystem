@@ -16,16 +16,6 @@ QVector<HarmonicConstant> SPMmainWindow::m_selectedHarmonicConstantVector = QVec
 
 SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
 {
-
-    std::cout << "P=" <<qRadiansToDegrees(qAtan(400))<< std::endl;
-    std::cout << "N=" <<qRadiansToDegrees(qAtan(-1.9))<< std::endl;
-
-    std::cout << "P=" <<qRadiansToDegrees(1.9)<< std::endl;
-    std::cout << "N=" <<qRadiansToDegrees(-1.9)<< std::endl;
-
-    std::cout << "radians=" <<qSin(M_PI/2)<< std::endl;
-    std::cout << "degrees=" <<qSin(90)<< std::endl;
-
     m_central = new CentralWidget(this);
 
     m_loadDialog = 0;
@@ -723,6 +713,8 @@ void SPMmainWindow::createMenus()
     m_dataMenu->addAction(m_importFrom_ASCII_Action);
 
     m_analisisMenu = menuBar()->addMenu(tr("Análisis"));
+    m_analisisMenu->addAction(m_tablaHorariadeMareaAction);
+    m_analisisMenu->addSeparator();
     m_analisisMenu->addAction(m_harmonicAnalisisAction);
 
     m_toolMenu = menuBar()->addMenu(tr("Herramientas"));
@@ -738,8 +730,8 @@ void SPMmainWindow::createMenus()
 
     m_chartMenu->addAction(m_chartRenderHintAction);
 
-    m_viewMenu = menuBar()->addMenu(tr("Ver"));
-    m_viewMenu->addAction(m_tablaHorariadeMareaAction);
+    //m_viewMenu = menuBar()->addMenu(tr("Ver"));
+    //m_viewMenu->addAction(m_tablaHorariadeMareaAction);
 }
 
 void SPMmainWindow::syncData(const QVector<HarmonicConstant> &components) //Para sync si hay un cambio en los componentes que se editan en otra facilidad

@@ -287,10 +287,11 @@ void CentralWidget::createComponents()
     QHBoxLayout *rangeLayout = new QHBoxLayout;
     rangeLayout->addWidget(m_rangeSlider);
     rangeLayout->addWidget(m_rangeSpinBox);
+    rangeLayout->setSpacing(0);
 
-    QGroupBox *rangeGroupBox = new QGroupBox(this);
-    rangeGroupBox->setLayout(rangeLayout);
-    rangeGroupBox->setFixedWidth(200);
+    //QGroupBox *rangeGroupBox = new QGroupBox(this);
+    //rangeGroupBox->setLayout(rangeLayout);
+    //rangeGroupBox->setFixedWidth(200);
 
     m_selectionIniDDLabel = new DisplayedDataLabels(this);
     m_selectionIniDDLabel->setLabel(tr("Inicio"));
@@ -323,12 +324,13 @@ void CentralWidget::createComponents()
     displayGroupBox->setLayout(displayLayout);
 
     QHBoxLayout *leftLayout = new QHBoxLayout;
-    leftLayout->addWidget(rangeGroupBox);
+    //leftLayout->addWidget(rangeGroupBox);
     leftLayout->addWidget(displayGroupBox);
 
     QVBoxLayout *rigthLayout = new QVBoxLayout;
     rigthLayout->addLayout(leftLayout);
     rigthLayout->addWidget(m_tideChartView);
+    rigthLayout->addLayout(rangeLayout);
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
 

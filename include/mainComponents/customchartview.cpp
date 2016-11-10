@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-
+#include <QStyleOptionGraphicsItem>
 
 customChartView::customChartView(QChart *chart, QWidget *parent): QChartView(chart,parent)
 {
@@ -38,12 +38,6 @@ customChartView::customChartView(QChart *chart, QWidget *parent): QChartView(cha
 void customChartView::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
-    case Qt::Key_Plus:
-        chart()->zoomIn();
-        break;
-    case Qt::Key_Minus:
-        chart()->zoomOut();
-        break;
     case Qt::Key_Left:
         chart()->scroll(-10,0);
         break;
@@ -67,7 +61,4 @@ void customChartView::wheelEvent(QWheelEvent *event)
     this->chart()->scroll(event->angleDelta().y(),0);
 }
 
-void customChartView::zoomXAxis(quint32 level)
-{
 
-}

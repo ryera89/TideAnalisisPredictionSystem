@@ -20,14 +20,12 @@ public:
 protected:
     void keyPressEvent(QKeyEvent *event);
     void wheelEvent(QWheelEvent *event);
-
 public slots:
-    void zoomXAxis(quint32 level);
 
 private:
     //QToolButton *leftButton;
     //QToolButton *rightButton;
-    quint32 m_currentXZoomLevel;
+
 };
 
 #endif // CUSTOMCHARTVIEW_H
