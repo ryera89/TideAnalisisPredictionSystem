@@ -37,7 +37,7 @@ double metaDataWidget::longitud() const
 
 QString metaDataWidget::equipmentID() const
 {
-    return m_equipmentIdLabel->text();
+    return m_equipmentIdLineEdit->text();
 }
 
 void metaDataWidget::setProjectName(const QString &str)
@@ -78,7 +78,7 @@ void metaDataWidget::createComponents()
     m_stationNameLabel = new QLabel(tr("Puesto:"),this);
     m_stationNameLineEdit = new QLineEdit(this);
 
-    m_localizationNameLabel = new QLabel(tr("Localización"),this);
+    m_localizationNameLabel = new QLabel(tr("Localización:"),this);
     m_localizationNameLineEdit = new QLineEdit(this);
 
     m_latitudLabel = new QLabel(tr("Latitud:"),this);
@@ -105,8 +105,8 @@ void metaDataWidget::interfazLayout()
     mainLayout->addRow(m_projectNameLabel,m_projectNameLineEdit);
     mainLayout->addRow(m_stationNameLabel,m_stationNameLineEdit);
     mainLayout->addRow(m_localizationNameLabel,m_localizationNameLineEdit);
-    mainLayout->addRow(lat_longLayout);
     mainLayout->addRow(m_equipmentIdLabel,m_equipmentIdLineEdit);
+    mainLayout->addRow(lat_longLayout);
 
     this->setLayout(mainLayout);
 }
