@@ -74,7 +74,7 @@ FreqEditor::FreqEditor(const QString &filePath, QWidget *parent):QDialog(parent)
 
 void FreqEditor::createButtons()
 {
-    m_okButton = new QPushButton(QIcon(":images/OK.png"),tr("Aceptar"),this);
+    m_okButton = new QPushButton(QIcon(":images/Ok.png"),tr("Aceptar"),this);
     connect(m_okButton,SIGNAL(clicked(bool)),this,SIGNAL(acceptButtonClicked()));
 
 
@@ -82,11 +82,11 @@ void FreqEditor::createButtons()
     connect(m_cancelButton,SIGNAL(clicked(bool)),this,SLOT(close()));
 
     m_addButton = new QPushButton(QIcon(":images/add.png"),tr("Agregar"),this);
-    m_addButton->setToolTip(tr("Agrega una nueva entrada"));
+    m_addButton->setToolTip(tr("Agregar fila"));
     connect(m_addButton,SIGNAL(clicked(bool)),this,SLOT(insertRow()));
 
-    m_removeButton = new QPushButton(QIcon(":images/Remove.png"),tr("Eliminar"),this);
-    m_removeButton->setToolTip(tr("Elimina la ultima entrada"));
+    m_removeButton = new QPushButton(QIcon(":images/delete.png"),tr("Eliminar"),this);
+    m_removeButton->setToolTip(tr("Eliminar filas"));
     connect(m_removeButton,SIGNAL(clicked(bool)),m_frequencyTable,SLOT(removeRows()));
 }
 

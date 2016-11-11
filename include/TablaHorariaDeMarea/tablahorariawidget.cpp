@@ -15,6 +15,7 @@ TablaHorariaWidget::TablaHorariaWidget(QWidget *parent) : QWidget(parent)
     createComponents();
     this->setWindowTitle(tr("Niveles Medios y Extremos"));
 
+    this->setWindowIcon(QIcon(":images/timetable.png"));
     this->setAttribute(Qt::WA_DeleteOnClose);
 }
 

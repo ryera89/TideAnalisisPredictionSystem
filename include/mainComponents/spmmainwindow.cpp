@@ -47,6 +47,7 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
 
     createActions();
     createMenus();
+    createToolBars();
 
     m_themeDarkAction->setChecked(true);
     m_animationNoAnimationAction->setChecked(true);
@@ -561,46 +562,47 @@ void SPMmainWindow::beginDataExtrationFromFile()
 
 void SPMmainWindow::createActions()
 {
-    m_newProjectAction = new QAction(tr("&Nuevo"),this);
-    //NOTE: icon
+    m_newProjectAction = new QAction(QIcon(":/images/project-new.png"),tr("&Nuevo"),this);
     m_newProjectAction->setShortcut(QKeySequence::New);
     m_newProjectAction->setToolTip(tr("Crea un nuevo proyecto"));
     //NOTE connect
 
-    m_loadProjectAction = new QAction(tr("&Abrir"),this);
-    //NOTE: icon
+    m_loadProjectAction = new QAction(QIcon(":/images/project-open.png"),tr("&Abrir"),this);
     m_loadProjectAction->setShortcut(QKeySequence::Open);
     m_loadProjectAction->setToolTip(tr("Carga un proyecto"));
     //NOTE connect
 
-    m_saveProjectAction = new QAction(tr("&Guardar"),this);
-    //NOTE: icon
+    m_saveProjectAction = new QAction(QIcon(":/images/save.png"),tr("&Guardar"),this);
     m_saveProjectAction->setShortcut(QKeySequence::Save);
     m_saveProjectAction->setToolTip(tr("Salva el proyecto"));
     //NOTE connect
 
-    m_saveAsProjectAction = new QAction(tr("Guardar &Como..."),this);
-    //NOTE: icon
+    m_saveAsProjectAction = new QAction(QIcon(":/images/saveAs.png"),tr("Guardar &Como..."),this);
     m_saveAsProjectAction->setShortcut(QKeySequence::SaveAs);
     m_saveAsProjectAction->setToolTip(tr("Salva el proyecto"));
     //NOTE connect
 
-    m_projectMetaDataAction = new QAction(tr("&Información"),this);
+    m_projectMetaDataAction = new QAction(QIcon(":/images/project-info.png"),tr("&Información"),this);
     m_projectMetaDataAction->setToolTip(tr("Información del Proyecto"));
     connect(m_projectMetaDataAction,SIGNAL(triggered(bool)),this,SLOT(createMetaDataDialog()));
-    //Note: icon
 
-    m_exitAction = new QAction(tr("Salir"),this);
-    //NOTE: icon
+    m_exitAction = new QAction(QIcon(":/images/project-close.png"),tr("Salir"),this);
     m_exitAction->setShortcut(QKeySequence::Quit);
     m_exitAction->setToolTip(tr("Cerrar aplicación"));
     connect(m_exitAction,SIGNAL(triggered(bool)),qApp,SLOT(quit()));
 
+    //Analisis Actions*******************************************************************************
+    m_tablaHorariadeMareaAction = new QAction(QIcon(":/images/timetable.png"),tr("Tabla Horaria"),this);
+    m_tablaHorariadeMareaAction->setToolTip(tr("Muestra la tabla horaria de marea"));
+    connect(m_tablaHorariadeMareaAction,SIGNAL(triggered(bool)),this,SLOT(crearTablaHoraria()));
     m_harmonicAnalisisAction = new QAction(tr("Análisis Armónico"),this);
     //TODO: icon
     connect(m_harmonicAnalisisAction,SIGNAL(triggered(bool)),this,SLOT(createHarmonicAnalisisDialog()));
+    m_nonHarmonicAnalisisAction = new QAction(tr("Constantes No Armonicas"),this);
+    //TODO: icon & conexion
 
     m_freqEditorAction = new QAction(tr("Editor de Componentes"),this);
+    //TODO icon
     connect(m_freqEditorAction,SIGNAL(triggered(bool)),this,SLOT(createFrequencyEditor()));
 
 
@@ -674,22 +676,14 @@ void SPMmainWindow::createActions()
     connect(m_chartRenderHintAction,SIGNAL(toggled(bool)),this,SLOT(setRenderedChartViewFlag(bool)));
     m_chartRenderHintAction->setChecked(true);
     //view Actions--------------------------------------------------
-    m_tablaHorariadeMareaAction = new QAction(tr("Tabla Horaria"),this);
-    //icon
-    m_tablaHorariadeMareaAction->setToolTip(tr("Muestra la tabla horaria de marea"));
-    connect(m_tablaHorariadeMareaAction,SIGNAL(triggered(bool)),this,SLOT(crearTablaHoraria()));
-    //NOTE: Faltan muchas mas acciones
 
     //Data Actions---------------------------------------------------------------------
-    m_manualDataIntroductionAction = new QAction(tr("Introducción Manual"),this);
+    m_manualDataIntroductionAction = new QAction(QIcon(":/images/table_pencil.png"),tr("Introducción Manual"),this);
     connect(m_manualDataIntroductionAction,SIGNAL(triggered(bool)),
             this,SLOT(createManualDataIntWidget()));
 
-    m_importFrom_ASCII_Action =  new QAction(tr("Importar"),this);
-    //NOTE: icon
-    //m_importFrom_CVS_Action->setShortcut(QKeySequence::SaveAs);
-    m_importFrom_ASCII_Action->setToolTip(tr("Importar desde archivo ASCII"));
-    //NOTE connect
+    m_importFrom_ASCII_Action =  new QAction(QIcon(":/images/import.png"),tr("Importar"),this);
+    m_importFrom_ASCII_Action->setToolTip(tr("Importar datos desde archivo ASCII"));
     connect(m_importFrom_ASCII_Action,SIGNAL(triggered(bool)),this,SLOT(loadDataFile()));
 
 }
@@ -721,8 +715,6 @@ void SPMmainWindow::createMenus()
     m_toolMenu->addAction(m_freqEditorAction);
 
     m_chartMenu = menuBar()->addMenu(tr("Gráfico"));
-    //chart subMenus;
-    //NOTE: Faltan Iconos
     m_animationSubMenu = m_chartMenu->addMenu(tr("Animaciones"));
     m_animationSubMenu->addActions(m_animationGroup->actions());
     m_themeSubMenu = m_chartMenu->addMenu(tr("Temas"));
@@ -732,6 +724,23 @@ void SPMmainWindow::createMenus()
 
     //m_viewMenu = menuBar()->addMenu(tr("Ver"));
     //m_viewMenu->addAction(m_tablaHorariadeMareaAction);
+}
+
+void SPMmainWindow::createToolBars()
+{
+    m_projectToolBar = addToolBar(tr("Project"));
+    m_projectToolBar->addAction(m_newProjectAction);
+    m_projectToolBar->addAction(m_loadProjectAction);
+    m_projectToolBar->addAction(m_saveProjectAction);
+    m_projectToolBar->addAction(m_saveAsProjectAction);
+    m_projectToolBar->addAction(m_projectMetaDataAction);
+
+    m_dataToolBar = addToolBar(tr("Data"));
+    m_dataToolBar->addAction(m_manualDataIntroductionAction);
+    m_dataToolBar->addAction(m_importFrom_ASCII_Action);
+
+    m_analsisToolBar = addToolBar(tr("Analisis"));
+    m_analsisToolBar->addAction(m_tablaHorariadeMareaAction);
 }
 
 void SPMmainWindow::syncData(const QVector<HarmonicConstant> &components) //Para sync si hay un cambio en los componentes que se editan en otra facilidad

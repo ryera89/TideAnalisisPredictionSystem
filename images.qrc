@@ -2,12 +2,24 @@
     <qresource prefix="/">
         <file>images/arrow_left.png</file>
         <file>images/arrow_right.png</file>
-        <file>images/Erase.png</file>
         <file>images/No.png</file>
-        <file>images/OK.png</file>
-        <file>images/Remove.png</file>
         <file>images/add.png</file>
         <file>images/analisis.png</file>
         <file>images/configure.png</file>
+        <file>images/delete.png</file>
+        <file>images/import.png</file>
+        <file>images/application-exit.png</file>
+        <file>images/Ok.png</file>
+        <file>images/project-open.png</file>
+        <file>images/save.png</file>
+        <file>images/saveAs.png</file>
+        <file>images/table_delete.png</file>
+        <file>images/table_pencil.png</file>
+        <file>images/table_row_delete.png</file>
+        <file>images/table_row_new.png</file>
+        <file>images/timetable.png</file>
+        <file>images/project-new.png</file>
+        <file>images/project-close.png</file>
+        <file>images/project-info.png</file>
     </qresource>
 </RCC>

@@ -19,6 +19,7 @@ MetaDataDialog::MetaDataDialog(const ProjectMetaData &data,QWidget *parent, Qt::
     m_metadata->setLongitud(data.longitud());
     m_metadata->setEquipmentID(data.equipmentID());
 
+    this->setWindowIcon(QIcon(":images/project-info.png"));
     this->setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -56,10 +57,10 @@ void MetaDataDialog::createComponets()
 {
     m_metadata = new metaDataWidget(this);
 
-    m_okButton = new QPushButton(tr("Aceptar"),this);
+    m_okButton = new QPushButton(QIcon(":images/Ok.png"),tr("Aceptar"),this);
     connect(m_okButton,SIGNAL(clicked(bool)),this,SIGNAL(okButtonClicked(bool)));
 
-    m_cancelButton = new QPushButton(tr("Cancelar"),this);
+    m_cancelButton = new QPushButton(QIcon(":images/No.png"),tr("Cancelar"),this);
     connect(m_cancelButton,SIGNAL(clicked(bool)),this,SLOT(close()));
 
     m_groupBox = new QGroupBox(this);

@@ -83,12 +83,15 @@ protected slots:
 
 private:
 
-    enum {SchemesMagicNumber = 18041989, ComponentsMagicNumber = 19891804};
-    //Internal data storage files path
+    enum {SchemesMagicNumber = 18041989, ComponentsMagicNumber = 19891804};  //Magic Numbers for config files recognition
+    //Config files filespath--------------------------------------------------------------------
     const QString m_frequencyFilePath = "data/frequency.frq"; //fichero donde se guardan la frecuencias de las constantes armonicas
     const QString m_schemesFilePath = "data/schemes.sch"; //Fichero donde se guardan los esquemas
 
+    /*********************************Visual Widgets**********************************************/
+    //Central Widget Main Interface----------------------------------------------------------------------
      CentralWidget *m_central;
+     //Dialogs------------------------------------------------------------------------------------------
      LoadDialog *m_loadDialog;
      TablaHorariaWidget *m_tablaHorariaWidget;
      ManualDataIntroductionWidget *m_manualDataIntroductionWidget;
@@ -97,7 +100,7 @@ private:
      FreqEditor *m_frequencyEditor;
 
      /*************************ACTIONS*************************************************/
-     //File Menu Actions
+     //File Menu Actions----------------------------------------------------------------
      QAction *m_newProjectAction;
      QAction *m_loadProjectAction;
      QAction *m_saveProjectAction;
@@ -115,7 +118,7 @@ private:
      QAction *m_themeHighcontrastAction;
      QAction *m_themeQtAction;
 
-     QActionGroup *m_themeGroup;
+     QActionGroup *m_themeGroup;  //exclusive actions
 
      QAction *m_animationNoAnimationAction;
      QAction *m_animationGridAxisAnimationAction;
@@ -124,26 +127,21 @@ private:
 
      QAction *m_chartRenderHintAction;
 
-     QActionGroup *m_animationGroup;
-
-     //View Actions-----------------------------------------------------------------------
-
-     QAction *m_tablaHorariadeMareaAction;
+     QActionGroup *m_animationGroup; //exclusive actions
 
      //Data Actions-----------------------------------------------------------------------
      QAction *m_manualDataIntroductionAction;
      QAction *m_importFrom_ASCII_Action;
 
      //Analisis Actions-------------------------------------------------------------------
+     QAction *m_tablaHorariadeMareaAction;
      QAction *m_harmonicAnalisisAction;
+     QAction *m_nonHarmonicAnalisisAction;
 
      //Tools Actions------------------------------------------------------------------------
      QAction *m_freqEditorAction;
 
-
-
-     /***********************************************************************************/
-
+     //View Actions-----------------------------------------------------------------------
 
      /************************MENUS******************************************************/
      QMenu *m_fileMenu;
@@ -159,17 +157,18 @@ private:
      QMenu *m_animationSubMenu;
      QMenu *m_themeSubMenu;
 
-     /***********************************************************************************/
-    //NOTE: va el widget especial que contiene el chart
+     /*************************ToolBars**********************************************************/
+     QToolBar *m_projectToolBar;
+     QToolBar *m_dataToolBar;
+     QToolBar *m_analsisToolBar;
 
-    //NOTE: van las acciones que se ejecutan en el programa.
-
-
+     /*************************Private Functions For Interface*************************************************/
      void createActions();
      void createMenus();
+     void createToolBars();
 
-     //DOnde se almacenan los datos
-     ProjectMetaData m_metadataStorage;
+     /**************************Internal Data Storage**********************************************************/
+     ProjectMetaData m_metadataStorage;  //Meta datos del proyecto
 
      //TidalData m_datosDeMarea;
      //ReadOnlyTableModel *m_tidalTableModel;
@@ -178,11 +177,11 @@ private:
      QVector<HarmonicConstant> m_harmonicConstantVector; //Donde se almacenan las constantes armonicas;
      static QVector<HarmonicConstant> m_selectedHarmonicConstantVector; //Constantes armonicas seleccionadas para analisis
 
+     /******************************Private Functions For Funcionality*******************************************/
      void syncData(const QVector<HarmonicConstant> &components);
      bool createHarmonicAnalisisDialogFromConfigFile();
      bool loadHarmonicConstantsFromFile();
      //static void setSelectectedHarmonicConstants();
-
      bool saveAnalisisDataToFile(const QString &filePath);
 
 };
