@@ -75,7 +75,10 @@ SOURCES += main.cpp\
     include/NonHarmonicConstantsModule/NonHarmonicConstants/horacotidianasemidiurna.cpp \
     include/NonHarmonicConstantsModule/NonHarmonicConstants/horacotidianadiurna.cpp \
     include/CoordinatesEditionWidget/mycoordinateseditorwidget.cpp \
-    include/mainComponents/mychart.cpp
+    include/mainComponents/mychart.cpp \
+    include/NonHarmonicConstantsModule/FrontEnd/displayresultwidget.cpp \
+    include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.cpp \
+    include/myseries.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -141,7 +144,10 @@ HEADERS  += \
     include/NonHarmonicConstantsModule/NonHarmonicConstants/horacotidianasemidiurna.h \
     include/NonHarmonicConstantsModule/NonHarmonicConstants/horacotidianadiurna.h \
     include/CoordinatesEditionWidget/mycoordinateseditorwidget.h \
-    include/mainComponents/mychart.h
+    include/mainComponents/mychart.h \
+    include/NonHarmonicConstantsModule/FrontEnd/displayresultwidget.h \
+    include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.h \
+    include/myseries.h
 
 RESOURCES += \
     images.qrc
