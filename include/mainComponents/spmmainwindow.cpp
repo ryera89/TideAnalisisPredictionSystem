@@ -7,7 +7,7 @@
 #include "include/maths/minsqr.h"
 #include "include/maths/fitsvd.h"
 #include "include/measurement/tidaldata.h"
-
+#include "include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.h"
 #include "include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytablemodel.h"
 #include <QtMath>
 #include <iostream>
@@ -23,6 +23,7 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
     m_manualDataIntroductionWidget = 0;
     m_projectMetaDataDialog = 0;
     m_schemeWidget = 0;
+    m_nonHarmonicConstantDialog = 0;
     m_frequencyEditor = 0;
     setCentralWidget(m_central);
 
@@ -121,6 +122,12 @@ void SPMmainWindow::createMetaDataDialog()
     m_projectMetaDataDialog = new MetaDataDialog(m_metadataStorage, this,Qt::WindowCloseButtonHint);
     m_projectMetaDataDialog->show();
     connect(m_projectMetaDataDialog,SIGNAL(okButtonClicked(bool)),this,SLOT(updateMetaData()));
+}
+
+void SPMmainWindow::createNonHarmonicDialog()
+{
+    m_nonHarmonicConstantDialog = new NonHarmonicCalcDialog(this);
+    m_nonHarmonicConstantDialog->show();
 }
 
 void SPMmainWindow::updateMetaData()
@@ -323,7 +330,7 @@ void SPMmainWindow::harmonicAnalisisWithCustomData()
     valarray<double> timeValarray(timeVector.size());
     valarray<double> levelValarray(levelVector.size());
 
-    for (int i = 0; i < timeValarray.size(); ++i){
+    for (uint i = 0; i < timeValarray.size(); ++i){
         timeValarray[i] = timeVector[i];
         levelValarray[i] = levelVector[i];
     }
@@ -564,22 +571,22 @@ void SPMmainWindow::createActions()
 {
     m_newProjectAction = new QAction(QIcon(":/images/project-new.png"),tr("&Nuevo"),this);
     m_newProjectAction->setShortcut(QKeySequence::New);
-    m_newProjectAction->setToolTip(tr("Crea un nuevo proyecto"));
+    m_newProjectAction->setToolTip(tr("Crear nuevo proyecto"));
     //NOTE connect
 
     m_loadProjectAction = new QAction(QIcon(":/images/project-open.png"),tr("&Abrir"),this);
     m_loadProjectAction->setShortcut(QKeySequence::Open);
-    m_loadProjectAction->setToolTip(tr("Carga un proyecto"));
+    m_loadProjectAction->setToolTip(tr("Cargar proyecto"));
     //NOTE connect
 
     m_saveProjectAction = new QAction(QIcon(":/images/save.png"),tr("&Guardar"),this);
     m_saveProjectAction->setShortcut(QKeySequence::Save);
-    m_saveProjectAction->setToolTip(tr("Salva el proyecto"));
+    m_saveProjectAction->setToolTip(tr("Guardar proyecto"));
     //NOTE connect
 
     m_saveAsProjectAction = new QAction(QIcon(":/images/saveAs.png"),tr("Guardar &Como..."),this);
     m_saveAsProjectAction->setShortcut(QKeySequence::SaveAs);
-    m_saveAsProjectAction->setToolTip(tr("Salva el proyecto"));
+    m_saveAsProjectAction->setToolTip(tr("Guardar proyecto como..."));
     //NOTE connect
 
     m_projectMetaDataAction = new QAction(QIcon(":/images/project-info.png"),tr("&Información"),this);
@@ -593,13 +600,16 @@ void SPMmainWindow::createActions()
 
     //Analisis Actions*******************************************************************************
     m_tablaHorariadeMareaAction = new QAction(QIcon(":/images/timetable.png"),tr("Tabla Horaria"),this);
-    m_tablaHorariadeMareaAction->setToolTip(tr("Muestra la tabla horaria de marea"));
+    m_tablaHorariadeMareaAction->setToolTip(tr("Tabla horaria de marea"));
     connect(m_tablaHorariadeMareaAction,SIGNAL(triggered(bool)),this,SLOT(crearTablaHoraria()));
     m_harmonicAnalisisAction = new QAction(tr("Análisis Armónico"),this);
     //TODO: icon
+    m_harmonicAnalisisAction->setToolTip(tr("Análisis Armónico"));
     connect(m_harmonicAnalisisAction,SIGNAL(triggered(bool)),this,SLOT(createHarmonicAnalisisDialog()));
     m_nonHarmonicAnalisisAction = new QAction(tr("Constantes No Armonicas"),this);
-    //TODO: icon & conexion
+    //TODO: icon
+    m_nonHarmonicAnalisisAction->setToolTip(tr("Constantes No Armonicas"));
+    connect(m_nonHarmonicAnalisisAction,SIGNAL(triggered(bool)),this,SLOT(createNonHarmonicDialog()));
 
     m_freqEditorAction = new QAction(tr("Editor de Componentes"),this);
     //TODO icon
@@ -710,6 +720,8 @@ void SPMmainWindow::createMenus()
     m_analisisMenu->addAction(m_tablaHorariadeMareaAction);
     m_analisisMenu->addSeparator();
     m_analisisMenu->addAction(m_harmonicAnalisisAction);
+    m_analisisMenu->addSeparator();
+    m_analisisMenu->addAction(m_nonHarmonicAnalisisAction);
 
     m_toolMenu = menuBar()->addMenu(tr("Herramientas"));
     m_toolMenu->addAction(m_freqEditorAction);

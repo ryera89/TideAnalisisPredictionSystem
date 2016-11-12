@@ -7,6 +7,7 @@
 
 class QLabel;
 class QDoubleSpinBox;
+class MyCoordinatesEditorWidget;
 
 class NonHarmonicCalcDialog : public QDialog
 {
@@ -27,6 +28,7 @@ private:
 
     QFrame *m_column1Frame;
     QFrame *m_column2Frame;
+    QFrame *m_column3Frame;
 
     QLabel *m_NMMLabel;
     QLabel *m_longitudLabel;
@@ -35,6 +37,7 @@ private:
     QLabel *m_tipoMareaLabel;
 
     QDoubleSpinBox *m_NMMSpinBox;
+    MyCoordinatesEditorWidget *m_longitudEditor;
     QLineEdit *m_ampRelationLineEdit;
     QLineEdit *m_semidiurnalRelationLineEdit;
     QLineEdit *m_tipoMareaLineEdit;

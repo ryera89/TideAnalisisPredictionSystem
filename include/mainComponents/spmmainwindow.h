@@ -13,7 +13,7 @@
 class SchemeWidget;
 class MetaDataDialog;
 class FreqEditor;
-
+class NonHarmonicCalcDialog;
 
 //NOTE: el analisis armonico se hace con la horas respecto al inicio del year
 
@@ -38,7 +38,7 @@ private slots:
     void createManualDataIntWidget();
     void crearTablaHoraria();
     void createMetaDataDialog();
-
+    void createNonHarmonicDialog();
     void updateMetaData(); //SLOT para connectar al dilogo de los meta datos para guardarlos
 
     /*void recieveData(const QVector<QStringList> &data, int dateField, int timeField,
@@ -48,13 +48,10 @@ private slots:
     void createHarmonicAnalisisDialog();
     void createFrequencyEditor();
 
-
     bool saveFrequencyFile();
     void harmonicAnalisis();
     void harmonicAnalisisWithAllData();
     void harmonicAnalisisWithCustomData();
-
-
 
 protected slots:
     void setChartLightTheme(bool);
@@ -97,6 +94,7 @@ private:
      ManualDataIntroductionWidget *m_manualDataIntroductionWidget;
      MetaDataDialog *m_projectMetaDataDialog;
      SchemeWidget *m_schemeWidget;
+     NonHarmonicCalcDialog *m_nonHarmonicConstantDialog;
      FreqEditor *m_frequencyEditor;
 
      /*************************ACTIONS*************************************************/

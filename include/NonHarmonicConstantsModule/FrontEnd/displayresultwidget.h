@@ -3,7 +3,6 @@
 
 #include <QGroupBox>
 
-
 class QLineEdit;
 class QPushButton;
 
@@ -13,7 +12,6 @@ class displayResultWidget : public QGroupBox
 public:
     explicit displayResultWidget(QWidget *parent = Q_NULLPTR);
     explicit displayResultWidget(const QString &title, QWidget *parent = Q_NULLPTR);
-
 
     void setLineEditText(const QString &text);
     void setPushButtonStatus(bool status);

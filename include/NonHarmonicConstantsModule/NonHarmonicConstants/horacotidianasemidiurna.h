@@ -10,8 +10,7 @@ class HoraCotidianaSemidiurna
 public:
     HoraCotidianaSemidiurna(const HarmonicConstant &M2, const HarmonicConstant &M4, const HarmonicConstant &M6, const double &longitud);
 
-    int hours() const{return m_hours;}
-    int minutes() const{return m_minutes;}
+    double HCS() const{return m_value;}
 private:
     const QString m_name = "Hora Cotidiana de la Marea Semidiurna";
 
@@ -20,8 +19,7 @@ private:
     HarmonicConstant m_M6;
     double m_longitud;
 
-    int m_hours;
-    int m_minutes;
+    double m_value;
 
     double shallowWaterInfluence1();   //devuelven la influencia de la aguas poco profundas en esta constante
     double shallowWaterInfluence2();

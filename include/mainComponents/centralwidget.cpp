@@ -166,6 +166,8 @@ void CentralWidget::setSeriesData()
 void CentralWidget::zoomXAxis(int level)
 {
     if (m_series){
+        if (m_series->pointsVector().isEmpty()) return;
+
         quint64 xMin = m_series->at(0).x();
         quint64 xMax = m_series->at(m_series->count()-1).x();
 

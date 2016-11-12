@@ -8,10 +8,14 @@
 #include <QFormLayout>
 #include <QVBoxLayout>
 
+#include "include/CoordinatesEditionWidget/mycoordinateseditorwidget.h"
 NonHarmonicCalcDialog::NonHarmonicCalcDialog(QWidget *parent):QDialog(parent)
 {
     createComponents();
     setInterfaceLayout();
+
+    setModal(true);
+    setAttribute(Qt::WA_DeleteOnClose);
 }
 
 void NonHarmonicCalcDialog::calculate(int index)
@@ -41,6 +45,9 @@ void NonHarmonicCalcDialog::createComponents()
     m_column2Frame = new QFrame(this);
     m_column2Frame->setFrameStyle(QFrame::Box | QFrame::Raised);
 
+    m_column3Frame = new QFrame(this);
+    m_column3Frame->setFrameStyle(QFrame::Box | QFrame::Raised);
+
     m_NMMLabel = new QLabel(tr("Nivel Medio:"));
     m_longitudLabel = new QLabel(tr("Longitud:"));
     m_ampRelationLabel = new QLabel(tr("Va Imagen!!!"));
@@ -49,6 +56,10 @@ void NonHarmonicCalcDialog::createComponents()
 
     m_NMMSpinBox = new QDoubleSpinBox;
     m_NMMSpinBox->setRange(0.0,INT64_MAX);
+
+    m_longitudEditor = new MyCoordinatesEditorWidget;
+    m_longitudEditor->setHType(MyCoordinatesEditorWidget::longitud);
+    m_longitudEditor->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
 
     m_ampRelationLineEdit = new QLineEdit;
     m_ampRelationLineEdit->setReadOnly(true);
@@ -62,9 +73,9 @@ void NonHarmonicCalcDialog::createComponents()
     m_calcAllPushButton = new QPushButton(tr("Calcular Todos"));
     m_calcAllPushButton->setToolTip(tr("Calcula todas las posibles constantes no armonicas"));
 
-    m_savePushButton = new QPushButton(tr("Guardar"));
-    //TODO: Icon & Conexion
-    m_closePushButton = new QPushButton(tr("Cerrar"));
+    m_savePushButton = new QPushButton(QIcon(":images/save.png"),tr("Guardar"));
+    //TODO: Conexion
+    m_closePushButton = new QPushButton(QIcon(":images/No.png"),tr("Cerrar"));
 
     createDisplaysResultWidgets();
 
@@ -97,7 +108,7 @@ void NonHarmonicCalcDialog::setInterfaceLayout()
 {
     QFormLayout *inputLayout = new QFormLayout;
     inputLayout->addRow(m_NMMLabel,m_NMMSpinBox);
-    inputLayout->addRow(m_longitudLabel,new QLabel("Coordenate Editor"));
+    inputLayout->addRow(m_longitudLabel,m_longitudEditor);
 
     m_inputFrame->setLayout(inputLayout);
 
@@ -116,15 +127,19 @@ void NonHarmonicCalcDialog::setInterfaceLayout()
 
     QVBoxLayout *column1Layout = new QVBoxLayout;
     QVBoxLayout *column2Layout = new QVBoxLayout;
-    int i = 0;
+    QVBoxLayout *column3Layout = new QVBoxLayout;
+    uint i = 0;
+    uint displayWidgetNumber = m_displayResultWidgetVector.size();
     foreach (displayResultWidget *disp, m_displayResultWidgetVector) {
-        if (i < m_displayResultWidgetVector.size()/2) column1Layout->addWidget(disp);
-        else column2Layout->addWidget(disp);
+        if (i <= displayWidgetNumber/3) column1Layout->addWidget(disp);
+        else if (i <= 2*displayWidgetNumber/3)column2Layout->addWidget(disp);
+        else column3Layout->addWidget(disp);
         ++i;
     }
 
     m_column1Frame->setLayout(column1Layout);
     m_column2Frame->setLayout(column2Layout);
+    m_column3Frame->setLayout(column3Layout);
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     buttonLayout->addWidget(m_calcAllPushButton);
@@ -139,6 +154,7 @@ void NonHarmonicCalcDialog::setInterfaceLayout()
     QHBoxLayout *displayLayout = new QHBoxLayout;
     displayLayout->addWidget(m_column1Frame);
     displayLayout->addWidget(m_column2Frame);
+    displayLayout->addWidget(m_column3Frame);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(upLayout);

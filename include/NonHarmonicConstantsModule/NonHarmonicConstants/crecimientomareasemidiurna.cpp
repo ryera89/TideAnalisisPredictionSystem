@@ -16,7 +16,5 @@ void CrecimientoMareaSemidiurna::calculate()
         t = -0.984*(deltaF)/24;
     }
 
-
-    m_days = qFloor(t);
-    m_hours = qFloor((t-m_days)*24);
+    m_value = t;
 }

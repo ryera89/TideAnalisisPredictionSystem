@@ -13,8 +13,7 @@ class CrecimientoMareaSemidiurna
 public:
     explicit CrecimientoMareaSemidiurna(const HarmonicConstant &M2, const HarmonicConstant &S2);
 
-    int days() const{return m_days;}
-    int hours() const{return m_hours;}
+    double CMS() const{return m_value;}
 
 private:
     const QString m_name = "Crecimiento de la Marea Semidiurna";
@@ -26,8 +25,7 @@ private:
     HarmonicConstant m_M2;
     HarmonicConstant m_S2;
 
-    int m_days;
-    int m_hours;
+    double m_value;
 
     void calculate();
 };

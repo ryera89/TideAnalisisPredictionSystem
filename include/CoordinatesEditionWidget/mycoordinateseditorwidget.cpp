@@ -19,8 +19,9 @@ MyCoordinatesEditorWidget::MyCoordinatesEditorWidget(QWidget *parent)
     editLayout->addWidget(m_HemisphereComboBox);
     editLayout->setSpacing(0);
 
-    this->setFrameShadow(QFrame::Raised);
+    //this->setFrameStyle(QFrame::Box | QFrame::Raised);
     this->setLayout(editLayout);
+    this->layout()->setMargin(0);
 
     m_HemisphereComboBox->addItem("N");
     m_HemisphereComboBox->addItem("S");

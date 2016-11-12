@@ -24,9 +24,5 @@ void HoraCotidianaDiurna::calculate()
     if(hcd > 24.0) hcd-=24;
     if(hcd < 0) hcd+=24;
 
-    int hour = qFloor(hcd);
-    int min = qFloor((hcd - hour)*60);
-
-    m_hours = hour;
-    m_minutes = min;
+    m_value = hcd;
 }

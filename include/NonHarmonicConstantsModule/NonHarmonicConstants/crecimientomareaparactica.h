@@ -13,9 +13,7 @@ class CrecimientoMareaParactica
 public:
     explicit CrecimientoMareaParactica(const HarmonicConstant &M2, const HarmonicConstant &N2);
 
-    int days() const{return m_days;}
-    int hours() const{return m_hours;}
-
+    int CMP() const{return m_value;}
 private:
     const QString m_name = "Crecimiento de la Marea Paralactica";
     const QString m_description = "Intervalo de tiempo desde el momento de perigeo de"
@@ -25,8 +23,7 @@ private:
     HarmonicConstant m_M2;
     HarmonicConstant m_N2;
 
-    int m_days;
-    int m_hours;
+    double m_value;
 
     void calculate();
 };

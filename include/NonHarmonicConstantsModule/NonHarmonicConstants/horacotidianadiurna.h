@@ -9,8 +9,7 @@ class HoraCotidianaDiurna
 public:
     HoraCotidianaDiurna(const HarmonicConstant &K1, const HarmonicConstant &O1, const double &longitud);
 
-    int hours() const {return m_hours;}
-    int minutes() const {return m_minutes;}
+    double HCD() const{return m_value;}
 private:
 
     const QString m_name = "Hora Cotidiana de la Marea Diurna";
@@ -19,8 +18,7 @@ private:
     HarmonicConstant m_O1;
     double m_longitud;
 
-    int m_hours;
-    int m_minutes;
+    double m_value;
 
     void calculate();
 };

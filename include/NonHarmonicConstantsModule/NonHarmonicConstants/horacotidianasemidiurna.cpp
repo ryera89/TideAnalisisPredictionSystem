@@ -49,9 +49,5 @@ void HoraCotidianaSemidiurna::calculate()
     if (hcs > 12.0) hcs-=12.0;
     if (hcs < 0) hcs+=12.0;
 
-    int hour = qFloor(hcs);
-    int minute = qFloor((hcs - hour)*60);
-
-    m_hours = hour;
-    m_minutes = minute;
+    m_value = hcs;
 }

@@ -9,7 +9,7 @@ HoraPuesto::HoraPuesto(const HarmonicConstant &M2, const HarmonicConstant &S2, c
 
 void HoraPuesto::calculate(const HPM &hpm)
 {
-    double E1 = hpm.hours() + hpm.minutes()/60;
+    double E1 = hpm.HoraPuestoMedia();
 
     double E;
     int cont = 0;
@@ -33,10 +33,5 @@ void HoraPuesto::calculate(const HPM &hpm)
        ++cont;
     }while (qFabs(E1 - E) > 0.001 && cont < 1000000);
 
-    int hour = qFloor(E1);
-
-    int minute =  qFloor((E1 - hour)*60);
-
-    m_hours = hour;
-    m_minutes = minute;
+    m_value = E1;
 }

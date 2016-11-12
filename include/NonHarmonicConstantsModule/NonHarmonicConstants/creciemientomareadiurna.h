@@ -13,8 +13,7 @@ class CreciemientoMareaDiurna
 public:
     explicit CreciemientoMareaDiurna(const HarmonicConstant &K1, const HarmonicConstant &O1);
 
-    int days() const{return m_days;}
-    int hours() const{return m_hours;}
+    double CMD() const{return m_value;}
 
 private:
    const QString m_name = "Crecimiento de la Marea Diurna";
@@ -27,8 +26,7 @@ private:
     HarmonicConstant m_K1;
     HarmonicConstant m_O1;
 
-    int m_days;
-    int m_hours;
+    double m_value;
 
     void calculate();
 };

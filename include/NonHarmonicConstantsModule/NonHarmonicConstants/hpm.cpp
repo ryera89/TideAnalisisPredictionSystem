@@ -32,12 +32,6 @@ void HPM::calculate()
     double v = shallowWaterInfluence();
     double hpm = (m_M2.phase() - v)/m_M2.frequency();
 
-    int hours = qFloor(hpm);
-
-    double min = (hpm - hours)*60;
-    int minutes = qFloor(min);
-
-    m_hours = hours;
-    m_minutes = minutes;
+    m_value = hpm;
 
 }

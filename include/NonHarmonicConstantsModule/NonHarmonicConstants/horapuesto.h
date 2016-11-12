@@ -13,11 +13,7 @@ class HoraPuesto
 public:
     HoraPuesto(const HarmonicConstant &M2, const HarmonicConstant &S2, const HPM &hpm);
 
-
-    int hours() const{return m_hours;}
-    int minutes() const{return m_minutes;}
-
-
+    double HP() const{return m_value;}
 private:
    const QString m_name = "Hora del Puesto";
    const QString m_description = "Valor del intervalo Lunar, cuando la Luna pasa a través del "
@@ -30,8 +26,7 @@ private:
     HarmonicConstant m_M2;
     HarmonicConstant m_S2;
 
-    int m_hours;
-    int m_minutes;
+    double m_value;
 
     void calculate(const HPM &hpm);
 };

@@ -77,8 +77,7 @@ SOURCES += main.cpp\
     include/CoordinatesEditionWidget/mycoordinateseditorwidget.cpp \
     include/mainComponents/mychart.cpp \
     include/NonHarmonicConstantsModule/FrontEnd/displayresultwidget.cpp \
-    include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.cpp \
-    include/myseries.cpp
+    include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -146,8 +145,7 @@ HEADERS  += \
     include/CoordinatesEditionWidget/mycoordinateseditorwidget.h \
     include/mainComponents/mychart.h \
     include/NonHarmonicConstantsModule/FrontEnd/displayresultwidget.h \
-    include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.h \
-    include/myseries.h
+    include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.h
 
 RESOURCES += \
     images.qrc

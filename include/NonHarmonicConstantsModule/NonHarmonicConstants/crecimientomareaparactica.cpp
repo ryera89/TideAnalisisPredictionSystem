@@ -17,7 +17,6 @@ void CrecimientoMareaParactica::calculate()
         t = -1.837*(deltaF)/24;
     }
 
+    m_value = t;
 
-    m_days = qFloor(t);
-    m_hours = qFloor((t-m_days)*24);
 }

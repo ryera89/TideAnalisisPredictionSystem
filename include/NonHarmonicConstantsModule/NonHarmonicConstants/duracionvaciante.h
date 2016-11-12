@@ -14,8 +14,7 @@ class DuracionVaciante
 public:
     explicit DuracionVaciante(const HarmonicConstant &M2, const HarmonicConstant &M4, const HarmonicConstant &M6);
 
-    int hours() const{return m_hours;}
-    int minutes() const{return m_minutes;}
+    double DV() const{return m_value;}
 
 private:
     const QString m_name = "Duracion del Vaciante";
@@ -27,8 +26,7 @@ private:
     HarmonicConstant m_M4;
     HarmonicConstant m_M6;
 
-    int m_hours;    //Esta constante se expresa en unidades de tiempo (ie horas y minutos (+-1minuto))
-    int m_minutes;
+    double m_value;
 
     double shallowWaterInfluence1();   //devuelven la influencia de la aguas poco profundas en esta constante
     double shallowWaterInfluence2();

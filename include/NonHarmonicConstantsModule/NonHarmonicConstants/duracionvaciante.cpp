@@ -49,11 +49,5 @@ void DuracionVaciante::calculate()
 
     double Tv = (180 + (v - w))/m_M2.frequency();
 
-    int hours = qFloor(Tv);
-
-    double min = (Tv - hours)*60;
-    int minutes = qFloor(min);
-
-    m_hours = hours;
-    m_minutes = minutes;
+    m_value = Tv;
 }

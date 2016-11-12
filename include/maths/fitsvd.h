@@ -3,12 +3,15 @@
 #include <QVector>
 struct Fitsvd {
     int ndat, ma;
-    double tol;
-    valarray<double> *x,&y,&sig;
-    QVector<double> (*funcs)(const double &);
+    valarray<double> *x;
+    Matrix *xmd;
+    valarray<double> &y,&sig;
     valarray<double> a;
     Matrix covar;
     double chisq;
+    QVector<double> (*funcs)(const double &);
+    QVector<double> (*funcsmd)(const valarray<double> &);
+    double tol;
 
     Fitsvd(valarray<double> &xx, valarray<double> &yy, valarray<double> &ssig,
     QVector<double> funks(const double &), const double TOL=1.e-12)
@@ -51,9 +54,6 @@ struct Fitsvd {
 		}
 
 	}
-
-    Matrix *xmd;
-    QVector<double> (*funcsmd)(const valarray<double> &);
 
     Fitsvd(Matrix &xx, valarray<double> &yy, valarray<double> &ssig,
     QVector<double> funks(const valarray<double> &), const double TOL=1.e-12)

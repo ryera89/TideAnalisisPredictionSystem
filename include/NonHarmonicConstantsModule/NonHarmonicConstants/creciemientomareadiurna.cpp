@@ -17,7 +17,5 @@ void CreciemientoMareaDiurna::calculate()
         t = -0.911*(deltaF)/24;
     }
 
-
-    m_days = qFloor(t);
-    m_hours = qFloor((t-m_days)*24);
+    m_value = t;
 }

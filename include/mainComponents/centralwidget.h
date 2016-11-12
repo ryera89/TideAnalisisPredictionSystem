@@ -13,11 +13,9 @@ class QTableView;
 #include "customchartview.h"
 #include <iostream>
 
-
 class DisplayedDataLabels;
 class QSpinBox;
 class QSlider;
-
 class XYTidalChartModelMapper;
 
 class CentralWidget : public QWidget
@@ -41,8 +39,6 @@ public slots:
     //void loadDataChart(); //Funcion para actualizar la grafica.
     //void updateDataInChartWhenRowIsEliminated(int i, int cont); //Slot para modificar la tabla cuando se elimina una fila
     //void  checkDateTimeStringFormat(const QString &dateFormat, const QString &timeFormat);
-
-
     void updateSerieData(int row);
     void setSeriesData();
 
@@ -53,7 +49,6 @@ private:
     QTableView *m_tidalTableView;
 
     //Chart Facilities
-
     SPMChart *m_tideChart;
     customChartView *m_tideChartView;
 
