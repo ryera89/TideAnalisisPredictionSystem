@@ -9,7 +9,7 @@ class ReadOnlyTableModel : public QAbstractTableModel
     Q_OBJECT
 public:
     ReadOnlyTableModel(QObject *parent = 0): QAbstractTableModel(parent){
-        headers << "Fecha" << "Hora" << "Nivel del Mar";
+        headers << "Fecha" << "Hora" << "Nivel [m]";
         m_data = QVector<TidesMeasurement>(100);
     }
 

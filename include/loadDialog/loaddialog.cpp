@@ -17,23 +17,24 @@
 #include <QTextStream>
 #include <QMessageBox>
 #include <QTextBlock>
+#include <QSpinBox>
+#include <QRadioButton>
 
 #include <iostream>
 using namespace std;
 
-//TODO: ver como exportamos los otros datos que se llenan en este dialogo.
+
 LoadDialog::LoadDialog(QWidget *parent)
     : QDialog(parent)
 {
     settingUpEveryThing();
-
-
 }
 
 LoadDialog::LoadDialog(const QString &filePath, QWidget *parent): QDialog(parent)
 {
 
-    //TODO: implementar que si filepath es un string vacio no se crea al dialogo esto de hace en la modulo principal
+    Qt::WindowFlags flags = Qt::Dialog | Qt::WindowCloseButtonHint;
+    this->setWindowFlags(flags);
     settingUpEveryThing();
     QFile file(filePath);
 
@@ -42,12 +43,18 @@ LoadDialog::LoadDialog(const QString &filePath, QWidget *parent): QDialog(parent
         QString text = in.readAll();
         m_importTextEdit->setPlainText(text);
 
-        m_fValidator->setTop(m_importTextEdit->blockCount());  //Set the max value that can be inserted to the number of block of the document
-        m_lValidator->setTop(m_importTextEdit->blockCount());
+        m_firstLineLineEdit->setMaximum(m_importTextEdit->blockCount());
+        m_lastLineLineEdit->setMaximum(m_importTextEdit->blockCount());
+
+        setTopFieldValidValue(1);
+
     }else{
         QMessageBox::information(this,tr("Marea"),tr("No se puede leer el archivo %1:\n%2.")
                                      .arg(file.fileName().arg(file.errorString())));
     }
+
+    this->setWindowIcon(QIcon(":images/import.png"));
+    this->setWindowTitle(tr("Importar Datos"));
 }
 
 LoadDialog::~LoadDialog()
@@ -55,7 +62,12 @@ LoadDialog::~LoadDialog()
 
 }
 
-QString LoadDialog::loacationName() const
+bool LoadDialog::isLevelRadioButtonChecked()
+{
+    return m_levelRadioButton->isChecked();
+}
+
+/*QString LoadDialog::loacationName() const
 {
     return m_locationLineEdit->text();
 }
@@ -73,115 +85,112 @@ QString LoadDialog::latitud() const
 QString LoadDialog::longitud() const
 {
     return m_longitudLineEdit->text();
-}
+}*/
 
-//TODO: ProgressBar vinculada al futuro padre del dialog
-//TODO: Agregar comprobacion de que si en la ultima linea coincide en la cantidad de campos con la primera
-//TODO: Ver como integramos cuando los edit de separadores no esten vacios.
-//TODO: agregar que los numeros de campo tienen que ser diferentes.
-void LoadDialog::getDataPoints()   //Retorna un Vector StringList con los datos de interes si algo falla retorna un Vector vacio
-{
+
+void LoadDialog::getDataPoints(){
     measurements.clear();
 
-    if (m_dateFormatLineEdit->text().isEmpty() || m_timeFormatLineEdit->text().isEmpty()){
+    int unitIndex = m_measurementUnitComboBox->currentIndex();
+    //0 - m
+    //1 - dm
+    //2 - cm
+    //3 - mm
+    qreal unitScale = 1.0;
+    switch (unitIndex) {
+    case 1:
+        unitScale/=10;
+        break;
+    case 2:
+        unitScale/=100;
+        break;
+    case 3:
+        unitScale/=1000;
+        break;
+    default:
+        break;
+    }
+
+    int from = m_firstLineLineEdit->value();
+    int to = m_lastLineLineEdit->value();
+
+    QString dateSeparator = m_separatorDateEdit->text();
+    QString timeSeparator = m_separatorTimeEdit->text();
+    QString levelSeparator = m_separatorHeigthEdit->text();
+
+    if (from <= to){
+        QVector<QStringList> pointsOfData;
+        for (int i = from-1; i < to; i++){
+            QString str = m_importTextEdit->document()->findBlockByLineNumber(i).text();
+            QStringList dataPoint = str.split(QRegExp(tr("[\\s+%1%2%3]").arg(dateSeparator).arg(timeSeparator).arg(levelSeparator)));
+            pointsOfData.push_back(dataPoint);
+        }
+
+        int dateField  = m_fieldDateEdit->value();
+        int timeField  = m_fieldTimeEdit->value();
+        int heightField  = m_fieldHeightEdit->value();
+
+
+        int desition = QMessageBox::Yes;
+
+        for (int i = 0; i < pointsOfData.size(); ++i){
+            if (dateField <= pointsOfData[i].size() && timeField <= pointsOfData[i].size() && heightField <= pointsOfData[i].size()){ //Chequea que el campo exista
+
+                QDate date = QDate::fromString(pointsOfData[i].at(dateField - 1),m_dateFormat);
+                QTime time = QTime::fromString(pointsOfData[i].at(timeField - 1),m_timeFormat);
+
+                QString level = pointsOfData[i].at(heightField - 1);
+                /*for (int i  = 0; i < level.size(); ++i){
+                   if (level.at(i) == ",") level.replace(Q)
+                }*/
+                level.replace(QRegExp(","),".");
+
+                bool d_ok;
+                QVariant heightVariant = level;
+                double height = heightVariant.toDouble(&d_ok);
+                height*=unitScale; //Conversion de unidades llevando a metros
+                if (date.isValid() && time.isValid() && d_ok){
+                    measurements.push_back(TidesMeasurement(height,date,time));
+                }else{
+                    desition = QMessageBox::question(this,tr("Advertencia"),tr("Falla al cargar datos. \n"
+                                                              " Posibles Causas: \n"
+                                                                   "1- Formato de fecha o hora no válidos. \n"
+                                                                   "2- Número de campos incorrectos. \n"
+                                                                   "3- Número de líneas incorrectos. \n"
+                                                                    "¿Desea continuar?"));
+                    if (desition == QMessageBox::No) break;
+                }
+
+            }
+
+        }
+        if (desition == QMessageBox::Yes) emit importButtonClicked();
+        return;
+    }else{
         QMessageBox::critical(this,tr("Error"),tr("Falla al cargar datos."
-                                                  " Formatos de fecha y hora no validos."));
+                                                  " La linea final es menor que la linea inicial."));
         return;
     }
-    bool b_ok;
-    bool l_ok;
-    int from = m_firstLineLineEdit->text().toInt(&b_ok);
-    int to = m_lastLineLineEdit->text().toInt(&l_ok);
-
-    if (b_ok && l_ok){
-        if (from > m_importTextEdit->blockCount() || to > m_importTextEdit->blockCount()){
-            QMessageBox::critical(this,tr("Error"),tr("Falla al cargar datos."
-                                                      " Límite de líneas de texto exedidas."));
-            //QVector<QStringList> empty;
-            return;
-        }
-        if (from <= to){
-            QVector<QStringList> pointsOfData;
-            for (int i = from-1; i < to; i++){
-                QString str = m_importTextEdit->document()->findBlockByLineNumber(i).text();
-                QStringList dataPoint = str.split(QRegExp("\\s+")); //TODO: ver la cosa cuando existan separadores
-                pointsOfData.push_back(dataPoint);
-
-
-            }
-
-            bool dateOk;
-            bool timeOk;
-            bool heightOk;
-
-            int dateField  = m_fieldDateEdit->text().toInt(&dateOk);
-            int timeField  = m_fieldTimeEdit->text().toInt(&timeOk);
-            int heightField  = m_fieldHeightEdit->text().toInt(&heightOk);
-
-            if (dateOk && timeOk && heightOk){
-                for (int i = 0; i < pointsOfData.size(); ++i){
-                    if (dateField <= pointsOfData[i].size() && timeField <= pointsOfData[i].size() && heightField <= pointsOfData[i].size()){ //Chequea que el campo exista
-
-                        QDate date = QDate::fromString(pointsOfData[i].at(dateField - 1),m_dateFormatLineEdit->text());
-                        QTime time = QTime::fromString(pointsOfData[i].at(timeField - 1), m_timeFormatLineEdit->text());
-
-                        //TODO: Crear un chequeo para comprobar si se estan cargando bien los datos.
-
-                        bool d_ok;
-                        QVariant heightVariant = pointsOfData[i].at(heightField - 1);
-                        double height = heightVariant.toDouble(&d_ok);
-
-                        if (date.isValid() && time.isValid() && d_ok){
-                            measurements.push_back(TidesMeasurement(height,date,time));
-                        }
-
-                    }
-
-                }
-                return;
-            }
-            QMessageBox::critical(this,tr("Error"),tr("Falla al cargar datos."
-                                                      " Existen números de campo invalidos."));
-
-            return;
-
-        }else{
-            QMessageBox::critical(this,tr("Error"),tr("Falla al cargar datos."
-                                                      " La linea final es menor que la linea inicial."));
-            //QVector<QStringList> empty;
-            return;
-        }
-    }else{
-        if (b_ok || l_ok){
-            if (b_ok) QMessageBox::critical(this,tr("Error"),tr("Falla al cargar datos."
-                                                                "Número de linea final invalido."));
-            if (l_ok) QMessageBox::critical(this,tr("Error"),tr("Falla al cargar datos."
-                                                                "Número de linea inicial invalido."));
-
-        } else{
-            QMessageBox::critical(this,tr("Error"),tr("Falla al cargar datos."
-                                                          "Número de lineas inicial y final invalidas."));
-        }
-
-    }
-
-    //QVector<QStringList> empty;
-    //return empty;
-
 }
 
-void LoadDialog::setTopFieldValidValue(const QString &text)
+void LoadDialog::setTopFieldValidValue(int value)
 {
-    bool ok;
+    QString dateSeparator = m_separatorDateEdit->text();
+    QString timeSeparator = m_separatorTimeEdit->text();
+    QString levelSeparator = m_separatorHeigthEdit->text();
 
-    int top = text.toInt(&ok);
+    QString str = m_importTextEdit->document()->findBlockByLineNumber(value - 1).text();
+    QStringList dataPoint = str.split(QRegExp(tr("[\\s+%1%2%3]").arg(dateSeparator).arg(timeSeparator).arg(levelSeparator)));
+    m_fieldDateEdit->setRange(1,dataPoint.size());
+    m_fieldTimeEdit->setRange(1,dataPoint.size());
+    m_fieldHeightEdit->setRange(1,dataPoint.size());
+}
 
-    if (ok){
-        QString str = m_importTextEdit->document()->findBlockByLineNumber(top - 1).text();
-        QStringList dataPoint = str.split(QRegExp("\\s+"));
-        m_fieldValidator->setTop(dataPoint.size());
-    }
-
+void LoadDialog::setTopFieldValidValue()
+{
+    int firstLine = m_firstLineLineEdit->value();
+    setTopFieldValidValue(firstLine);
+    fillFirstAndLastDataPoints();
 }
 
 void LoadDialog::enableFieldEditorsEdition()
@@ -200,42 +209,141 @@ void LoadDialog::enableFieldEditorsEdition()
 
 void LoadDialog::enableImportButton()
 {
-    if (m_dateFormatLineEdit->text().isEmpty() || m_timeFormatLineEdit->text().isEmpty() || !m_fieldDateEdit->isEnabled()
-            || m_fieldDateEdit->text().isEmpty() || m_fieldTimeEdit->text().isEmpty() || m_fieldHeightEdit->text().isEmpty()){
-        m_importButton->setDisabled(true);
+     if (m_timeFormat != "otro" && m_dateFormat != "otro" && !m_dateFormat.isEmpty() && !m_timeFormat.isEmpty() && m_fieldDateEdit->value() && m_fieldTimeEdit->value()
+             && m_fieldHeightEdit->value() && m_fieldDateEdit->value() != m_fieldTimeEdit->value()
+             && m_fieldDateEdit->value() != m_fieldHeightEdit->value() && m_fieldTimeEdit->value() != m_fieldHeightEdit->value()){
+         m_importButton->setEnabled(true);
+     }else{
+         m_importButton->setDisabled(true);
+     }
+}
+
+void LoadDialog::fillFirstAndLastDataPoints() //conectado los edit de primera y ultima linea
+{
+    fillFirstAndLastDate(m_fieldDateEdit->value());
+    fillFirstAndLastTime(m_fieldTimeEdit->value());
+    fillFirstAndLastHeigth(m_fieldHeightEdit->value());
+}
+
+void LoadDialog::fillFirstAndLastDate(int index)
+{
+    int first = m_firstLineLineEdit->value();
+    int last = m_lastLineLineEdit->value();
+
+    QString dateSeparator = m_separatorDateEdit->text();
+    QString timeSeparator = m_separatorTimeEdit->text();
+    QString levelSeparator = m_separatorHeigthEdit->text();
+
+    QString str1 = m_importTextEdit->document()->findBlockByLineNumber(first - 1).text(); //Reading the line
+    QStringList dataPoint1 = str1.split(QRegExp(tr("[\\s+%1%2%3]").arg(dateSeparator).arg(timeSeparator).arg(levelSeparator)));
+
+    QString str2 = m_importTextEdit->document()->findBlockByLineNumber(last - 1).text();   //Reading the line
+    QStringList dataPoint2 = str2.split(QRegExp(tr("[\\s+%1%2%3]").arg(dateSeparator).arg(timeSeparator).arg(levelSeparator)));
+    if (index <= dataPoint1.size())
+        m_firstPointDateEdit->setText(dataPoint1.at(index - 1));
+    else m_firstPointDateEdit->setText(tr(""));
+
+    if (index <= dataPoint2.size())
+        m_lastPointDateEdit->setText(dataPoint2.at(index - 1));
+    else m_lastPointDateEdit->setText("");
+
+}
+
+void LoadDialog::fillFirstAndLastTime(int index)
+{
+    int first = m_firstLineLineEdit->value();
+    int last = m_lastLineLineEdit->value();
+
+    QString dateSeparator = m_separatorDateEdit->text();
+    QString timeSeparator = m_separatorTimeEdit->text();
+    QString levelSeparator = m_separatorHeigthEdit->text();
+
+    QString str1 = m_importTextEdit->document()->findBlockByLineNumber(first - 1).text(); //Reading the line
+    QStringList dataPoint1 = str1.split(QRegExp(tr("[\\s+%1%2%3]").arg(dateSeparator).arg(timeSeparator).arg(levelSeparator)));
+
+    QString str2 = m_importTextEdit->document()->findBlockByLineNumber(last - 1).text();   //Reading the line
+    QStringList dataPoint2 = str2.split(QRegExp(tr("[\\s+%1%2%3]").arg(dateSeparator).arg(timeSeparator).arg(levelSeparator)));
+
+    if (index <= dataPoint1.size())
+        m_firstPointTimeEdit->setText(dataPoint1.at(index - 1));
+    else m_firstPointTimeEdit->setText(tr(""));
+
+    if (index <= dataPoint2.size())
+        m_lastPointTimeEdit->setText(dataPoint2.at(index - 1));
+    else m_lastPointTimeEdit->setText("");
+}
+
+void LoadDialog::fillFirstAndLastHeigth(int index)
+{
+    int first = m_firstLineLineEdit->value();
+    int last = m_lastLineLineEdit->value();
+
+    QString dateSeparator = m_separatorDateEdit->text();
+    QString timeSeparator = m_separatorTimeEdit->text();
+    QString levelSeparator = m_separatorHeigthEdit->text();
+
+    QString str1 = m_importTextEdit->document()->findBlockByLineNumber(first - 1).text(); //Reading the line
+    QStringList dataPoint1 = str1.split(QRegExp(tr("[\\s+%1%2%3]").arg(dateSeparator).arg(timeSeparator).arg(levelSeparator)));
+
+    QString str2 = m_importTextEdit->document()->findBlockByLineNumber(last - 1).text();   //Reading the line
+    QStringList dataPoint2 = str2.split(QRegExp(tr("[\\s+%1%2%3]").arg(dateSeparator).arg(timeSeparator).arg(levelSeparator)));
+
+    if (index <= dataPoint1.size())
+        m_firstPointHeigthEdit->setText(dataPoint1.at(index - 1));
+    else m_firstPointHeigthEdit->setText(tr(""));
+
+    if (index <= dataPoint2.size())
+        m_lastPointHeigthEdit->setText(dataPoint2.at(index - 1));
+    else m_lastPointHeigthEdit->setText("");
+}
+
+void LoadDialog::enableTimeFormatEdit(int index)
+{
+    if (index == 3){
+        m_timeFormatLineEdit->setEnabled(true);
     }else{
-        m_importButton->setEnabled(true);
+        m_timeFormatLineEdit->setDisabled(true);
     }
 }
 
-void LoadDialog::fillFirstAndLastDataPoints()
+void LoadDialog::enableDateFormatEdit(int index)
 {
-    if (!m_fieldDateEdit->isEnabled() || m_fieldDateEdit->text().isEmpty() || m_fieldTimeEdit->text().isEmpty()
-            || m_fieldHeightEdit->text().isEmpty()){
-        m_firstPointDateEdit->setText("");
-        m_firstPointTimeEdit->setText("");
-        m_firstPointHeigthEdit->setText("");
-
-        m_lastPointDateEdit->setText("");
-        m_lastPointTimeEdit->setText("");
-        m_lastPointHeigthEdit->setText("");
+    if (index == 4){
+        m_dateFormatLineEdit->setEnabled(true);
     }else{
-        int first = m_firstLineLineEdit->text().toInt();
-        int last = m_lastLineLineEdit->text().toInt();
-        QString str1 = m_importTextEdit->document()->findBlockByLineNumber(first - 1).text(); //Reading the line
-        QStringList dataPoint1 = str1.split(QRegExp("\\s+"));  //TODO: ver la cosa cuando existan separadores
-
-        QString str2 = m_importTextEdit->document()->findBlockByLineNumber(last - 1).text();   //Reading the line
-        QStringList dataPoint2 = str2.split(QRegExp("\\s+"));  //TODO: ver la cosa cuando existan separadores
-
-        m_firstPointDateEdit->setText(dataPoint1.at(m_fieldDateEdit->text().toInt() - 1));
-        m_firstPointTimeEdit->setText(dataPoint1.at(m_fieldTimeEdit->text().toInt() - 1));
-        m_firstPointHeigthEdit->setText(dataPoint1.at(m_fieldHeightEdit->text().toInt() - 1));
-
-        m_lastPointDateEdit->setText(dataPoint2.at(m_fieldDateEdit->text().toInt() - 1));
-        m_lastPointTimeEdit->setText(dataPoint2.at(m_fieldTimeEdit->text().toInt() - 1));
-        m_lastPointHeigthEdit->setText(dataPoint2.at(m_fieldHeightEdit->text().toInt() - 1));
+        m_dateFormatLineEdit->setDisabled(true);
     }
+}
+
+void LoadDialog::setTimeFormat(const QString &format)
+{
+    m_timeFormat = format;
+
+    enableImportButton();
+}
+
+void LoadDialog::setDateFormat(const QString &format)
+{
+    m_dateFormat = format;
+
+    enableImportButton();
+}
+
+void LoadDialog::setCustomTimeFormat(const QString &format)
+{
+    m_timeFormat = format;
+}
+
+void LoadDialog::setCustomDateFormat(const QString &format)
+{
+    m_dateFormat = format;
+}
+
+void LoadDialog::setMinimumLastLineValue(int value)
+{
+    if (m_lastLineLineEdit->value() < value ) m_lastLineLineEdit->setValue(value);
+
+    m_lastLineLineEdit->setMinimum(value);
 }
 
 
@@ -244,7 +352,10 @@ void LoadDialog::settingUpEveryThing()
     this->setWindowTitle(tr("Importar Datos"));
     m_importTextEdit = new LineNumberEditor(this);
     m_importTextEdit->setReadOnly(true);
-    m_importTextEdit->setFixedHeight(250);
+    //m_importTextEdit->setFixedHeight(250);
+    m_importTextEdit->setFixedWidth(500);
+
+    //m_dataWidget = new metaDataWidget(this);
 
     m_dateLabel = new QLabel(tr("Fecha"),this);
     m_dateLabel->setAlignment(Qt::AlignVCenter);
@@ -262,29 +373,39 @@ void LoadDialog::settingUpEveryThing()
     m_lastPointLabel = new QLabel(tr("Última Medición"), this);
     m_lastPointLabel->setAlignment(Qt::AlignHCenter);
 
-    m_fieldDateEdit = new QLineEdit(this);
-    m_fieldDateEdit->setDisabled(true);
-    connect(m_fieldDateEdit,SIGNAL(textChanged(QString)),this,SLOT(enableImportButton()));
-    connect(m_fieldDateEdit,SIGNAL(textChanged(QString)),this,SLOT(fillFirstAndLastDataPoints()));
-    m_fieldTimeEdit = new QLineEdit(this);
-    m_fieldTimeEdit->setDisabled(true);
-    connect(m_fieldTimeEdit,SIGNAL(textChanged(QString)),this,SLOT(enableImportButton()));
-    connect(m_fieldTimeEdit,SIGNAL(textChanged(QString)),this,SLOT(fillFirstAndLastDataPoints()));
-    m_fieldHeightEdit = new QLineEdit(this);
-    m_fieldHeightEdit->setDisabled(true);
-    connect(m_fieldHeightEdit,SIGNAL(textChanged(QString)),this,SLOT(enableImportButton()));
-    connect(m_fieldHeightEdit,SIGNAL(textChanged(QString)),this,SLOT(fillFirstAndLastDataPoints()));
+    m_fieldDateEdit = new QSpinBox(this);
+    //m_fieldDateEdit->setDisabled(true);
+    connect(m_fieldDateEdit,SIGNAL(valueChanged(int)),this,SLOT(enableImportButton()));
+    connect(m_fieldDateEdit,SIGNAL(valueChanged(int)),this,SLOT(fillFirstAndLastDate(int)));
+    m_fieldTimeEdit = new QSpinBox(this);
+    //m_fieldTimeEdit->setDisabled(true);
+    connect(m_fieldTimeEdit,SIGNAL(valueChanged(int)),this,SLOT(enableImportButton()));
+    connect(m_fieldTimeEdit,SIGNAL(valueChanged(int)),this,SLOT(fillFirstAndLastTime(int)));
+    m_fieldHeightEdit = new QSpinBox(this);
+    //m_fieldHeightEdit->setDisabled(true);
+    connect(m_fieldHeightEdit,SIGNAL(valueChanged(int)),this,SLOT(enableImportButton()));
+    connect(m_fieldHeightEdit,SIGNAL(valueChanged(int)),this,SLOT(fillFirstAndLastHeigth(int)));
 
-    m_fieldValidator = new QIntValidator;  //Validator
-    m_fieldValidator->setBottom(1);
+    //m_fieldDateEdit->setMinimum(1);
+    //m_fieldTimeEdit->setMinimum(1);
+    //m_fieldHeightEdit->setMinimum(1);
 
-    m_fieldDateEdit->setValidator(m_fieldValidator);
-    m_fieldTimeEdit->setValidator(m_fieldValidator);
-    m_fieldHeightEdit->setValidator(m_fieldValidator);
+    //m_fieldValidator = new QIntValidator;  //Validator
+    //m_fieldValidator->setBottom(1);
+
+    //m_fieldDateEdit->setValidator(m_fieldValidator);
+    //m_fieldTimeEdit->setValidator(m_fieldValidator);
+    //m_fieldHeightEdit->setValidator(m_fieldValidator);
 
     m_separatorDateEdit = new QLineEdit(this);
+    m_separatorDateEdit->setAlignment(Qt::AlignRight);
+    connect(m_separatorDateEdit,SIGNAL(textChanged(QString)),this,SLOT(setTopFieldValidValue()));
     m_separatorTimeEdit = new QLineEdit(this);
+    m_separatorTimeEdit->setAlignment(Qt::AlignRight);
+    connect(m_separatorTimeEdit,SIGNAL(textChanged(QString)),this,SLOT(setTopFieldValidValue()));
     m_separatorHeigthEdit = new QLineEdit(this);
+    m_separatorHeigthEdit->setAlignment(Qt::AlignRight);
+    connect(m_separatorHeigthEdit,SIGNAL(textChanged(QString)),this,SLOT(setTopFieldValidValue()));
 
     m_firstPointDateEdit = new QLineEdit(this);
     m_firstPointDateEdit->setDisabled(true);
@@ -300,105 +421,156 @@ void LoadDialog::settingUpEveryThing()
     m_lastPointHeigthEdit = new QLineEdit(this);
     m_lastPointHeigthEdit->setDisabled(true);
 
-    m_importButton = new QPushButton(tr("Importar"),this);
+    m_importButton = new QPushButton(QIcon(":images/importButton.png"),tr("Importar"),this);
     m_importButton->setDisabled(true);
     connect(m_importButton,SIGNAL(clicked(bool)),this,SLOT(getDataPoints()));
-    connect(m_importButton,SIGNAL(clicked(bool)),this,SIGNAL(importButtonClicked()));
+    //connect(m_importButton,SIGNAL(clicked(bool)),this,SIGNAL(importButtonClicked()));
 
-    m_cancelButton = new QPushButton(tr("Cancel"),this);
+    m_cancelButton = new QPushButton(QIcon(":images/No.png"),tr("Cancelar"),this);
     connect(m_cancelButton,SIGNAL(clicked(bool)),this,SLOT(close()));
 
-    m_unitGroupBox = new QGroupBox(tr("Unidad de Medición")); //GroupBox de Medidas
-    m_correctionGroupBox = new QGroupBox(tr("Corrección de Nivel")); //GrupoBox de Correciones
-    m_firstLineGroupBox  = new QGroupBox(tr("Primera Línea")); //GroupBox de carga de datos
-    m_lastLineGroupBox  = new QGroupBox(tr("Última Línea")); //GroupBox de carga de datos
+    //m_unitGroupBox = new QGroupBox(tr("Unidad de Medición")); //GroupBox de Medidas
+    //m_correctionGroupBox = new QGroupBox(tr("Corrección de Nivel")); //GrupoBox de Correciones
+    m_firstLineGroupBox  = new QGroupBox(tr("Primera Línea:")); //GroupBox de carga de datos
+    m_lastLineGroupBox  = new QGroupBox(tr("Última Línea:")); //GroupBox de carga de datos
+    m_measurementUnitGroupBox = new QGroupBox(tr("Unidad de Medición:"),this);
 
-    m_unitComboBox = new QComboBox;   //ComboBox de unidad de medida
-    m_unitComboBox->addItem(tr("metros"));
-    m_unitComboBox->addItem(tr("centimetros"));
+    //m_unitComboBox = new QComboBox;   //ComboBox de unidad de medida
+    //m_unitComboBox->addItem(tr("metros"));
+    //m_unitComboBox->addItem(tr("centimetros"));
 
-    QHBoxLayout *unitLayout = new QHBoxLayout;
-    unitLayout->addWidget(m_unitComboBox);
+    //QHBoxLayout *unitLayout = new QHBoxLayout;
+    //unitLayout->addWidget(m_unitComboBox);
 
-    m_unitGroupBox->setLayout(unitLayout);
+    //m_unitGroupBox->setLayout(unitLayout);
 
-    QDoubleValidator *doubleValidator = new QDoubleValidator;
+    //QDoubleValidator *doubleValidator = new QDoubleValidator;
 
-    m_correctionLineEdit = new QLineEdit; //Line edit para correcciones
-    m_correctionLineEdit->setValidator(doubleValidator);
+    //m_correctionLineEdit = new QLineEdit; //Line edit para correcciones
+    //m_correctionLineEdit->setValidator(doubleValidator);
 
-    m_fValidator = new QIntValidator;
-    m_fValidator->setBottom(1);
-    m_firstLineLineEdit = new QLineEdit; //LineEdit para linea de carga.
-    m_firstLineLineEdit->setValidator(m_fValidator);
-    connect(m_firstLineLineEdit,SIGNAL(textChanged(QString)),this,SLOT(setTopFieldValidValue(QString)));
-    connect(m_firstLineLineEdit, SIGNAL(textChanged(QString)),this,SLOT(enableFieldEditorsEdition()));
-    connect(m_firstLineLineEdit,SIGNAL(textChanged(QString)),this,SLOT(fillFirstAndLastDataPoints()));
+    //m_fValidator = new QIntValidator;
+    //m_fValidator->setBottom(1);
+
+    m_firstLineLineEdit = new QSpinBox; //LineEdit para linea de carga.
+    m_firstLineLineEdit->setMinimum(1);
+    connect(m_firstLineLineEdit,SIGNAL(valueChanged(int)),this,SLOT(setTopFieldValidValue(int)));
+    connect(m_firstLineLineEdit,SIGNAL(valueChanged(int)),this,SLOT(setMinimumLastLineValue(int)));
+    //connect(m_firstLineLineEdit,SIGNAL(valueChanged(int)),this,SLOT(enableFieldEditorsEdition()));
+    connect(m_firstLineLineEdit,SIGNAL(valueChanged(int)),this,SLOT(fillFirstAndLastDataPoints()));
 
     QHBoxLayout *firstLineLayout = new QHBoxLayout;
     firstLineLayout->addWidget(m_firstLineLineEdit);
 
     m_firstLineGroupBox->setLayout(firstLineLayout);
 
-    m_lValidator = new QIntValidator;
-    m_lValidator->setBottom(1);
-    m_lastLineLineEdit = new QLineEdit;
-    m_lastLineLineEdit->setValidator(m_lValidator);
-    connect(m_lastLineLineEdit, SIGNAL(textEdited(QString)),this,SLOT(enableFieldEditorsEdition()));
-    connect(m_lastLineLineEdit,SIGNAL(textChanged(QString)),this,SLOT(fillFirstAndLastDataPoints()));
+    //m_lValidator = new QIntValidator;
+    //m_lValidator->setBottom(1);
+
+    m_lastLineLineEdit = new QSpinBox;
+    m_lastLineLineEdit->setMinimum(1);
+    //connect(m_lastLineLineEdit,SIGNAL(valueChanged(int)),this,SLOT(enableFieldEditorsEdition()));
+    connect(m_lastLineLineEdit,SIGNAL(valueChanged(int)),this,SLOT(fillFirstAndLastDataPoints()));
+
+    m_measurementUnitComboBox = new QComboBox;
+    m_measurementUnitComboBox->addItem("m");
+    m_measurementUnitComboBox->addItem("dm");
+    m_measurementUnitComboBox->addItem("cm");
+    m_measurementUnitComboBox->addItem("mm");
+
+    QHBoxLayout *unitLayout = new QHBoxLayout;
+    unitLayout->addWidget(m_measurementUnitComboBox);
+    m_measurementUnitGroupBox->setLayout(unitLayout);
 
     QHBoxLayout *lastLineLayout = new QHBoxLayout;
     lastLineLayout->addWidget(m_lastLineLineEdit);
 
     m_lastLineGroupBox->setLayout(lastLineLayout);
 
-    QHBoxLayout *corrLayout = new QHBoxLayout;
-    corrLayout->addWidget(m_correctionLineEdit);
+    //QHBoxLayout *corrLayout = new QHBoxLayout;
+    //corrLayout->addWidget(m_correctionLineEdit);
 
-    m_correctionGroupBox->setLayout(corrLayout);
+    //m_correctionGroupBox->setLayout(corrLayout);
 
-    //TODO: Implementar RegExp
     //Date and Time Format Facilities----------------
     m_dateFormatGroupBox = new QGroupBox(tr("Formato de Fecha"));
+
     m_dateFormatLineEdit = new QLineEdit;
-    connect(m_dateFormatLineEdit,SIGNAL(textChanged(QString)),this,SLOT(enableImportButton()));
-    QHBoxLayout *dateFormatLayout = new QHBoxLayout;
+    m_dateFormatLineEdit->setDisabled(true);
+    connect(m_dateFormatLineEdit,SIGNAL(textEdited(QString)),this,SLOT(setCustomDateFormat(QString)));
+    connect(m_dateFormatLineEdit,SIGNAL(textEdited(QString)),this,SLOT(enableImportButton()));
+
+    m_dateFormatComboBox = new QComboBox;
+    m_dateFormatComboBox->addItem("yyyy/MM/dd");
+    m_dateFormatComboBox->addItem("dd/MM/yyyy");
+    m_dateFormatComboBox->addItem("d/MM/yyyy");
+    m_dateFormatComboBox->addItem("d/M/yyyy");
+    m_dateFormatComboBox->addItem("yyyy.MM.dd");
+    m_dateFormatComboBox->addItem("dd.MM.yyyy");
+    m_dateFormatComboBox->addItem("otro");
+
+    m_dateFormat = m_dateFormatComboBox->currentText();
+
+    connect(m_dateFormatComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(setDateFormat(QString)));
+    connect(m_dateFormatComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(enableDateFormatEdit(int)));
+
+    QVBoxLayout *dateFormatLayout = new QVBoxLayout;
+    dateFormatLayout->addWidget(m_dateFormatComboBox);
     dateFormatLayout->addWidget(m_dateFormatLineEdit);
     m_dateFormatGroupBox->setLayout(dateFormatLayout);
 
     m_timeFormatGroupBox = new QGroupBox(tr("Formato de Hora"));
+
     m_timeFormatLineEdit = new QLineEdit;
+    m_timeFormatLineEdit->setDisabled(true);
+    connect(m_timeFormatLineEdit,SIGNAL(textEdited(QString)),this,SLOT(setCustomTimeFormat(QString)));
     connect(m_timeFormatLineEdit,SIGNAL(textChanged(QString)),this,SLOT(enableImportButton()));
-    QHBoxLayout *timeFormatLayout = new QHBoxLayout;
+
+    m_timeFormatComboBox = new QComboBox;
+    m_timeFormatComboBox->addItem("hh:mm:ss");
+    m_timeFormatComboBox->addItem("h:mm:ss");
+    m_timeFormatComboBox->addItem("hh:mm");
+    m_timeFormatComboBox->addItem("h:mm");
+    m_timeFormatComboBox->addItem("otro");
+
+    m_timeFormat = m_timeFormatComboBox->currentText();
+
+    connect(m_timeFormatComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(setTimeFormat(QString)));
+    connect(m_timeFormatComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(enableTimeFormatEdit(int)));
+
+    QVBoxLayout *timeFormatLayout = new QVBoxLayout;
+    timeFormatLayout->addWidget(m_timeFormatComboBox);
     timeFormatLayout->addWidget(m_timeFormatLineEdit);
     m_timeFormatGroupBox->setLayout(timeFormatLayout);
 
     //Layout medio superior---------------------------
-    QVBoxLayout *layout1 = new QVBoxLayout;
+    QHBoxLayout *layout1 = new QHBoxLayout;
     layout1->addWidget(m_firstLineGroupBox);
     layout1->addWidget(m_lastLineGroupBox);
+    layout1->addWidget(m_measurementUnitGroupBox);
 
-    QVBoxLayout *layout2 = new QVBoxLayout;
+    QHBoxLayout *layout2 = new QHBoxLayout;
     layout2->addWidget(m_dateFormatGroupBox);
     layout2->addWidget(m_timeFormatGroupBox);
 
-    QVBoxLayout *layout3 = new QVBoxLayout;
-    layout3->addWidget(m_correctionGroupBox);
-    layout3->addWidget(m_unitGroupBox);
+    //QVBoxLayout *layout3 = new QVBoxLayout;
+    //layout3->addWidget(m_correctionGroupBox);
+    //layout3->addWidget(m_unitGroupBox);
 
-    QHBoxLayout *midtopLayout = new QHBoxLayout;
+    QVBoxLayout *midtopLayout = new QVBoxLayout;
     midtopLayout->addLayout(layout1);
+    midtopLayout->addSpacing(20);
     midtopLayout->addLayout(layout2);
-    midtopLayout->addLayout(layout3);
+    //midtopLayout->addLayout(layout3);
 
 
     //------------------------------------------------
 
     m_measurementGroupBox = new QGroupBox(this);
 
-    QGridLayout *midLayout = new QGridLayout;
+    QVBoxLayout *midLayout = new QVBoxLayout;
 
-    midLayout->addLayout(midtopLayout,0,1,2,4);
+    midLayout->addLayout(midtopLayout);
 
     /*midLayout->addWidget(m_firstLineGroupBox,0,1);
     midLayout->addWidget(m_lastLineGroupBox,1,1);
@@ -408,39 +580,46 @@ void LoadDialog::settingUpEveryThing()
     midLayout->addWidget(m_unitGroupBox,1,3);*/
 
 
+    QGridLayout *myLayout = new QGridLayout;
 
+    QGroupBox *myBox = new QGroupBox;
 
-    midLayout->addWidget(m_dateLabel,3,0);
-    midLayout->addWidget(m_timeLabel,4,0);
-    midLayout->addWidget(m_heigthLabel,5,0);
+    myLayout->addWidget(m_dateLabel,1,0);
+    myLayout->addWidget(m_timeLabel,2,0);
+    myLayout->addWidget(m_heigthLabel,3,0);
 
-    midLayout->addWidget(m_fieldLabel,2,1);
-    midLayout->addWidget(m_fieldDateEdit,3,1);
-    midLayout->addWidget(m_fieldTimeEdit,4,1);
-    midLayout->addWidget(m_fieldHeightEdit,5,1);
+    myLayout->addWidget(m_fieldLabel,0,1);
+    myLayout->addWidget(m_fieldDateEdit,1,1);
+    myLayout->addWidget(m_fieldTimeEdit,2,1);
+    myLayout->addWidget(m_fieldHeightEdit,3,1);
 
-    midLayout->addWidget(m_separatorLabel,2,2);
-    midLayout->addWidget(m_separatorDateEdit,3,2);
-    midLayout->addWidget(m_separatorTimeEdit,4,2);
-    midLayout->addWidget(m_separatorHeigthEdit,5,2);
+    myLayout->addWidget(m_separatorLabel,0,2);
+    myLayout->addWidget(m_separatorDateEdit,1,2);
+    myLayout->addWidget(m_separatorTimeEdit,2,2);
+    myLayout->addWidget(m_separatorHeigthEdit,3,2);
 
-    midLayout->addWidget(m_firstPointLabel,2,3);
-    midLayout->addWidget(m_firstPointDateEdit,3,3);
-    midLayout->addWidget(m_firstPointTimeEdit,4,3);
-    midLayout->addWidget(m_firstPointHeigthEdit,5,3);
+    myLayout->addWidget(m_firstPointLabel,0,3);
+    myLayout->addWidget(m_firstPointDateEdit,1,3);
+    myLayout->addWidget(m_firstPointTimeEdit,2,3);
+    myLayout->addWidget(m_firstPointHeigthEdit,3,3);
 
-    midLayout->addWidget(m_lastPointLabel,2,4);
-    midLayout->addWidget(m_lastPointDateEdit,3,4);
-    midLayout->addWidget(m_lastPointTimeEdit,4,4);
-    midLayout->addWidget(m_lastPointHeigthEdit,5,4);
+    myLayout->addWidget(m_lastPointLabel,0,4);
+    myLayout->addWidget(m_lastPointDateEdit,1,4);
+    myLayout->addWidget(m_lastPointTimeEdit,2,4);
+    myLayout->addWidget(m_lastPointHeigthEdit,3,4);
 
+    myBox->setLayout(myLayout);
 
+    midLayout->addSpacing(20);
+
+    midLayout->addWidget(myBox);
 
     m_measurementGroupBox->setLayout(midLayout);
+    m_measurementGroupBox->setFixedWidth(350);
 
     //Location facilities-------------------------------
 
-    m_localizationGroupBox = new QGroupBox;
+    /*m_localizationGroupBox = new QGroupBox;
 
     m_locationLineEdit = new QLineEdit;
     m_equipmentIDLineEdit =  new QLineEdit;
@@ -464,23 +643,51 @@ void LoadDialog::settingUpEveryThing()
     locationLayout->addWidget(m_longitudLabel,1,2);
     locationLayout->addWidget(m_longitudLineEdit,1,3);
 
-    m_localizationGroupBox->setLayout(locationLayout);
+    m_localizationGroupBox->setLayout(locationLayout);*/
 
     //---------------------------------------------------------
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
     bottomLayout->addStretch();
 
-    QVBoxLayout *buttonLayout = new QVBoxLayout;
+    QHBoxLayout *buttonLayout = new QHBoxLayout;
     buttonLayout->addWidget(m_importButton);
     buttonLayout->addWidget(m_cancelButton);
 
     bottomLayout->addLayout(buttonLayout);
 
+    //QGroupBox *metaGroupBox = new QGroupBox(tr("DATOS DEL PROYECTO"));
+
+    //QVBoxLayout *metaLayout = new QVBoxLayout;
+    //metaLayout->addWidget(m_dataWidget);
+    //metaGroupBox->setLayout(metaLayout);
+
+    QGroupBox *primaryData = new QGroupBox(tr("Tipo de Datos Primarios"));
+    m_corrRadioButton = new QRadioButton(tr("Corrección"));
+    m_corrRadioButton->setChecked(true);
+    m_levelRadioButton = new QRadioButton(tr("Nivel"));
+
+    QVBoxLayout *primaryDataTypeLayout = new QVBoxLayout;
+    primaryDataTypeLayout->addWidget(m_corrRadioButton);
+    primaryDataTypeLayout->addWidget(m_levelRadioButton);
+
+    primaryData->setLayout(primaryDataTypeLayout);
+
+    QVBoxLayout *leftLayout = new QVBoxLayout;
+    //leftLayout->addWidget(metaGroupBox);
+    leftLayout->addWidget(primaryData);
+    leftLayout->addWidget(m_measurementGroupBox);
+
+    QHBoxLayout *mainUpperLayout = new QHBoxLayout;
+    //mainUpperLayout->addWidget(m_dataWidget);
+    mainUpperLayout->addLayout(leftLayout);
+    //mainUpperLayout->addWidget(m_measurementGroupBox);
+    mainUpperLayout->addWidget(m_importTextEdit);
+    //mainLayout->addWidget(m_localizationGroupBox);
+    //mainLayout->addLayout(bottomLayout);
+
     QVBoxLayout *mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(m_importTextEdit);
-    mainLayout->addWidget(m_measurementGroupBox);
-    mainLayout->addWidget(m_localizationGroupBox);
+    mainLayout->addLayout(mainUpperLayout);
     mainLayout->addLayout(bottomLayout);
 
     this->setLayout(mainLayout);

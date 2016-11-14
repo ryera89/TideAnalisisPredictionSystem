@@ -21,5 +21,6 @@
         <file>images/project-new.png</file>
         <file>images/project-close.png</file>
         <file>images/project-info.png</file>
+        <file>images/importButton.png</file>
     </qresource>
 </RCC>
