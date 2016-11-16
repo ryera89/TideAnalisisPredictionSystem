@@ -5,6 +5,7 @@
 
 #include <QWidget>
 #include "include/CoordinatesEditionWidget/mycoordinateseditorwidget.h"
+#include "include/MeasurementUnitEditWidget/measurementuniteditwidget.h"
 class QLineEdit;
 class QLabel;
 
@@ -17,6 +18,10 @@ public:
     QString projectName() const;
     QString stationName() const;
     QString localizationName() const;
+    double ceroPuesto() const;
+    double nivelReferencia() const;
+    MeasurementUnitEditWidget::Units ceroUnit() const;
+    MeasurementUnitEditWidget::Units referenciaUnit() const;
     double latitud() const;
     double longitud() const;
     QString equipmentID() const;
@@ -24,6 +29,8 @@ public:
     void setProjectName(const QString &str);
     void setStationName(const QString &str);
     void setLocalizationName(const QString &str);
+    void setCeroPuestoValueAndUnit(MeasurementUnitEditWidget::Units unit,double value);
+    void setNivelReferenciaValueAndUnit(MeasurementUnitEditWidget::Units unit, double value);
     void setLatitud(double);
     void setLongitud(double);
     void setEquipmentID(const QString &str);
@@ -39,13 +46,20 @@ private:
     QLabel *m_latitudLabel;
     QLabel *m_longitudLabel;
     QLabel *m_equipmentIdLabel;
+    QLabel *m_ceroPuestoLabel;
+    QLabel *m_nivelReferenciaLabel;
 
     QLineEdit *m_projectNameLineEdit;
     QLineEdit *m_stationNameLineEdit;
     QLineEdit *m_localizationNameLineEdit;
+    MeasurementUnitEditWidget *m_ceroPuestoEdit;
+    MeasurementUnitEditWidget *m_nivelReferenciaEdit;
     MyCoordinatesEditorWidget *m_latitudEdit;
     MyCoordinatesEditorWidget *m_longitudEdit;
     QLineEdit *m_equipmentIdLineEdit;
+
+    MeasurementUnitEditWidget::Units ceroDisplayUnits;
+    MeasurementUnitEditWidget::Units referenciaDisplayUnits;
 
     void createComponents();
     void interfazLayout();

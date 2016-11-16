@@ -4,7 +4,6 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QGroupBox>
-#include "include/ProjectMetaData/projectmetadata.h"
 
 MetaDataDialog::MetaDataDialog(const ProjectMetaData &data,QWidget *parent, Qt::WindowFlags f):QDialog(parent,f)
 {
@@ -15,6 +14,8 @@ MetaDataDialog::MetaDataDialog(const ProjectMetaData &data,QWidget *parent, Qt::
     m_metadata->setProjectName(data.projectName());
     m_metadata->setStationName(data.stationName());
     m_metadata->setLocalizationName(data.localizationName());
+    m_metadata->setCeroPuestoValueAndUnit(data.ceroUnit(),data.ceroPuesto());
+    m_metadata->setNivelReferenciaValueAndUnit(data.referenciaUnit(),data.nivelReferencia());
     m_metadata->setLatitud(data.latitud());
     m_metadata->setLongitud(data.longitud());
     m_metadata->setEquipmentID(data.equipmentID());
@@ -38,6 +39,16 @@ QString MetaDataDialog::localizationName() const
     return m_metadata->localizationName();
 }
 
+double MetaDataDialog::ceroPuesto() const
+{
+    return m_metadata->ceroPuesto();
+}
+
+double MetaDataDialog::nivelReferencia() const
+{
+    return m_metadata->nivelReferencia();
+}
+
 double MetaDataDialog::latitud() const
 {
     return m_metadata->latitud();
@@ -46,6 +57,16 @@ double MetaDataDialog::latitud() const
 double MetaDataDialog::longitud() const
 {
     return m_metadata->longitud();
+}
+
+MeasurementUnitEditWidget::Units MetaDataDialog::ceroPuestoUnit() const
+{
+    return m_metadata->ceroUnit();
+}
+
+MeasurementUnitEditWidget::Units MetaDataDialog::nivelReferenciaUnit() const
+{
+    return m_metadata->referenciaUnit();
 }
 
 QString MetaDataDialog::equipmentId() const

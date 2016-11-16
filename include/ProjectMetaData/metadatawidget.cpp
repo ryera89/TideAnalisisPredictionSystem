@@ -25,6 +25,26 @@ QString metaDataWidget::localizationName() const
     return m_localizationNameLineEdit->text();
 }
 
+double metaDataWidget::ceroPuesto() const
+{
+    return m_ceroPuestoEdit->value();
+}
+
+double metaDataWidget::nivelReferencia() const
+{
+    return m_nivelReferenciaEdit->value();
+}
+
+MeasurementUnitEditWidget::Units metaDataWidget::ceroUnit() const
+{
+    return m_ceroPuestoEdit->unit();
+}
+
+MeasurementUnitEditWidget::Units metaDataWidget::referenciaUnit() const
+{
+    return m_nivelReferenciaEdit->unit();
+}
+
 double metaDataWidget::latitud() const
 {
     return m_latitudEdit->coordinate();
@@ -55,6 +75,17 @@ void metaDataWidget::setLocalizationName(const QString &str)
     m_localizationNameLineEdit->setText(str);
 }
 
+void metaDataWidget::setCeroPuestoValueAndUnit(MeasurementUnitEditWidget::Units unit, double value)
+{
+    m_ceroPuestoEdit->setSpinAndComboBoxesValues(unit,value);
+}
+
+void metaDataWidget::setNivelReferenciaValueAndUnit(MeasurementUnitEditWidget::Units unit, double value)
+{
+    m_nivelReferenciaEdit->setSpinAndComboBoxesValues(unit,value);
+}
+
+
 void metaDataWidget::setLatitud(double latitud)
 {
     m_latitudEdit->setEditorAndComboValue(latitud);
@@ -81,6 +112,12 @@ void metaDataWidget::createComponents()
     m_localizationNameLabel = new QLabel(tr("Localización:"),this);
     m_localizationNameLineEdit = new QLineEdit(this);
 
+    m_ceroPuestoLabel = new QLabel(tr("Cero del Puesto:"),this);
+    m_ceroPuestoEdit = new MeasurementUnitEditWidget(this);
+
+    m_nivelReferenciaLabel = new QLabel(tr("Nivel de Referencia:"),this);
+    m_nivelReferenciaEdit = new MeasurementUnitEditWidget(this);
+
     m_latitudLabel = new QLabel(tr("Latitud:"),this);
     m_latitudEdit = new MyCoordinatesEditorWidget(this);
 
@@ -94,19 +131,29 @@ void metaDataWidget::createComponents()
 
 void metaDataWidget::interfazLayout()
 {
-    QHBoxLayout *lat_longLayout = new QHBoxLayout;
+    /*QHBoxLayout *lat_longLayout = new QHBoxLayout;
     lat_longLayout->addWidget(m_latitudLabel);
     lat_longLayout->addWidget(m_latitudEdit);
     lat_longLayout->addStretch();
     lat_longLayout->addWidget(m_longitudLabel);
-    lat_longLayout->addWidget(m_longitudEdit);
+    lat_longLayout->addWidget(m_longitudEdit);*/
+
+    /*QHBoxLayout *levelsLayout = new QHBoxLayout;
+    levelsLayout->addWidget(m_ceroPuestoLabel);
+    levelsLayout->addWidget(m_ceroPuestoEdit);
+    levelsLayout->addStretch();
+    levelsLayout->addWidget(m_nivelReferenciaLabel);
+    levelsLayout->addWidget(m_nivelReferenciaEdit);*/
 
     QFormLayout *mainLayout = new QFormLayout;
     mainLayout->addRow(m_projectNameLabel,m_projectNameLineEdit);
     mainLayout->addRow(m_stationNameLabel,m_stationNameLineEdit);
     mainLayout->addRow(m_localizationNameLabel,m_localizationNameLineEdit);
     mainLayout->addRow(m_equipmentIdLabel,m_equipmentIdLineEdit);
-    mainLayout->addRow(lat_longLayout);
+    mainLayout->addRow(m_ceroPuestoLabel,m_ceroPuestoEdit);
+    mainLayout->addRow(m_nivelReferenciaLabel,m_nivelReferenciaEdit);
+    mainLayout->addRow(m_latitudLabel,m_latitudEdit);
+    mainLayout->addRow(m_longitudLabel,m_longitudEdit);
 
     this->setLayout(mainLayout);
 }

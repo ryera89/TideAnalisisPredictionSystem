@@ -6,7 +6,15 @@
 MyCoordinatesEditorWidget::MyCoordinatesEditorWidget(QWidget *parent)
     : QFrame(parent)
 {
+    m_coordinate = 0.0;
+    m_hType = latitud;
+    m_type = 0;
+
     m_HemisphereComboBox = new QComboBox(this);
+    m_HemisphereComboBox->addItem("N");
+    m_HemisphereComboBox->addItem("S");
+    m_HemisphereComboBox->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
+
     m_coordinatesSpinBox = new QDoubleSpinBox(this);
     //m_HemisphereComboBox->setFrame(false);
     //m_coordinatesLineEdit->setFrame(false);
@@ -23,8 +31,7 @@ MyCoordinatesEditorWidget::MyCoordinatesEditorWidget(QWidget *parent)
     this->setLayout(editLayout);
     this->layout()->setMargin(0);
 
-    m_HemisphereComboBox->addItem("N");
-    m_HemisphereComboBox->addItem("S");
+
     connect(m_HemisphereComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(setHemisphere(int)));
     connect(m_coordinatesSpinBox,SIGNAL(valueChanged(double)),this,SLOT(setCoordinate(double)));
     connect(this,SIGNAL(hTypeChanged(HemisphereType)),this,SLOT(setHemisphereComboBoxItems(HemisphereType)));

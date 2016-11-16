@@ -2,8 +2,8 @@
 #define METADATADIALOG_H
 
 #include <QDialog>
+#include "projectmetadata.h"
 
-class ProjectMetaData;
 class metaDataWidget;
 class QPushButton;
 class QGroupBox;
@@ -12,13 +12,17 @@ class MetaDataDialog : public QDialog
 {
     Q_OBJECT
 public:
-    MetaDataDialog(const ProjectMetaData &metadata, QWidget *parent, Qt::WindowFlags f = Qt::WindowFlags());
+    explicit MetaDataDialog(const ProjectMetaData &metadata, QWidget *parent, Qt::WindowFlags f = Qt::WindowFlags());
 
     QString projectName() const;
     QString stationName() const;
     QString localizationName() const;
+    double ceroPuesto() const;
+    double nivelReferencia() const;
     double latitud() const;
     double longitud() const;
+    MeasurementUnitEditWidget::Units ceroPuestoUnit() const;
+    MeasurementUnitEditWidget::Units nivelReferenciaUnit() const;
     QString equipmentId() const;
 
 signals:

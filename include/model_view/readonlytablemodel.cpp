@@ -40,7 +40,6 @@ QVariant ReadOnlyTableModel::data(const QModelIndex &index, int role) const
 QVariant ReadOnlyTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     //if (role == Qt::BackgroundRole) return QColor(Qt::blue);
-
     if (role == Qt::DisplayRole){
         if (orientation == Qt::Horizontal){
            return headers[section];

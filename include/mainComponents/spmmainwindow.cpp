@@ -135,6 +135,10 @@ void SPMmainWindow::updateMetaData()
     m_metadataStorage.setProjectName(m_projectMetaDataDialog->projectName());
     m_metadataStorage.setStationName(m_projectMetaDataDialog->stationName());
     m_metadataStorage.setLocalizationName(m_projectMetaDataDialog->localizationName());
+    m_metadataStorage.setCeroPuesto(m_projectMetaDataDialog->ceroPuesto());
+    m_metadataStorage.setNivelReferencia(m_projectMetaDataDialog->nivelReferencia());
+    m_metadataStorage.setCeroUnits(m_projectMetaDataDialog->ceroPuestoUnit());
+    m_metadataStorage.setReferenceUnits(m_projectMetaDataDialog->nivelReferenciaUnit());
     m_metadataStorage.setLatitud(m_projectMetaDataDialog->latitud());
     m_metadataStorage.setLongitud(m_projectMetaDataDialog->longitud());
     m_metadataStorage.setEquipmentID(m_projectMetaDataDialog->equipmentId());
