@@ -25,7 +25,7 @@ public:
     explicit CentralWidget(QWidget *parent = 0);
 
     //MySeries* chartSerie() const{return m_series;}
-    QSplineSeries* chartSerie() const{return m_series;}
+    QSplineSeries* chartSerie() const{return m_series;} //CAmbiar esto
     QTableView* tableView() const{return m_tidalTableView;}
     QChartView* chartView() const{return m_tideChartView;}
     ReadOnlyTableModel* tableModel() const{return m_tidalTableModel;}
@@ -45,6 +45,8 @@ public slots:
 private slots:
     void zoomXAxis(int level);
     void getAndDisplayCursorPosInSeries(QPointF point);
+    void getAndDisplayClickedPosInSeries(QPointF point);
+    void setPointSelectedRange(QPointF pPoint, QPointF rPoint);
 private:
     //Table Facilities
     QTableView *m_tidalTableView;
@@ -56,6 +58,7 @@ private:
     QDateTimeAxis *m_timeAxis;
     //QValueAxis *m_yAxis;
     QSplineSeries *m_series;
+    QScatterSeries *m_selectionSeries;
     //QScatterSeries *m_scatterSerie;
     //MySeries *m_series;
     //Display Facilities

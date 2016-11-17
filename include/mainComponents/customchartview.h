@@ -18,15 +18,21 @@ public:
 
 signals:
     void seriesPoint(QPointF point);
+    void seriesPointPressed(QPointF point);
+    void seriesPointsPressedAndRealesed(QPointF pPoint, QPointF rPoint);
 protected:
     void keyPressEvent(QKeyEvent *event);
     void wheelEvent(QWheelEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
+    void mousePressEvent(QMouseEvent *event);
+    void mouseReleaseEvent(QMouseEvent *event);
 
 public slots:
 
 private:
     QPointF m_currentMousePos;
+    QPointF m_pressedMousePosition;
+    QPointF m_releasedMousePosition;
     //QToolButton *leftButton;
     //QToolButton *rightButton;
 

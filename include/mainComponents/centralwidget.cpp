@@ -5,8 +5,8 @@
 #include "displayeddatalabels.h"
 #include <QSpinBox>
 #include <QSlider>
+#include <iostream>
 //TODO: Revisar todo el codigo pues hay que modificarlo.
-
 CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
 {
     m_currentXZoomLevel = 1;
@@ -122,6 +122,7 @@ void CentralWidget::setSeriesData()
 
     m_series = new QSplineSeries;
     m_series->setPointsVisible(true);
+    m_selectionSeries = new QScatterSeries;
     //m_scatterSerie = new QScatterSeries;
     //m_scatterSerie->setColor(Qt::red);
     //m_scatterSerie->setMarkerSize(5);
@@ -155,13 +156,21 @@ void CentralWidget::setSeriesData()
     //m_tideChartView->chart()->createDefaultAxes();
 
     m_tideChartView->chart()->addSeries(m_series);
+    m_tideChartView->chart()->addSeries(m_selectionSeries);
     m_tideChartView->chart()->createDefaultAxes();
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
+    m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
     //m_tideChartView->chart()->setAxisX(m_timeAxis,m_scatterSerie);
 
     m_mapper->setSeries(m_series);
 
+    QVector<QPointF> Points = m_series->pointsVector();
 
+    int i = 1;
+    foreach (QPointF point, Points) {
+        std::cout << i << " " << point.x() << " " << point.y() << std::endl;
+        ++i;
+    }
 }
 
 void CentralWidget::zoomXAxis(int level)
@@ -244,6 +253,71 @@ void CentralWidget::getAndDisplayCursorPosInSeries(QPointF point)
 
     m_cursorPosDDLabel->setInternalData(time,point.y());
 }
+
+void CentralWidget::getAndDisplayClickedPosInSeries(QPointF point)
+{
+    QVector<QPointF> seriesPointsVector;
+    foreach (QPointF p, m_series->pointsVector()) {
+        seriesPointsVector.append(m_tideChart->mapToPosition(p,m_series));
+    }
+
+    qreal distance = INT64_MAX; //distancia al punto
+    QPointF closest(INT64_MAX, INT64_MAX); //punto mas cercano
+
+    foreach (QPointF po, seriesPointsVector) {
+        qreal currentDist = qSqrt(qPow((po.y() - point.y()),2) + qPow((po.x() - point.x()),2));
+
+        if (currentDist < distance){
+            distance = currentDist;
+            closest = po;
+        }
+    }
+    if (distance <= 5){
+        QPointF selectedPoint = m_tideChart->mapToValue(closest,m_series);
+        QDateTime time = QDateTime::fromMSecsSinceEpoch(selectedPoint.x());
+
+        m_selectionIniDDLabel->setInternalData(time,selectedPoint.y());
+    }
+    /*QVector<QPointF> seriesPointsVector = m_series->pointsVector();
+
+    qreal distance = INT64_MAX; //distancia al punto
+    QPointF closest(INT64_MAX, INT64_MAX); //punto mas cercano
+
+    foreach (QPointF po, seriesPointsVector) {
+        qreal currentDist = qSqrt(qPow((po.y() - point.y()),2) + qPow((po.x() - point.x()),2));
+
+        if (currentDist < distance){
+            distance = currentDist;
+            closest = po;
+        }
+    }
+    if (distance < 50000*m_currentXZoomLevel){
+        QDateTime time = QDateTime::fromMSecsSinceEpoch(closest.x());
+
+        m_selectionIniDDLabel->setInternalData(time,closest.y());
+    }*/
+    //std::cout << distance << std::endl;
+}
+
+void CentralWidget::setPointSelectedRange(QPointF pPoint, QPointF rPoint)
+{
+    /*if (m_selectionSeries == Q_NULLPTR){
+        m_selectionSeries = new QScatterSeries;
+        m_tideChartView->chart()->addSeries(m_selectionSeries);
+        m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
+    }*/
+    m_selectionSeries->clear();
+    QPointF pSeriesPoint = m_tideChart->mapToValue(pPoint,m_series);
+    QPointF rSeriesPoint = m_tideChart->mapToValue(rPoint,m_series);
+
+    foreach (QPointF point, m_series->pointsVector()) {
+        if (point.x() >= pSeriesPoint.x() && point.x() <= rSeriesPoint.x()){
+            m_selectionSeries->append(point);
+            std::cout << point.x() << " " << point.y() << std::endl;
+        }
+    }
+
+}
 void CentralWidget::createComponents()
 {
     //QVector<TidesMeasurement> measurement = readTidesDataFromCVSFile("files/prueba7.csv"); //NOTE: probando remover despues
@@ -265,6 +339,7 @@ void CentralWidget::createComponents()
     m_mapper = new XYTidalChartModelMapper(m_tidalTableModel,m_series);
     connect(m_tidalTableModel,SIGNAL(modelReset()),this,SLOT(setSeriesData()));
 
+    m_selectionSeries = new QScatterSeries;
 
     m_tideChartView = new customChartView(m_tideChart,this);
 
@@ -276,12 +351,16 @@ void CentralWidget::createComponents()
 
     //NOTE: Valorar Remover esto
     m_tideChart->addSeries(m_series);
+    m_tideChart->addSeries(m_selectionSeries);
     m_tideChart->createDefaultAxes();
 
+    m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
-
     m_tideChartView->chart()->axisX(m_series)->setTitleText(tr("Tiempo"));
+    m_tideChartView->chart()->axisY(m_series)->setTitleText(tr("Nivel"));
 
+    connect(m_tideChartView,SIGNAL(seriesPointPressed(QPointF)),this,SLOT(getAndDisplayClickedPosInSeries(QPointF)));
+    connect(m_tideChartView,SIGNAL(seriesPointsPressedAndRealesed(QPointF,QPointF)),this,SLOT(setPointSelectedRange(QPointF,QPointF)));
 
     //Display facilities
     m_rangeSlider =  new QSlider(Qt::Horizontal,this);
@@ -301,7 +380,10 @@ void CentralWidget::createComponents()
     //rangeGroupBox->setFixedWidth(200);
 
     m_selectionIniDDLabel = new DisplayedDataLabels(this);
-    m_selectionIniDDLabel->setLabel(tr("Inicio"));
+    m_selectionIniDDLabel->setLabel(tr("Seleccion"));
+    m_selectionIniDDLabel->setFixedWidth(200);
+    m_selectionIniDDLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+
     m_selectionEndDDLabel = new DisplayedDataLabels(this);
     m_selectionEndDDLabel->setLabel(tr("Fin"));
 
@@ -311,6 +393,8 @@ void CentralWidget::createComponents()
     m_cursorPosDDLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
     connect(m_tideChartView,SIGNAL(seriesPoint(QPointF)),this,SLOT(getAndDisplayCursorPosInSeries(QPointF)));
+
+
 
     //QHBoxLayout *cursorLayout =  new QHBoxLayout;
     //cursorLayout->addWidget(m_cursorPosDDLabel);
@@ -330,7 +414,7 @@ void CentralWidget::createComponents()
 void CentralWidget::setInterfazLayout()
 {
     QHBoxLayout *selectionLayout = new QHBoxLayout;
-    selectionLayout->addWidget(m_selectionIniDDLabel);
+    //selectionLayout->addWidget(m_selectionIniDDLabel);
     selectionLayout->addWidget(m_selectionEndDDLabel);
 
     QGroupBox *selectionGroupBox = new QGroupBox(tr("Seleccion"),this);
@@ -350,8 +434,10 @@ void CentralWidget::setInterfazLayout()
 
     QHBoxLayout *rangeLayout = new QHBoxLayout; //Parte de Abajo
     rangeLayout->addWidget(m_cursorPosDDLabel);
+    rangeLayout->addWidget(m_selectionIniDDLabel);
     rangeLayout->addWidget(m_rangeSlider);
     rangeLayout->addWidget(m_rangeSpinBox);
+
     //rangeLayout->setSpacing(0);
 
     QVBoxLayout *rigthLayout = new QVBoxLayout;

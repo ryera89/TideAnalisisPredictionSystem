@@ -8,6 +8,7 @@
 
 customChartView::customChartView(QChart *chart, QWidget *parent): QChartView(chart,parent)
 {
+
     /*leftButton = new QToolButton(this);
     leftButton->setFixedWidth(50);
     leftButton->setFixedHeight(50);
@@ -79,9 +80,31 @@ void customChartView::mouseMoveEvent(QMouseEvent *event)
         m_currentMousePos = event->pos();
 
         emit seriesPoint(seriesPos);
-    }else{
-        QChartView::mouseMoveEvent(event);
     }
+    QChartView::mouseMoveEvent(event);
+}
+
+void customChartView::mousePressEvent(QMouseEvent *event)
+{
+    /*if (chart()->series().first()){
+        QPointF clickedPoint = chart()->mapToValue(event->pos(),chart()->series().first());
+
+        emit seriesPointPressed(clickedPoint);
+    }else{
+        QChartView::mousePressEvent(event);
+    }*/
+    emit seriesPointPressed(event->pos());
+    m_pressedMousePosition = event->pos();
+    setRubberBand(QChartView::HorizontalRubberBand);
+    QChartView::mousePressEvent(event);
+}
+
+void customChartView::mouseReleaseEvent(QMouseEvent *event)
+{
+    m_releasedMousePosition = event->pos();
+    this->setRubberBand(QChartView::NoRubberBand);
+
+    emit seriesPointsPressedAndRealesed(m_pressedMousePosition,m_releasedMousePosition);
 }
 
 
