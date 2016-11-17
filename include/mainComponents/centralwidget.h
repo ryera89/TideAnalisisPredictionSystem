@@ -44,6 +44,7 @@ public slots:
 
 private slots:
     void zoomXAxis(int level);
+    void getAndDisplayCursorPosInSeries(QPointF point);
 private:
     //Table Facilities
     QTableView *m_tidalTableView;
@@ -74,6 +75,7 @@ private:
     int m_currentXZoomLevel;
 
     void createComponents();
+    void setInterfazLayout();
     void settingUpTable();
     void settingZoomPosibleValues();
 

@@ -10,17 +10,17 @@ MyCoordinatesEditorWidget::MyCoordinatesEditorWidget(QWidget *parent)
     m_hType = latitud;
     m_type = 0;
 
-    m_HemisphereComboBox = new QComboBox(this);
-    m_HemisphereComboBox->addItem("N");
-    m_HemisphereComboBox->addItem("S");
-    m_HemisphereComboBox->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
-
     m_coordinatesSpinBox = new QDoubleSpinBox(this);
     //m_HemisphereComboBox->setFrame(false);
     //m_coordinatesLineEdit->setFrame(false);
     m_coordinatesSpinBox->setRange(0.0,90.0);
     m_coordinatesSpinBox->setDecimals(3);
     m_coordinatesSpinBox->setSuffix("°");
+    //m_coordinatesSpinBox->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+
+    m_HemisphereComboBox = new QComboBox(this);
+    m_HemisphereComboBox->addItem("N");
+    m_HemisphereComboBox->addItem("S");
 
     QHBoxLayout *editLayout = new QHBoxLayout;
     editLayout->addWidget(m_coordinatesSpinBox);

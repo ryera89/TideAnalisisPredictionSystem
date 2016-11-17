@@ -4,6 +4,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QStyleOptionGraphicsItem>
+#include <QMouseEvent>
 
 customChartView::customChartView(QChart *chart, QWidget *parent): QChartView(chart,parent)
 {
@@ -54,11 +55,33 @@ void customChartView::keyPressEvent(QKeyEvent *event)
         QGraphicsView::keyPressEvent(event);
         break;
     }
+    if (chart()->series().first()){
+        QPointF seriesPos = chart()->mapToValue(m_currentMousePos,chart()->series().first()); //Ver esto pues quizas debemos cambiar
+        emit seriesPoint(seriesPos);
+    }
 }
 
 void customChartView::wheelEvent(QWheelEvent *event)
 {
     this->chart()->scroll(event->angleDelta().y(),0);
+
+    if (chart()->series().first()){
+        QPointF seriesPos = chart()->mapToValue(event->pos(),chart()->series().first()); //Ver esto pues quizas debemos cambiar
+
+        emit seriesPoint(seriesPos);
+    }
+}
+
+void customChartView::mouseMoveEvent(QMouseEvent *event)
+{
+    if (chart()->series().first()){
+        QPointF seriesPos = chart()->mapToValue(event->pos(),chart()->series().first()); //Ver esto pues quizas debemos cambiar
+        m_currentMousePos = event->pos();
+
+        emit seriesPoint(seriesPos);
+    }else{
+        QChartView::mouseMoveEvent(event);
+    }
 }
 
 

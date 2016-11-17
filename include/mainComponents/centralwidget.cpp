@@ -11,6 +11,7 @@ CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
 {
     m_currentXZoomLevel = 1;
     createComponents();
+    setInterfazLayout();
 }
 
 /*void CentralWidget::loadDataChart()
@@ -236,6 +237,13 @@ void CentralWidget::zoomXAxis(int level)
         m_timeAxis->setRange(QDateTime::fromMSecsSinceEpoch(showXMin),QDateTime::fromMSecsSinceEpoch(showXMax));
     }
 }
+
+void CentralWidget::getAndDisplayCursorPosInSeries(QPointF point)
+{
+    QDateTime time = QDateTime::fromMSecsSinceEpoch(point.x());
+
+    m_cursorPosDDLabel->setInternalData(time,point.y());
+}
 void CentralWidget::createComponents()
 {
     //QVector<TidesMeasurement> measurement = readTidesDataFromCVSFile("files/prueba7.csv"); //NOTE: probando remover despues
@@ -286,10 +294,7 @@ void CentralWidget::createComponents()
     connect(m_rangeSlider,SIGNAL(valueChanged(int)),m_rangeSpinBox,SLOT(setValue(int)));
     connect(m_rangeSpinBox,SIGNAL(valueChanged(int)),this,SLOT(zoomXAxis(int)));
 
-    QHBoxLayout *rangeLayout = new QHBoxLayout;
-    rangeLayout->addWidget(m_rangeSlider);
-    rangeLayout->addWidget(m_rangeSpinBox);
-    rangeLayout->setSpacing(0);
+
 
     //QGroupBox *rangeGroupBox = new QGroupBox(this);
     //rangeGroupBox->setLayout(rangeLayout);
@@ -300,6 +305,30 @@ void CentralWidget::createComponents()
     m_selectionEndDDLabel = new DisplayedDataLabels(this);
     m_selectionEndDDLabel->setLabel(tr("Fin"));
 
+    m_cursorPosDDLabel = new DisplayedDataLabels(this);
+    m_cursorPosDDLabel->setLabel(tr("Cursor"));
+    m_cursorPosDDLabel->setFixedWidth(200);
+    m_cursorPosDDLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+
+    connect(m_tideChartView,SIGNAL(seriesPoint(QPointF)),this,SLOT(getAndDisplayCursorPosInSeries(QPointF)));
+
+    //QHBoxLayout *cursorLayout =  new QHBoxLayout;
+    //cursorLayout->addWidget(m_cursorPosDDLabel);
+
+    //QGroupBox *cursorGroupBox = new QGroupBox(tr("Cursor"),this);
+    //cursorGroupBox->setAlignment(Qt::AlignCenter);
+    //cursorGroupBox->setLayout(cursorLayout);
+
+
+
+
+    //Connections
+
+    //connect(m_dataTable,SIGNAL(rowEliminated(int,int)),this,SLOT(updateDataInChartWhenRowIsEliminated(int,int)));
+}
+
+void CentralWidget::setInterfazLayout()
+{
     QHBoxLayout *selectionLayout = new QHBoxLayout;
     selectionLayout->addWidget(m_selectionIniDDLabel);
     selectionLayout->addWidget(m_selectionEndDDLabel);
@@ -308,19 +337,9 @@ void CentralWidget::createComponents()
     selectionGroupBox->setAlignment(Qt::AlignCenter);
     selectionGroupBox->setLayout(selectionLayout);
 
-    m_cursorPosDDLabel = new DisplayedDataLabels(this);
-    m_cursorPosDDLabel->setLabel(tr("Posicion"));
-
-    QHBoxLayout *cursorLayout =  new QHBoxLayout;
-    cursorLayout->addWidget(m_cursorPosDDLabel);
-
-    QGroupBox *cursorGroupBox = new QGroupBox(tr("Cursor"),this);
-    cursorGroupBox->setAlignment(Qt::AlignCenter);
-    cursorGroupBox->setLayout(cursorLayout);
-
-    QHBoxLayout *displayLayout = new QHBoxLayout;
+    QHBoxLayout *displayLayout = new QHBoxLayout; //Parte de arriba
     displayLayout->addWidget(selectionGroupBox);
-    displayLayout->addWidget(cursorGroupBox);
+    //displayLayout->addWidget(cursorGroupBox);
 
     QGroupBox *displayGroupBox = new QGroupBox;
     displayGroupBox->setLayout(displayLayout);
@@ -329,12 +348,19 @@ void CentralWidget::createComponents()
     //leftLayout->addWidget(rangeGroupBox);
     leftLayout->addWidget(displayGroupBox);
 
+    QHBoxLayout *rangeLayout = new QHBoxLayout; //Parte de Abajo
+    rangeLayout->addWidget(m_cursorPosDDLabel);
+    rangeLayout->addWidget(m_rangeSlider);
+    rangeLayout->addWidget(m_rangeSpinBox);
+    //rangeLayout->setSpacing(0);
+
     QVBoxLayout *rigthLayout = new QVBoxLayout;
     rigthLayout->addLayout(leftLayout);
     rigthLayout->addWidget(m_tideChartView);
     rigthLayout->addLayout(rangeLayout);
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
+
 
     mainLayout->addWidget(m_tidalTableView);
     //QVBoxLayout *rigthLayout = new QVBoxLayout; //NOTE: Probando el edit
@@ -344,10 +370,6 @@ void CentralWidget::createComponents()
     mainLayout->addLayout(rigthLayout);
 
     this->setLayout(mainLayout);
-
-    //Connections
-
-    //connect(m_dataTable,SIGNAL(rowEliminated(int,int)),this,SLOT(updateDataInChartWhenRowIsEliminated(int,int)));
 }
 
 void CentralWidget::settingUpTable()

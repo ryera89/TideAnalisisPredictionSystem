@@ -131,12 +131,12 @@ void metaDataWidget::createComponents()
 
 void metaDataWidget::interfazLayout()
 {
-    /*QHBoxLayout *lat_longLayout = new QHBoxLayout;
+    QHBoxLayout *lat_longLayout = new QHBoxLayout;
     lat_longLayout->addWidget(m_latitudLabel);
     lat_longLayout->addWidget(m_latitudEdit);
     lat_longLayout->addStretch();
     lat_longLayout->addWidget(m_longitudLabel);
-    lat_longLayout->addWidget(m_longitudEdit);*/
+    lat_longLayout->addWidget(m_longitudEdit);
 
     /*QHBoxLayout *levelsLayout = new QHBoxLayout;
     levelsLayout->addWidget(m_ceroPuestoLabel);
@@ -149,11 +149,12 @@ void metaDataWidget::interfazLayout()
     mainLayout->addRow(m_projectNameLabel,m_projectNameLineEdit);
     mainLayout->addRow(m_stationNameLabel,m_stationNameLineEdit);
     mainLayout->addRow(m_localizationNameLabel,m_localizationNameLineEdit);
-    mainLayout->addRow(m_equipmentIdLabel,m_equipmentIdLineEdit);
     mainLayout->addRow(m_ceroPuestoLabel,m_ceroPuestoEdit);
     mainLayout->addRow(m_nivelReferenciaLabel,m_nivelReferenciaEdit);
-    mainLayout->addRow(m_latitudLabel,m_latitudEdit);
-    mainLayout->addRow(m_longitudLabel,m_longitudEdit);
+    mainLayout->addRow(m_equipmentIdLabel,m_equipmentIdLineEdit); 
+    //mainLayout->addRow(m_latitudLabel,m_latitudEdit);
+    //mainLayout->addRow(m_longitudLabel,m_longitudEdit);
+    mainLayout->addRow(lat_longLayout);
 
     this->setLayout(mainLayout);
 }

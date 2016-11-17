@@ -16,13 +16,17 @@ class customChartView : public QChartView
 public:
     customChartView(QChart *chart, QWidget *parent = 0);
 
-
+signals:
+    void seriesPoint(QPointF point);
 protected:
     void keyPressEvent(QKeyEvent *event);
     void wheelEvent(QWheelEvent *event);
+    void mouseMoveEvent(QMouseEvent *event);
+
 public slots:
 
 private:
+    QPointF m_currentMousePos;
     //QToolButton *leftButton;
     //QToolButton *rightButton;
 
