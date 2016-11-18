@@ -114,10 +114,8 @@ bool TableModel::removeRows(int row, int count, const QModelIndex &parent)
     //if (!parent.isValid()) return false;
     //int r = row;
 
-    beginRemoveRows(parent, row, row+count);
-    for (int i = row; i <= row+count; ++i ){
-        measurements.remove(row);
-    }
+    beginRemoveRows(parent, row, row+count-1);
+    measurements.remove(row,count);
     endRemoveRows();
     return true;
 }
@@ -137,5 +135,17 @@ void TableModel::setMeasurements(const QVector<TidesMeasurement> &measurement)
     beginResetModel();
     measurements = measurement;
     endResetModel();
+}
+
+QVector<QPointF> TableModel::measurementDataRealPoints() const
+{
+    QVector<QPointF> points;
+    foreach(TidesMeasurement m, measurements){
+        quint64 x = m.measurementDateTime().toMSecsSinceEpoch();
+
+        QPointF point(x,m.seaLevel());
+        points.append(point);
+    }
+    return points;
 }
 

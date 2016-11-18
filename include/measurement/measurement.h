@@ -46,6 +46,7 @@ public:
     QDateTime measurementDateTime() const{return QDateTime(m_date,m_time);}
 
     TidalTimeLevel dateMeasurement() const;
+
 };
 
 

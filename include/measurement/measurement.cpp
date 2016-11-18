@@ -35,7 +35,7 @@ void TidesMeasurement::setMeasurementTime(const QTime &time)
 
 TidalTimeLevel TidesMeasurement::dateMeasurement() const
 {
-   return TidalTimeLevel(m_time,m_seaLevel);
+    return TidalTimeLevel(m_time,m_seaLevel);
 }
 
 /*void TidesMeasurement::setLabelDate(const QString &newLabel)

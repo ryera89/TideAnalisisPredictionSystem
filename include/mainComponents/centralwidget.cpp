@@ -162,7 +162,7 @@ void CentralWidget::setSeriesData()
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
     //m_tideChartView->chart()->setAxisX(m_timeAxis,m_scatterSerie);
 
-    m_mapper->setSeries(m_series);
+    //m_mapper->setSeries(m_series);
 
     QVector<QPointF> Points = m_series->pointsVector();
 
@@ -329,6 +329,82 @@ void CentralWidget::setPointSelectedRange(QPointF pPoint, QPointF rPoint)
     }
 
 }
+
+void CentralWidget::deleteSelectedPointOnGraph()
+{
+    if (m_selectionSeries->pointsVector().isEmpty()) return;
+
+    if (m_selectionSeries->count() == 1){
+        QDateTime time = QDateTime::fromMSecsSinceEpoch(m_selectionSeries->at(0).x());
+        qreal level = m_selectionSeries->at(0).y();
+        int desition = QMessageBox::question(this,tr("Eliminar Datos"),tr("Se eliminara la medición %1 %2\n"
+                                                           " ¿Desea continuar?").arg(time.toString("yyyy/MM/dd hh:mm")).arg(QString::number(level)));
+        if (desition == QMessageBox::No) return;
+        deletePoints();
+    }else{
+        QDateTime iniTimeRange = QDateTime::fromMSecsSinceEpoch(m_selectionSeries->pointsVector().first().x());
+        QDateTime endTimeRange = QDateTime::fromMSecsSinceEpoch(m_selectionSeries->pointsVector().last().x());
+
+        qreal iniLevelRange = m_selectionSeries->pointsVector().first().y();
+        qreal endLevelRange = m_selectionSeries->pointsVector().last().y();
+
+        int desition = QMessageBox::question(this,tr("Eliminar Datos"),tr("Se eliminara la medición %1 %2 hasta %3 %4\n"
+                                                           " ¿Desea continuar?").arg(iniTimeRange.toString("yyyy/MM/dd hh:mm")).arg(QString::number(iniLevelRange)).
+                                             arg(endTimeRange.toString("yyyy/MM/dd hh:mm")).arg(QString::number(endLevelRange)));
+        if (desition == QMessageBox::No) return;
+        deletePoints();
+    }
+
+
+}
+
+void CentralWidget::updateSeriesData(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    int topRow = topLeft.row();
+    int bottomRow = bottomRight.row();
+
+    //int firstColumn = topLeft.column();
+    //int lastColumn = bottomRight.column();
+
+    for (int i = topRow; i <= bottomRow; ++i){
+        double y_value;
+        QDateTime x_value;
+
+        x_value.setDate(m_tidalTableModel->data(m_tidalTableModel->index(i,0),
+                                      Qt::DisplayRole).toDate());
+
+        x_value.setTime(m_tidalTableModel->data(m_tidalTableModel->index(i,1),
+                                      Qt::DisplayRole).toTime());
+
+        y_value = m_tidalTableModel->data(m_tidalTableModel->index(i,2),
+                                Qt::DisplayRole).toDouble();
+
+
+        if (i < m_series->count()){
+            m_series->replace(i,x_value.toMSecsSinceEpoch(),y_value);
+        }else{
+            if (i == m_series->count()){
+                m_series->append(x_value.toMSecsSinceEpoch(),y_value);
+            }else{
+                int k = m_series->count();
+                while (k < i){
+                    m_series->append(0,0);
+                    ++k;
+                }
+                m_series->append(x_value.toMSecsSinceEpoch(),y_value);
+            }
+        }
+
+    }
+}
+
+void CentralWidget::updateSeriesDataAtRowRemove(const QModelIndex &parent, int in, int last)
+{
+    Q_UNUSED(parent);
+
+    m_series->removePoints(in,last-in+1);
+
+}
 void CentralWidget::createComponents()
 {
     //QVector<TidesMeasurement> measurement = readTidesDataFromCVSFile("files/prueba7.csv"); //NOTE: probando remover despues
@@ -347,7 +423,7 @@ void CentralWidget::createComponents()
 
     m_series = new QSplineSeries;
     //m_series = new MySeries;
-    m_mapper = new XYTidalChartModelMapper(m_tidalTableModel,m_series);
+    //m_mapper = new XYTidalChartModelMapper(m_tidalTableModel,m_series);
     connect(m_tidalTableModel,SIGNAL(modelReset()),this,SLOT(setSeriesData()));
 
     m_selectionSeries = new QScatterSeries;
@@ -370,9 +446,10 @@ void CentralWidget::createComponents()
     m_tideChartView->chart()->axisX(m_series)->setTitleText(tr("Tiempo"));
     m_tideChartView->chart()->axisY(m_series)->setTitleText(tr("Nivel"));
 
+    connect(m_tideChartView,SIGNAL(seriesPoint(QPointF)),this,SLOT(getAndDisplayCursorPosInSeries(QPointF)));
     connect(m_tideChartView,SIGNAL(seriesPointPressed(QPointF)),this,SLOT(getAndDisplayClickedPosInSeries(QPointF)));
     connect(m_tideChartView,SIGNAL(seriesPointsPressedAndRealesed(QPointF,QPointF)),this,SLOT(setPointSelectedRange(QPointF,QPointF)));
-
+    connect(m_tideChartView,SIGNAL(deleteSelectedPointsOnGraph()),this,SLOT(deleteSelectedPointOnGraph()));
     //Display facilities
     m_rangeSlider =  new QSlider(Qt::Horizontal,this);
     m_rangeSpinBox = new QSpinBox(this);
@@ -383,8 +460,6 @@ void CentralWidget::createComponents()
     connect(m_rangeSpinBox,SIGNAL(valueChanged(int)),m_rangeSlider,SLOT(setValue(int)));
     connect(m_rangeSlider,SIGNAL(valueChanged(int)),m_rangeSpinBox,SLOT(setValue(int)));
     connect(m_rangeSpinBox,SIGNAL(valueChanged(int)),this,SLOT(zoomXAxis(int)));
-
-
 
     //QGroupBox *rangeGroupBox = new QGroupBox(this);
     //rangeGroupBox->setLayout(rangeLayout);
@@ -402,10 +477,6 @@ void CentralWidget::createComponents()
     m_cursorPosDDLabel->setLabel(tr("Cursor"));
     m_cursorPosDDLabel->setFixedWidth(200);
     m_cursorPosDDLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-
-    connect(m_tideChartView,SIGNAL(seriesPoint(QPointF)),this,SLOT(getAndDisplayCursorPosInSeries(QPointF)));
-
-
 
     //QHBoxLayout *cursorLayout =  new QHBoxLayout;
     //cursorLayout->addWidget(m_cursorPosDDLabel);
@@ -472,11 +543,13 @@ void CentralWidget::setInterfazLayout()
 void CentralWidget::settingUpTable()
 {
     m_tidalTableView = new QTableView;
-    m_tidalTableModel = new ReadOnlyTableModel;
+    m_tidalTableModel = new TableModel;
     m_tidalTableView->setItemDelegate(new TidalTableDelegate);
     m_tidalTableView->setModel(m_tidalTableModel);
     m_tidalTableView->setAlternatingRowColors(true);
 
+    connect(m_tidalTableModel,SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),this,SLOT(updateSeriesData(QModelIndex,QModelIndex,QVector<int>)));
+    connect(m_tidalTableModel,SIGNAL(rowsRemoved(QModelIndex,int,int)),this,SLOT(updateSeriesDataAtRowRemove(QModelIndex,int,int)));
     int width = 20 + m_tidalTableView->verticalHeader()->width();
     for (int i = 0; i < m_tidalTableModel->columnCount(QModelIndex()); ++i){
          width += m_tidalTableView->columnWidth(i);
@@ -497,6 +570,43 @@ void CentralWidget::settingZoomPosibleValues()
        m_rangeSlider->setMaximum(days + 1);
     }
 
+}
+
+void CentralWidget::deletePoints()
+{
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    int maxFlag = 0;
+    int begin = 0;
+    bool flag = false;
+    //m_tideChartView->chart()->removeSeries(m_series);
+    //m_tideChartView->chart()->removeSeries(m_selectionSeries);
+    foreach (QPointF point, m_selectionSeries->pointsVector()){
+        QDateTime time = QDateTime::fromMSecsSinceEpoch(point.x());
+        int i = 0;
+        //QVector<TidesMeasurement> dataMeasurement = m_tidalTableModel->measurementData();
+        foreach (TidesMeasurement measu, m_tidalTableModel->measurementData()) { //Paracomparar elementos
+            if (measu.measurementDateTime() == time){ //Si coinciden en el tiempo eliminarlos
+                if (!flag){ begin = i; flag = true;}  //Para guardar la primera ves que se entra en el loop
+                ++maxFlag;
+                //m_tidalTableModel->removeRow(i,QModelIndex());
+                //m_series->remove(point);
+                //++flag;
+                break;
+            }
+             ++i;
+        }
+    }
+    m_tidalTableModel->removeRows(begin,maxFlag,QModelIndex());
+    m_selectionSeries->clear(); //vacia la serie donde se almacenan los datos seleccionados
+    //m_tideChartView->chart()->addSeries(m_series);
+    //m_tideChartView->chart()->addSeries(m_selectionSeries);
+
+    //m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
+    //m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
+
+    //m_series->clear();
+    //m_series->append(m_tidalTableModel->measurementDataRealPoints().toList());
+    QApplication::restoreOverrideCursor();
 }
 
 

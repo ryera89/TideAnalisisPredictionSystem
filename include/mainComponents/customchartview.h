@@ -20,6 +20,7 @@ signals:
     void seriesPoint(QPointF point);
     void seriesPointPressed(QPointF point);
     void seriesPointsPressedAndRealesed(QPointF pPoint, QPointF rPoint);
+    void deleteSelectedPointsOnGraph();
 protected:
     void keyPressEvent(QKeyEvent *event);
     void wheelEvent(QWheelEvent *event);

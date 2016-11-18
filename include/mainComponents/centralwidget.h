@@ -28,7 +28,7 @@ public:
     QSplineSeries* chartSerie() const{return m_series;} //CAmbiar esto
     QTableView* tableView() const{return m_tidalTableView;}
     QChartView* chartView() const{return m_tideChartView;}
-    ReadOnlyTableModel* tableModel() const{return m_tidalTableModel;}
+    TableModel* tableModel() const{return m_tidalTableModel;}
 
 
 signals:
@@ -47,6 +47,13 @@ private slots:
     void getAndDisplayCursorPosInSeries(QPointF point);
     void getAndDisplayClickedPosInSeries(QPointF point);
     void setPointSelectedRange(QPointF pPoint, QPointF rPoint);
+    void deleteSelectedPointOnGraph();
+
+    void updateSeriesData(const QModelIndex &topLeft, const QModelIndex &bottomRight,
+                          const QVector<int> &roles = QVector<int> ());
+
+    void updateSeriesDataAtRowRemove(const QModelIndex &parent, int in, int last);
+
 private:
     //Table Facilities
     QTableView *m_tidalTableView;
@@ -71,8 +78,8 @@ private:
     DisplayedDataLabels *m_cursorPosDDLabel;
 
     //Storage and sync facilities
-    ReadOnlyTableModel *m_tidalTableModel;
-    XYTidalChartModelMapper *m_mapper;
+    TableModel *m_tidalTableModel;
+    //XYTidalChartModelMapper *m_mapper;
 
 
     int m_currentXZoomLevel;
@@ -81,6 +88,8 @@ private:
     void setInterfazLayout();
     void settingUpTable();
     void settingZoomPosibleValues();
+
+    void deletePoints();
 
 };
 

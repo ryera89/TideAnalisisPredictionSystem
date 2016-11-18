@@ -6,7 +6,7 @@
 #include "include/measurement/measurement.h"
 #include <QVector>
 #include <QModelIndex>
-
+#include <QPointF>
 
 class TableModel : public QAbstractTableModel
 {
@@ -42,7 +42,7 @@ public:
     void setMeasurements(const QVector<TidesMeasurement> &measurement);
 
     QVector<TidesMeasurement> measurementData() const{return measurements;}
-
+    QVector<QPointF> measurementDataRealPoints() const;
 private:
     QVector<TidesMeasurement> measurements;
     QStringList headers;
