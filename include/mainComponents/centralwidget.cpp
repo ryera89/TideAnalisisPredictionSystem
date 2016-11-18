@@ -256,6 +256,7 @@ void CentralWidget::getAndDisplayCursorPosInSeries(QPointF point)
 
 void CentralWidget::getAndDisplayClickedPosInSeries(QPointF point)
 {
+    m_selectionSeries->clear();
     QVector<QPointF> seriesPointsVector;
     foreach (QPointF p, m_series->pointsVector()) {
         seriesPointsVector.append(m_tideChart->mapToPosition(p,m_series));
@@ -274,6 +275,8 @@ void CentralWidget::getAndDisplayClickedPosInSeries(QPointF point)
     }
     if (distance <= 5){
         QPointF selectedPoint = m_tideChart->mapToValue(closest,m_series);
+        m_selectionSeries->append(selectedPoint);
+
         QDateTime time = QDateTime::fromMSecsSinceEpoch(selectedPoint.x());
 
         m_selectionIniDDLabel->setInternalData(time,selectedPoint.y());

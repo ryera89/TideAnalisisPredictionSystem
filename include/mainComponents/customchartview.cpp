@@ -93,7 +93,7 @@ void customChartView::mousePressEvent(QMouseEvent *event)
     }else{
         QChartView::mousePressEvent(event);
     }*/
-    emit seriesPointPressed(event->pos());
+    //emit seriesPointPressed(event->pos());
     m_pressedMousePosition = event->pos();
     setRubberBand(QChartView::HorizontalRubberBand);
     QChartView::mousePressEvent(event);
@@ -104,7 +104,11 @@ void customChartView::mouseReleaseEvent(QMouseEvent *event)
     m_releasedMousePosition = event->pos();
     this->setRubberBand(QChartView::NoRubberBand);
 
-    emit seriesPointsPressedAndRealesed(m_pressedMousePosition,m_releasedMousePosition);
+    if (qAbs(m_pressedMousePosition.x() - m_releasedMousePosition.x()) <= 4){
+        emit seriesPointPressed(m_releasedMousePosition);
+    }else emit seriesPointsPressedAndRealesed(m_pressedMousePosition,m_releasedMousePosition);
+
+
 }
 
 
