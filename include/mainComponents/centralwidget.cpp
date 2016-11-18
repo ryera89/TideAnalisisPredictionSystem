@@ -311,9 +311,17 @@ void CentralWidget::setPointSelectedRange(QPointF pPoint, QPointF rPoint)
     QPointF rSeriesPoint = m_tideChart->mapToValue(rPoint,m_series);
 
     foreach (QPointF point, m_series->pointsVector()) {
-        if (point.x() >= pSeriesPoint.x() && point.x() <= rSeriesPoint.x()){
-            m_selectionSeries->append(point);
-            std::cout << point.x() << " " << point.y() << std::endl;
+        if (pSeriesPoint.x() <= rSeriesPoint.x()){
+            if (point.x() >= pSeriesPoint.x() && point.x() <= rSeriesPoint.x()){
+                m_selectionSeries->append(point);
+                //std::cout << point.x() << " " << point.y() << std::endl;
+            }
+        }else{
+            if (point.x() >= rSeriesPoint.x() && point.x() <= pSeriesPoint.x()){
+                m_selectionSeries->append(point);
+                //std::cout << point.x() << " " << point.y() << std::endl;
+            }
+
         }
     }
 
