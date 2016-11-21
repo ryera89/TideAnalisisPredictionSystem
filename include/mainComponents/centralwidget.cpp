@@ -117,12 +117,14 @@ void CentralWidget::setSeriesData()
     settingZoomPosibleValues();
     //NOTE: Si luego hay problemas es por haber comentariado esto
     m_series->clear();
+    m_mapForValuesInMainAndSelectionSeries.clear();
     m_tideChartView->chart()->removeAxis(m_timeAxis);
     m_tideChartView->chart()->removeAllSeries();
 
     m_series = new QSplineSeries;
     m_series->setPointsVisible(true);
     m_selectionSeries = new QScatterSeries;
+    m_selectionSeries->setMarkerSize(8);
     //m_scatterSerie = new QScatterSeries;
     //m_scatterSerie->setColor(Qt::red);
     //m_scatterSerie->setMarkerSize(5);
@@ -257,6 +259,8 @@ void CentralWidget::getAndDisplayCursorPosInSeries(QPointF point)
 void CentralWidget::getAndDisplayClickedPosInSeries(QPointF point)
 {
     m_selectionSeries->clear();
+    m_mapForValuesInMainAndSelectionSeries.clear();
+
     QVector<QPointF> seriesPointsVector;
     foreach (QPointF p, m_series->pointsVector()) {
         seriesPointsVector.append(m_tideChart->mapToPosition(p,m_series));
@@ -265,17 +269,22 @@ void CentralWidget::getAndDisplayClickedPosInSeries(QPointF point)
     qreal distance = INT64_MAX; //distancia al punto
     QPointF closest(INT64_MAX, INT64_MAX); //punto mas cercano
 
+    int posInMainSeries = 0;
+    int cont = 0;
     foreach (QPointF po, seriesPointsVector) {
         qreal currentDist = qSqrt(qPow((po.y() - point.y()),2) + qPow((po.x() - point.x()),2));
 
         if (currentDist < distance){
             distance = currentDist;
             closest = po;
+            posInMainSeries = cont;
         }
+        ++cont;
     }
     if (distance <= 5){
         QPointF selectedPoint = m_tideChart->mapToValue(closest,m_series);
         m_selectionSeries->append(selectedPoint);
+        m_mapForValuesInMainAndSelectionSeries[posInMainSeries] = 0;
 
         QDateTime time = QDateTime::fromMSecsSinceEpoch(selectedPoint.x());
 
@@ -310,22 +319,29 @@ void CentralWidget::setPointSelectedRange(QPointF pPoint, QPointF rPoint)
         m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
     }*/
     m_selectionSeries->clear();
+    m_mapForValuesInMainAndSelectionSeries.clear();
+
     QPointF pSeriesPoint = m_tideChart->mapToValue(pPoint,m_series);
     QPointF rSeriesPoint = m_tideChart->mapToValue(rPoint,m_series);
 
+    int posInMain = 0;
+    int posInSelection = 0;
     foreach (QPointF point, m_series->pointsVector()) {
         if (pSeriesPoint.x() <= rSeriesPoint.x()){
             if (point.x() >= pSeriesPoint.x() && point.x() <= rSeriesPoint.x()){
                 m_selectionSeries->append(point);
-                //std::cout << point.x() << " " << point.y() << std::endl;
+                m_mapForValuesInMainAndSelectionSeries[posInMain] = posInSelection;
+                ++posInSelection;
             }
         }else{
             if (point.x() >= rSeriesPoint.x() && point.x() <= pSeriesPoint.x()){
                 m_selectionSeries->append(point);
-                //std::cout << point.x() << " " << point.y() << std::endl;
+                m_mapForValuesInMainAndSelectionSeries[posInMain] = posInSelection;
+                ++posInSelection;
             }
 
         }
+        ++posInMain;
     }
 
 }
@@ -358,8 +374,29 @@ void CentralWidget::deleteSelectedPointOnGraph()
 
 }
 
+void CentralWidget::updateSelectionSeriesData(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
+{
+    Q_UNUSED(roles);
+
+    int topRow = topLeft.row();
+    int bottomRow = bottomRight.row();
+
+    if (m_selectionSeries->pointsVector().isEmpty()) return;
+
+    for (int i = topRow; i <= bottomRow; ++i){
+        if (m_mapForValuesInMainAndSelectionSeries.contains(i)){
+           qreal y_value = m_series->at(i).y();
+           qreal x_value = m_series->at(i).x();
+
+           m_selectionSeries->replace(m_mapForValuesInMainAndSelectionSeries[i],x_value,y_value);
+        }
+    }
+}
+
 void CentralWidget::updateSeriesData(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
 {
+    //Q_UNUSED(roles);
+
     int topRow = topLeft.row();
     int bottomRow = bottomRight.row();
 
@@ -396,14 +433,36 @@ void CentralWidget::updateSeriesData(const QModelIndex &topLeft, const QModelInd
         }
 
     }
+    updateSelectionSeriesData(topLeft,bottomRight,roles);
 }
 
 void CentralWidget::updateSeriesDataAtRowRemove(const QModelIndex &parent, int in, int last)
 {
     Q_UNUSED(parent);
 
-    m_series->removePoints(in,last-in+1);
+    m_series->removePoints(in,last-in+1); //Elimina los datos de la serie principal
 
+    if (!m_selectionSeries->pointsVector().isEmpty()){ //Update los datos de la series para la seleccion
+        int cont = 0;
+        int begin = 0;
+        QVector<int> pointsMarker;
+        bool flag = true;
+        for (int i = in; i <= last; ++i){
+            if (m_mapForValuesInMainAndSelectionSeries.contains(i)){
+                if (flag) {begin = i; flag = false;}
+                pointsMarker.append(i);
+                ++cont;
+            }
+        }
+        if (!cont) return; //si no existen coincidencia retorna
+        int selectionBeginin = m_mapForValuesInMainAndSelectionSeries[begin];
+        //int selectionEnding = m_mapForValuesInMainAndSelectionSeries[storePointForDelete.last()];
+
+        m_selectionSeries->removePoints(selectionBeginin,cont);
+        foreach (int mark, pointsMarker) {
+            m_mapForValuesInMainAndSelectionSeries.remove(mark); //REmueve los puntos del map
+        }
+    }
 }
 void CentralWidget::createComponents()
 {
@@ -427,6 +486,7 @@ void CentralWidget::createComponents()
     connect(m_tidalTableModel,SIGNAL(modelReset()),this,SLOT(setSeriesData()));
 
     m_selectionSeries = new QScatterSeries;
+    m_selectionSeries->setMarkerSize(8);
 
     m_tideChartView = new customChartView(m_tideChart,this);
 
@@ -596,8 +656,9 @@ void CentralWidget::deletePoints()
              ++i;
         }
     }
-    m_tidalTableModel->removeRows(begin,maxFlag,QModelIndex());
     m_selectionSeries->clear(); //vacia la serie donde se almacenan los datos seleccionados
+    m_mapForValuesInMainAndSelectionSeries.clear();
+    m_tidalTableModel->removeRows(begin,maxFlag,QModelIndex());
     //m_tideChartView->chart()->addSeries(m_series);
     //m_tideChartView->chart()->addSeries(m_selectionSeries);
 

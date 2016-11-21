@@ -606,8 +606,8 @@ void SPMmainWindow::createActions()
     m_tablaHorariadeMareaAction = new QAction(QIcon(":/images/timetable.png"),tr("Tabla Horaria"),this);
     m_tablaHorariadeMareaAction->setToolTip(tr("Tabla horaria de marea"));
     connect(m_tablaHorariadeMareaAction,SIGNAL(triggered(bool)),this,SLOT(crearTablaHoraria()));
-    m_harmonicAnalisisAction = new QAction(tr("Análisis Armónico"),this);
-    //TODO: icon
+
+    m_harmonicAnalisisAction = new QAction(QIcon(":images/harmonic-analisis.png"),tr("Análisis Armónico"),this);
     m_harmonicAnalisisAction->setToolTip(tr("Análisis Armónico"));
     connect(m_harmonicAnalisisAction,SIGNAL(triggered(bool)),this,SLOT(createHarmonicAnalisisDialog()));
     m_nonHarmonicAnalisisAction = new QAction(tr("Constantes No Armonicas"),this);
@@ -757,6 +757,7 @@ void SPMmainWindow::createToolBars()
 
     m_analsisToolBar = addToolBar(tr("Analisis"));
     m_analsisToolBar->addAction(m_tablaHorariadeMareaAction);
+    m_analsisToolBar->addAction(m_harmonicAnalisisAction);
 }
 
 void SPMmainWindow::syncData(const QVector<HarmonicConstant> &components) //Para sync si hay un cambio en los componentes que se editan en otra facilidad

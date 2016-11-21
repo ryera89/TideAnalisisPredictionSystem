@@ -33,8 +33,8 @@ void MyHeader::createContextMenu()
 {
     m_contextMenu = new QMenu;
 
-    m_removeRowAction = new QAction(QIcon(":images/Remove.png"),tr("Eliminar fila"));
-    m_insertRowAction = new QAction(QIcon(":images/Add.png"),tr("Insertar fila"));
+    m_removeRowAction = new QAction(QIcon(":images/table_row_delete.png"),tr("Eliminar fila"));
+    m_insertRowAction = new QAction(QIcon(":images/table_row_new.png"),tr("Insertar fila"));
     connect(m_removeRowAction,SIGNAL(triggered(bool)),this,SIGNAL(removeRowActionTriggered(bool)));
 
     m_contextMenu->addAction(m_insertRowAction);

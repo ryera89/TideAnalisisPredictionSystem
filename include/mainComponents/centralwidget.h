@@ -49,10 +49,12 @@ private slots:
     void setPointSelectedRange(QPointF pPoint, QPointF rPoint);
     void deleteSelectedPointOnGraph();
 
+    void updateSelectionSeriesData(const QModelIndex &topLeft, const QModelIndex &bottomRight,
+                                   const QVector<int> &roles);
     void updateSeriesData(const QModelIndex &topLeft, const QModelIndex &bottomRight,
                           const QVector<int> &roles = QVector<int> ());
 
-    void updateSeriesDataAtRowRemove(const QModelIndex &parent, int in, int last);
+    void updateSeriesDataAtRowRemove(const QModelIndex &parent, int in, int last); //Update series in data elimination
 
 private:
     //Table Facilities
@@ -83,6 +85,7 @@ private:
 
 
     int m_currentXZoomLevel;
+    QHash<int, int> m_mapForValuesInMainAndSelectionSeries;
 
     void createComponents();
     void setInterfazLayout();
