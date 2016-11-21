@@ -297,26 +297,32 @@ void LoadDialog::fillFirstAndLastHeigth(int index)
     else m_lastPointHeigthEdit->setText("");
 }
 
-void LoadDialog::enableTimeFormatEdit(int index)
+/*void LoadDialog::enableTimeFormatEdit(const QString &str)
 {
-    if (index == 3){
+    if (str == "otro"){
         m_timeFormatLineEdit->setEnabled(true);
     }else{
         m_timeFormatLineEdit->setDisabled(true);
     }
-}
+}*/
 
-void LoadDialog::enableDateFormatEdit(int index)
+/*void LoadDialog::enableDateFormatEdit(const QString &str)
 {
-    if (index == 4){
+    if (str == "otro"){
         m_dateFormatLineEdit->setEnabled(true);
     }else{
         m_dateFormatLineEdit->setDisabled(true);
     }
-}
+}*/
 
 void LoadDialog::setTimeFormat(const QString &format)
 {
+    if (format == "otro"){
+        m_timeFormatLineEdit->setEnabled(true);
+    }else{
+        m_timeFormatLineEdit->setDisabled(true);
+    }
+
     m_timeFormat = format;
 
     enableImportButton();
@@ -324,6 +330,12 @@ void LoadDialog::setTimeFormat(const QString &format)
 
 void LoadDialog::setDateFormat(const QString &format)
 {
+    if (format == "otro"){
+        m_dateFormatLineEdit->setEnabled(true);
+    }else{
+        m_dateFormatLineEdit->setDisabled(true);
+    }
+
     m_dateFormat = format;
 
     enableImportButton();
@@ -512,7 +524,7 @@ void LoadDialog::settingUpEveryThing()
     m_dateFormat = m_dateFormatComboBox->currentText();
 
     connect(m_dateFormatComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(setDateFormat(QString)));
-    connect(m_dateFormatComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(enableDateFormatEdit(int)));
+    //connect(m_dateFormatComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(enableDateFormatEdit(QString)));
 
     QVBoxLayout *dateFormatLayout = new QVBoxLayout;
     dateFormatLayout->addWidget(m_dateFormatComboBox);
@@ -536,7 +548,7 @@ void LoadDialog::settingUpEveryThing()
     m_timeFormat = m_timeFormatComboBox->currentText();
 
     connect(m_timeFormatComboBox,SIGNAL(currentIndexChanged(QString)),this,SLOT(setTimeFormat(QString)));
-    connect(m_timeFormatComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(enableTimeFormatEdit(int)));
+    //connect(m_timeFormatComboBox,SIGNAL(currentIndexChanged(QStri)),this,SLOT(enableTimeFormatEdit(int)));
 
     QVBoxLayout *timeFormatLayout = new QVBoxLayout;
     timeFormatLayout->addWidget(m_timeFormatComboBox);

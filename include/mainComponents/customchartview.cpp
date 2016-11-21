@@ -95,11 +95,15 @@ void customChartView::wheelEvent(QWheelEvent *event)
 
 void customChartView::mouseMoveEvent(QMouseEvent *event)
 {
-    if (chart()->series().first()){
-        QPointF seriesPos = chart()->mapToValue(event->pos(),chart()->series().first()); //Ver esto pues quizas debemos cambiar
-        m_currentMousePos = event->pos();
+    if (this->chart()->plotArea().contains(event->pos())){
+        if (chart()->series().first()){
+            QPointF seriesPos = chart()->mapToValue(event->pos(),chart()->series().first()); //Ver esto pues quizas debemos cambiar
+            m_currentMousePos = event->pos();
 
-        emit seriesPoint(seriesPos);
+            emit seriesPoint(seriesPos);
+
+            if (rubberBand() != QChartView::NoRubberBand) emit selectionUpdated(m_pressedMousePosition,m_currentMousePos);
+        }
     }
     QChartView::mouseMoveEvent(event);
 }
@@ -114,19 +118,29 @@ void customChartView::mousePressEvent(QMouseEvent *event)
         QChartView::mousePressEvent(event);
     }*/
     //emit seriesPointPressed(event->pos());
-    m_pressedMousePosition = event->pos();
-    setRubberBand(QChartView::HorizontalRubberBand);
+    if (this->chart()->plotArea().contains(event->pos())){
+        m_pressedMousePosition = event->pos();
+        setRubberBand(QChartView::HorizontalRubberBand);
+    }
     QChartView::mousePressEvent(event);
 }
 
 void customChartView::mouseReleaseEvent(QMouseEvent *event)
 {
-    m_releasedMousePosition = event->pos();
-    this->setRubberBand(QChartView::NoRubberBand);
+    if (this->rubberBand() != QChartView::NoRubberBand){
+        if (this->chart()->plotArea().contains(QPoint(event->pos().x(),chart()->plotArea().y()))) {m_releasedMousePosition = event->pos();
+        }else{
+            if (event->pos().x() > chart()->plotArea().left() + chart()->plotArea().width()) m_releasedMousePosition = QPointF(chart()->plotArea().left() + chart()->plotArea().width(),event->pos().y());
+            else m_releasedMousePosition = QPointF(this->chart()->plotArea().left(),event->pos().y());
+        }
+            //m_releasedMousePosition = QPointF(this->chart()->plotArea().left() + this->chart()->plotArea().width(),event->pos().y());
 
-    if (qAbs(m_pressedMousePosition.x() - m_releasedMousePosition.x()) <= 4){
-        emit seriesPointPressed(m_releasedMousePosition);
-    }else emit seriesPointsPressedAndRealesed(m_pressedMousePosition,m_releasedMousePosition);
+            this->setRubberBand(QChartView::NoRubberBand);
+
+        if (qAbs(m_pressedMousePosition.x() - m_releasedMousePosition.x()) <= 4){
+            emit seriesPointPressed(m_releasedMousePosition);
+        }else emit seriesPointsPressedAndRealesed(m_pressedMousePosition,m_releasedMousePosition);
+    }
 
 
 }

@@ -78,7 +78,8 @@ SOURCES += main.cpp\
     include/mainComponents/mychart.cpp \
     include/NonHarmonicConstantsModule/FrontEnd/displayresultwidget.cpp \
     include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.cpp \
-    include/MeasurementUnitEditWidget/measurementuniteditwidget.cpp
+    include/MeasurementUnitEditWidget/measurementuniteditwidget.cpp \
+    include/SelectionRangeLabel/selectionrangelabel.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -147,7 +148,8 @@ HEADERS  += \
     include/mainComponents/mychart.h \
     include/NonHarmonicConstantsModule/FrontEnd/displayresultwidget.h \
     include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.h \
-    include/MeasurementUnitEditWidget/measurementuniteditwidget.h
+    include/MeasurementUnitEditWidget/measurementuniteditwidget.h \
+    include/SelectionRangeLabel/selectionrangelabel.h
 
 RESOURCES += \
     images.qrc

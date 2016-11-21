@@ -166,13 +166,6 @@ void CentralWidget::setSeriesData()
 
     //m_mapper->setSeries(m_series);
 
-    QVector<QPointF> Points = m_series->pointsVector();
-
-    int i = 1;
-    foreach (QPointF point, Points) {
-        std::cout << i << " " << point.x() << " " << point.y() << std::endl;
-        ++i;
-    }
 }
 
 void CentralWidget::zoomXAxis(int level)
@@ -288,7 +281,7 @@ void CentralWidget::getAndDisplayClickedPosInSeries(QPointF point)
 
         QDateTime time = QDateTime::fromMSecsSinceEpoch(selectedPoint.x());
 
-        m_selectionIniDDLabel->setInternalData(time,selectedPoint.y());
+        m_selectionPointRange->setInternalData(time,selectedPoint.y(),time,selectedPoint.y());
     }
     /*QVector<QPointF> seriesPointsVector = m_series->pointsVector();
 
@@ -343,7 +336,7 @@ void CentralWidget::setPointSelectedRange(QPointF pPoint, QPointF rPoint)
         }
         ++posInMain;
     }
-
+    updateDisplayRangeLabel();
 }
 
 void CentralWidget::deleteSelectedPointOnGraph()
@@ -464,6 +457,42 @@ void CentralWidget::updateSeriesDataAtRowRemove(const QModelIndex &parent, int i
         }
     }
 }
+
+void CentralWidget::updateOnRealTimeSelectionRange(QPointF iniPos, QPointF currentPos)
+{
+    QPointF iniPoint;
+    QPointF currentPoint;
+
+    if (iniPos.x() <= currentPos.x()){
+        iniPoint = m_tideChart->mapToValue(iniPos,m_series);
+        currentPoint = m_tideChart->mapToValue(currentPos,m_series);
+    }else{
+        iniPoint = m_tideChart->mapToValue(currentPos,m_series);
+        currentPoint = m_tideChart->mapToValue(iniPos,m_series);
+    }
+
+    QDateTime iniDateTime = QDateTime::fromMSecsSinceEpoch(iniPoint.x());
+    qreal iniValue = iniPoint.y();
+
+    QDateTime endDateTime = QDateTime::fromMSecsSinceEpoch(currentPoint.x());
+    qreal endValue = currentPoint.y();
+
+    m_selectionPointRange->setInternalData(iniDateTime,iniValue,endDateTime,endValue);
+
+}
+
+void CentralWidget::updateDisplayRangeLabel()
+{
+    if (!m_selectionSeries->pointsVector().isEmpty()){
+        QDateTime iniDateTime = QDateTime::fromMSecsSinceEpoch(m_selectionSeries->pointsVector().first().x());
+        qreal iniValue = m_selectionSeries->pointsVector().first().y();
+
+        QDateTime endDateTime = QDateTime::fromMSecsSinceEpoch(m_selectionSeries->pointsVector().last().x());
+        qreal endValue = m_selectionSeries->pointsVector().last().y();
+
+        m_selectionPointRange->setInternalData(iniDateTime,iniValue,endDateTime,endValue);
+    }
+}
 void CentralWidget::createComponents()
 {
     //QVector<TidesMeasurement> measurement = readTidesDataFromCVSFile("files/prueba7.csv"); //NOTE: probando remover despues
@@ -510,6 +539,7 @@ void CentralWidget::createComponents()
     connect(m_tideChartView,SIGNAL(seriesPointPressed(QPointF)),this,SLOT(getAndDisplayClickedPosInSeries(QPointF)));
     connect(m_tideChartView,SIGNAL(seriesPointsPressedAndRealesed(QPointF,QPointF)),this,SLOT(setPointSelectedRange(QPointF,QPointF)));
     connect(m_tideChartView,SIGNAL(deleteSelectedPointsOnGraph()),this,SLOT(deleteSelectedPointOnGraph()));
+    connect(m_tideChartView,SIGNAL(selectionUpdated(QPointF,QPointF)),this,SLOT(updateOnRealTimeSelectionRange(QPointF,QPointF)));
     //Display facilities
     m_rangeSlider =  new QSlider(Qt::Horizontal,this);
     m_rangeSpinBox = new QSpinBox(this);
@@ -525,18 +555,28 @@ void CentralWidget::createComponents()
     //rangeGroupBox->setLayout(rangeLayout);
     //rangeGroupBox->setFixedWidth(200);
 
-    m_selectionIniDDLabel = new DisplayedDataLabels(this);
-    m_selectionIniDDLabel->setLabel(tr("Seleccion"));
-    m_selectionIniDDLabel->setFixedWidth(200);
-    m_selectionIniDDLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+    //m_selectionIniDDLabel = new DisplayedDataLabels(this);
+    //QFont selectionLabelFont = m_selectionIniDDLabel->font();
+    //selectionLabelFont.setBold(true);
+    //m_selectionIniDDLabel->setFont(selectionLabelFont);
+    //m_selectionIniDDLabel->setLabel(tr("Seleccion"));
+    //m_selectionIniDDLabel->setFixedWidth(200);
+    //m_selectionIniDDLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
-    m_selectionEndDDLabel = new DisplayedDataLabels(this);
-    m_selectionEndDDLabel->setLabel(tr("Fin"));
+    //m_selectionEndDDLabel = new DisplayedDataLabels(this);
+    //m_selectionEndDDLabel->setLabel(tr("Fin"));
 
     m_cursorPosDDLabel = new DisplayedDataLabels(this);
+    QFont labelFont = m_cursorPosDDLabel->font();
+    labelFont.setBold(true);
+    m_cursorPosDDLabel->setFont(labelFont);
     m_cursorPosDDLabel->setLabel(tr("Cursor"));
     m_cursorPosDDLabel->setFixedWidth(200);
     m_cursorPosDDLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+
+    m_selectionPointRange = new SelectionRangeLabel(tr("Selección"),this);
+    m_selectionPointRange->setFixedWidth(450);
+    m_selectionPointRange->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
     //QHBoxLayout *cursorLayout =  new QHBoxLayout;
     //cursorLayout->addWidget(m_cursorPosDDLabel);
@@ -555,35 +595,35 @@ void CentralWidget::createComponents()
 
 void CentralWidget::setInterfazLayout()
 {
-    QHBoxLayout *selectionLayout = new QHBoxLayout;
+    //QHBoxLayout *selectionLayout = new QHBoxLayout;
     //selectionLayout->addWidget(m_selectionIniDDLabel);
-    selectionLayout->addWidget(m_selectionEndDDLabel);
+    //selectionLayout->addWidget(m_selectionEndDDLabel);
 
-    QGroupBox *selectionGroupBox = new QGroupBox(tr("Seleccion"),this);
-    selectionGroupBox->setAlignment(Qt::AlignCenter);
-    selectionGroupBox->setLayout(selectionLayout);
+    //QGroupBox *selectionGroupBox = new QGroupBox(tr("Seleccion"),this);
+    //selectionGroupBox->setAlignment(Qt::AlignCenter);
+    //selectionGroupBox->setLayout(selectionLayout);
 
-    QHBoxLayout *displayLayout = new QHBoxLayout; //Parte de arriba
-    displayLayout->addWidget(selectionGroupBox);
+    //QHBoxLayout *displayLayout = new QHBoxLayout; //Parte de arriba
+    //displayLayout->addWidget(selectionGroupBox);
     //displayLayout->addWidget(cursorGroupBox);
 
-    QGroupBox *displayGroupBox = new QGroupBox;
-    displayGroupBox->setLayout(displayLayout);
+    //QGroupBox *displayGroupBox = new QGroupBox;
+    //displayGroupBox->setLayout(displayLayout);
 
-    QHBoxLayout *leftLayout = new QHBoxLayout;
+    //QHBoxLayout *leftLayout = new QHBoxLayout;
     //leftLayout->addWidget(rangeGroupBox);
-    leftLayout->addWidget(displayGroupBox);
+    //leftLayout->addWidget(displayGroupBox);
 
     QHBoxLayout *rangeLayout = new QHBoxLayout; //Parte de Abajo
     rangeLayout->addWidget(m_cursorPosDDLabel);
-    rangeLayout->addWidget(m_selectionIniDDLabel);
+    rangeLayout->addWidget(m_selectionPointRange);
     rangeLayout->addWidget(m_rangeSlider);
     rangeLayout->addWidget(m_rangeSpinBox);
 
     //rangeLayout->setSpacing(0);
 
     QVBoxLayout *rigthLayout = new QVBoxLayout;
-    rigthLayout->addLayout(leftLayout);
+    //rigthLayout->addLayout(leftLayout);
     rigthLayout->addWidget(m_tideChartView);
     rigthLayout->addLayout(rangeLayout);
 

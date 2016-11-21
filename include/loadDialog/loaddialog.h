@@ -62,8 +62,8 @@ public slots:
     void fillFirstAndLastHeigth(int index);
 
 private slots:
-    void enableTimeFormatEdit(int index);
-    void enableDateFormatEdit(int index);
+    //void enableTimeFormatEdit(const QString &str);
+    //void enableDateFormatEdit(const QString &str);
 
     void setTimeFormat(const QString &format);
     void setDateFormat(const QString &format);

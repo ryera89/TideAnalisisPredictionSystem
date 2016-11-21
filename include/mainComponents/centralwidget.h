@@ -11,6 +11,7 @@ class QTableView;
 #include "include/model_view/tidaltabledelegate.h"
 #include "include/model_view/readonlytablemodel.h"
 #include "customchartview.h"
+#include "include/SelectionRangeLabel/selectionrangelabel.h"
 #include <iostream>
 
 class DisplayedDataLabels;
@@ -56,6 +57,7 @@ private slots:
 
     void updateSeriesDataAtRowRemove(const QModelIndex &parent, int in, int last); //Update series in data elimination
 
+    void updateOnRealTimeSelectionRange(QPointF iniPos, QPointF currentPos);
 private:
     //Table Facilities
     QTableView *m_tidalTableView;
@@ -75,9 +77,10 @@ private:
     QSpinBox *m_rangeSpinBox;
     //DisplayedDataLabels *m_rangeIniDDLabel;
     //DisplayedDataLabels *m_rangeEndDDLabel;
-    DisplayedDataLabels *m_selectionIniDDLabel;
-    DisplayedDataLabels *m_selectionEndDDLabel;
+    //DisplayedDataLabels *m_selectionIniDDLabel;
+    //DisplayedDataLabels *m_selectionEndDDLabel;
     DisplayedDataLabels *m_cursorPosDDLabel;
+    SelectionRangeLabel *m_selectionPointRange;
 
     //Storage and sync facilities
     TableModel *m_tidalTableModel;
@@ -93,7 +96,7 @@ private:
     void settingZoomPosibleValues();
 
     void deletePoints();
-
+    void updateDisplayRangeLabel();
 };
 
 #endif // CENTRALWIDGET_H
