@@ -127,6 +127,7 @@ void SPMmainWindow::createMetaDataDialog()
 void SPMmainWindow::createNonHarmonicDialog()
 {
     m_nonHarmonicConstantDialog = new NonHarmonicCalcDialog(this);
+    m_nonHarmonicConstantDialog->loadHarmonicConstants(SPMmainWindow::m_selectedHarmonicConstantVector);
     m_nonHarmonicConstantDialog->show();
 }
 

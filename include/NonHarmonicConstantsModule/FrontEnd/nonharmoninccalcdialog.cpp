@@ -7,6 +7,22 @@
 #include <QHBoxLayout>
 #include <QFormLayout>
 #include <QVBoxLayout>
+#include <QMessageBox>
+
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/amplitudrelation.h"
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/semidiurnalrelation.h"
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/hpm.h"
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/horapuesto.h"
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/duracionllenante.h"
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/duracionvaciante.h"
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/creciemientomareadiurna.h"
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/crecimientomareaparactica.h"
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/crecimientomareasemidiurna.h"
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/horacotidianadiurna.h"
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/horacotidianasemidiurna.h"
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/alturapromediomarea.h"
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/alturasemimarea.h"
+#include "include/NonHarmonicConstantsModule/NonHarmonicConstants/pleabajamedia.h"
 
 #include "include/CoordinatesEditionWidget/mycoordinateseditorwidget.h"
 NonHarmonicCalcDialog::NonHarmonicCalcDialog(QWidget *parent):QDialog(parent)
@@ -17,6 +33,65 @@ NonHarmonicCalcDialog::NonHarmonicCalcDialog(QWidget *parent):QDialog(parent)
     setModal(true);
     setAttribute(Qt::WA_DeleteOnClose);
 }
+
+void NonHarmonicCalcDialog::loadHarmonicConstants(const QVector<HarmonicConstant> &harmonicConstants)
+{
+    bool m2Present = false;
+    bool s2Present = false;
+    bool n2Present = false;
+    bool k2Present = false;
+
+    bool k1Present = false;
+    bool o1Present = false;
+    bool p1Present = false;
+    bool q1Present = false;
+
+    bool m4Present = false;
+    bool m6Present = false;
+
+    foreach (HarmonicConstant harmonic, harmonicConstants) {
+        if (harmonic.name() == "M2") {m_M2 = harmonic; m2Present = true;}
+        if (harmonic.name() == "S2") {m_S2 = harmonic; s2Present = true;}
+        if (harmonic.name() == "N2") {m_N2 = harmonic; n2Present = true;}
+        if (harmonic.name() == "K2") {m_K2 = harmonic; k2Present = true;}
+        if (harmonic.name() == "K1") {m_K1 = harmonic; k1Present = true;}
+        if (harmonic.name() == "O1") {m_O1 = harmonic; o1Present = true;}
+        if (harmonic.name() == "P1") {m_P1 = harmonic; p1Present = true;}
+        if (harmonic.name() == "Q1") {m_Q1 = harmonic; q1Present = true;}
+        if (harmonic.name() == "M4") {m_M4 = harmonic; m4Present = true;}
+        if (harmonic.name() == "M6") {m_M6 = harmonic; m6Present = true;}
+    }
+    if (!m2Present || !s2Present || !k1Present || !o1Present){
+        QMessageBox::critical(this,tr("Faltan Componentes Principales"), tr("Alguna/s de las componentes "
+                                                                            "M2, S2, K1, O1 faltan en el "
+                                                                            "analisis armonico. Estas son "
+                                                                            "esenciales para el calculo de "
+                                                                            "las constantes no armonicas."));
+        return;
+    }
+    if (!n2Present || !k2Present || !p1Present || !q1Present || !m4Present || !m6Present){
+        QMessageBox::information(this,tr("Faltan Componentes"), tr("Alguna/s de las componentes"
+                                                                            "N2, K2, P1, Q1, M4, M6 faltan en el"
+                                                                            "analisis armonico. Estas no se "
+                                                                            "tomaran en cuenta para el calculo "
+                                                                            "de las constantes no armonicas"));
+
+
+    }
+    double ampRelation = calculateAmplitudRelation();
+    double semidiurnalRelation = calculateSemidiurnalRelation();
+
+    QFont font = m_ampRelationLineEdit->font();
+    font.setBold(true);
+    m_ampRelationLineEdit->setFont(font);
+    m_semidiurnalRelationLineEdit->setFont(font);
+    m_tipoMareaLineEdit->setFont(font);
+    m_ampRelationLineEdit->setText(QString::number(ampRelation,'g',3));
+    m_semidiurnalRelationLineEdit->setText(QString::number(semidiurnalRelation,'g',3));
+
+    m_tipoMareaLineEdit->setText(tipoDeMarea(ampRelation));
+}
+
 
 void NonHarmonicCalcDialog::calculate(int index)
 {
@@ -78,8 +153,6 @@ void NonHarmonicCalcDialog::createComponents()
     m_closePushButton = new QPushButton(QIcon(":images/No.png"),tr("Cerrar"));
 
     createDisplaysResultWidgets();
-
-
 }
 
 void NonHarmonicCalcDialog::createDisplaysResultWidgets()
@@ -97,6 +170,7 @@ void NonHarmonicCalcDialog::createDisplaysResultWidgets()
 
     foreach (QString title, nonHarmonicNames) {
         displayResultWidget *nonHarmonicConstantDisplay = new displayResultWidget(title);
+        nonHarmonicConstantDisplay->setPushButtonStatus(false);
         m_displayResultWidgetVector.append(nonHarmonicConstantDisplay);
         m_mapper->setMapping(nonHarmonicConstantDisplay,m_displayResultWidgetVector.size()-1);
         connect(nonHarmonicConstantDisplay,SIGNAL(pushButtonClicked()),m_mapper,SLOT(map()));
@@ -166,9 +240,170 @@ void NonHarmonicCalcDialog::setInterfaceLayout()
 
 }
 
-void NonHarmonicCalcDialog::checkForMainComponents()
+double NonHarmonicCalcDialog::calculateAmplitudRelation()
 {
-    foreach (HarmonicConstant component, m_harmonicConstants) {
-        if (component.name())
-    }
+    AmplitudRelation ampR(m_M2, m_K1, m_O1);
+
+    return ampR.amplRelation();
 }
+
+double NonHarmonicCalcDialog::calculateSemidiurnalRelation()
+{
+    SemidiurnalRelation semiR(m_M2,m_S2);
+
+    return semiR.relationS2M2();
+}
+
+QString NonHarmonicCalcDialog::tipoDeMarea(double ampRelation)
+{
+    if (0.0 < ampRelation && 0.5 >= ampRelation) return "MAREA SEMIDIURNA";
+    if (0.5 < ampRelation && 2.0 >= ampRelation) return "MAREA MIXTA SEMIDIURNA IRREGULAR";
+    if (2.0 < ampRelation && 4.0 >= ampRelation) return "MAREA MIXTA DIURNA IRREGULAR";
+    if (4.0 < ampRelation) return "MAREA DIURNA";
+
+    return "ERROR DE DATOS";
+}
+
+double NonHarmonicCalcDialog::calculateHPM()
+{
+    HPM hpm(m_M2,m_M4,m_M6);
+
+    return hpm.HoraPuestoMedia();
+}
+
+double NonHarmonicCalcDialog::calculateHP()
+{
+    HoraPuesto hp(m_M2,m_S2,HPM(m_M2,m_M4,m_M6));
+
+    return hp.HP();
+}
+
+double NonHarmonicCalcDialog::calculateDV()
+{
+    DuracionVaciante dv(m_M2,m_M4,m_M6);
+
+    return dv.DV();
+}
+
+double NonHarmonicCalcDialog::calculateDLL()
+{
+    DuracionLLenante dll(m_M2,m_M4,m_M6);
+
+    return dll.DLL();
+}
+
+double NonHarmonicCalcDialog::calculateCMS()
+{
+   CrecimientoMareaSemidiurna cms(m_M2,m_S2);
+
+   return cms.CMS();
+}
+
+double NonHarmonicCalcDialog::calculateCMP()
+{
+    CrecimientoMareaParactica cmp(m_M2,m_N2);
+
+    cmp.CMP();
+}
+
+double NonHarmonicCalcDialog::calculateCMD()
+{
+    CreciemientoMareaDiurna cmd(m_K1,m_O1);
+
+    return cmd.CMD();
+}
+
+double NonHarmonicCalcDialog::calculateHCMS()
+{
+    HoraCotidianaSemidiurna hcms(m_M2,m_M4,m_M6,m_longitud);
+
+    return hcms.HCS();
+}
+
+double NonHarmonicCalcDialog::calculateHCMD()
+{
+    HoraCotidianaDiurna hcmd(m_K1,m_O1,m_longitud);
+
+    return hcmd.HCD();
+}
+
+double NonHarmonicCalcDialog::calculateAPMS()
+{
+    AlturaPromedioMarea apm(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6);
+
+    return apm.AlturaPromedioSemidiurna();
+}
+
+double NonHarmonicCalcDialog::calculateAPMSS()
+{
+
+    AlturaPromedioMarea apm(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6);
+
+    return apm.AlturaPromedioSicigias();
+}
+
+double NonHarmonicCalcDialog::calculateAPMC()
+{
+
+    AlturaPromedioMarea apm(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6);
+
+    return apm.AlturaPromedioCuadratura();
+}
+
+double NonHarmonicCalcDialog::calculateAPMT()
+{
+
+    AlturaPromedioMarea apm(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6);
+
+    return apm.AlturaPromedioTropical();
+}
+
+double NonHarmonicCalcDialog::calculateAS()
+{
+    AlturaSemimarea as(m_M2,m_K1,m_O1,m_M4,m_nivelMedio);
+
+    return as.AlturaDeSemimarea();
+}
+
+double NonHarmonicCalcDialog::calculatePMS()
+{
+    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_nivelMedio));
+
+    return pbm.PleamarMediaSicigias();
+}
+
+double NonHarmonicCalcDialog::calculatePMC()
+{
+    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_nivelMedio));
+
+    return pbm.PleamarMediaCuadratura();
+}
+
+double NonHarmonicCalcDialog::calculatePMMT()
+{
+    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_nivelMedio));
+
+    return pbm.PleamarMediaTropical();
+}
+
+double NonHarmonicCalcDialog::calculateBMSS()
+{
+    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_nivelMedio));
+
+    return pbm.BajamarMediaSicigias();
+}
+
+double NonHarmonicCalcDialog::calculateBMC()
+{
+    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_nivelMedio));
+
+    return pbm.BajamarMediaCuadratura();
+}
+
+double NonHarmonicCalcDialog::calculateBMMT()
+{
+    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_nivelMedio));
+
+    return pbm.BajamarMediaTropical();
+}
+

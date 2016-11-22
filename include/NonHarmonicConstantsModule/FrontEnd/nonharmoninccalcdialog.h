@@ -63,11 +63,37 @@ private:
     HarmonicConstant m_M4; //Bajo Fondo
     HarmonicConstant m_M6;
 
+    qreal m_longitud;
+    qreal m_nivelMedio;
+
     void createComponents();
     void createDisplaysResultWidgets();
     void setInterfaceLayout();
 
-    void checkForMainComponents();
+    double calculateAmplitudRelation();
+    double calculateSemidiurnalRelation();
+    QString tipoDeMarea(double ampRelation);
+
+    double calculateHPM();
+    double calculateHP();
+    double calculateDV();
+    double calculateDLL();
+    double calculateCMS();
+    double calculateCMP();
+    double calculateCMD();
+    double calculateHCMS();
+    double calculateHCMD();
+    double calculateAPMS();
+    double calculateAPMSS();
+    double calculateAPMC();
+    double calculateAPMT();
+    double calculateAS();
+    double calculatePMS();
+    double calculatePMC();
+    double calculatePMMT();
+    double calculateBMSS();
+    double calculateBMC();
+    double calculateBMMT();
 };
 
 #endif // NONHARMONINCCALCDIALOG_H
