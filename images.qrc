@@ -23,5 +23,7 @@
         <file>images/project-info.png</file>
         <file>images/importButton.png</file>
         <file>images/harmonic-analisis.png</file>
+        <file>images/amplitud_relation.png</file>
+        <file>images/semidiurnal_relation.png</file>
     </qresource>
 </RCC>

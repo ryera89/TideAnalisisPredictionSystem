@@ -228,8 +228,12 @@ void NonHarmonicCalcDialog::createComponents()
 
     m_NMMLabel = new QLabel(tr("Nivel Medio:"));
     m_longitudLabel = new QLabel(tr("Longitud:"));
-    m_ampRelationLabel = new QLabel(tr("Va Imagen!!!"));
-    m_semidiurnalRelationLabel = new QLabel(tr("Va Imagen!!!"));
+    m_ampRelationLabel = new QLabel(this);
+    m_ampRelationLabel->setPixmap(QPixmap(":images/semidiurnal_relation.png"));
+    m_ampRelationLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+    m_semidiurnalRelationLabel = new QLabel(this);
+    m_semidiurnalRelationLabel->setPixmap(QPixmap(":images/amplitud_relation.png"));
+    m_semidiurnalRelationLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
     m_tipoMareaLabel = new QLabel(tr("Tipo de Marea:"),this);
 
     m_NMMSpinBox = new MeasurementUnitEditWidget;
