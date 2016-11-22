@@ -165,3 +165,10 @@ void NonHarmonicCalcDialog::setInterfaceLayout()
     this->setLayout(mainLayout);
 
 }
+
+void NonHarmonicCalcDialog::checkForMainComponents()
+{
+    foreach (HarmonicConstant component, m_harmonicConstants) {
+        if (component.name())
+    }
+}

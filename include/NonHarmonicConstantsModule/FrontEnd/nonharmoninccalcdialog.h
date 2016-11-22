@@ -4,6 +4,7 @@
 #include <QDialog>
 #include "displayresultwidget.h"
 #include <QSignalMapper>
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 
 class QLabel;
 class QDoubleSpinBox;
@@ -15,6 +16,7 @@ class NonHarmonicCalcDialog : public QDialog
 
 public:
     NonHarmonicCalcDialog(QWidget *parent = 0);
+    void loadHarmonicConstants(const QVector<HarmonicConstant> &harmonicConstants);
     ~NonHarmonicCalcDialog(){}
 
 private slots:
@@ -42,16 +44,30 @@ private:
     QLineEdit *m_semidiurnalRelationLineEdit;
     QLineEdit *m_tipoMareaLineEdit;
 
-
     QPushButton *m_calcAllPushButton;
     QPushButton *m_savePushButton;
     QPushButton *m_closePushButton;
 
     QSignalMapper *m_mapper;
 
+    HarmonicConstant m_M2; //Semidiurnal
+    HarmonicConstant m_S2;
+    HarmonicConstant m_N2;
+    HarmonicConstant m_K2;
+
+    HarmonicConstant m_K1; //Diurnal
+    HarmonicConstant m_O1;
+    HarmonicConstant m_P1;
+    HarmonicConstant m_Q1;
+
+    HarmonicConstant m_M4; //Bajo Fondo
+    HarmonicConstant m_M6;
+
     void createComponents();
     void createDisplaysResultWidgets();
     void setInterfaceLayout();
+
+    void checkForMainComponents();
 };
 
 #endif // NONHARMONINCCALCDIALOG_H
