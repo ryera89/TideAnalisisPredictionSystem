@@ -165,11 +165,13 @@ void ManualDataIntroductionWidget::createComponents()
     m_endTimeLabel->setAlignment(Qt::AlignCenter);
 
     m_iniDateEdit = new QDateEdit;
+    m_iniDateEdit->setCalendarPopup(true);
     m_iniDateEdit->setDisplayFormat("yyyy/MM/dd");
     m_iniDateEdit->setMinimumDate(QDate(1970,1,1));
     connect(m_iniDateEdit,SIGNAL(dateChanged(QDate)),this,SLOT(setMinimumDateEditValue(QDate)));
 
     m_endDateEdit = new QDateEdit;
+    m_endDateEdit->setCalendarPopup(true);
     m_endDateEdit->setDisplayFormat("yyyy/MM/dd");
     m_endDateEdit->setMinimumDate(QDate(m_iniDateEdit->date()));
 
@@ -232,19 +234,19 @@ void ManualDataIntroductionWidget::createComponents()
 
     m_buttonsGroupBox = new QGroupBox;
 
-    m_insertPushButton = new QPushButton(QIcon(":images/add.png"),tr("Insertar"));
+    m_insertPushButton = new QPushButton(QIcon(":images/table_row_new.png"),tr("Insertar"));
     m_insertPushButton->setToolTip(tr("Inserta una nueva medición"));
     connect(m_insertPushButton,SIGNAL(clicked(bool)),this,SLOT(insertMeasurement()));
 
-    m_removePushButton = new QPushButton(QIcon(":images/Remove.png"),tr("Eliminar"));
+    m_removePushButton = new QPushButton(QIcon(":images/table_row_delete.png"),tr("Eliminar"));
     m_removePushButton->setToolTip(tr("Elimina la última medición"));
     connect(m_removePushButton,SIGNAL(clicked(bool)),this,SLOT(removeLastMeasurement()));
 
-    m_clearPushButton = new QPushButton(QIcon(":images/Erase.png"),tr("Limpiar"));
+    m_clearPushButton = new QPushButton(QIcon(":images/table_delete.png"),tr("Limpiar"));
     m_clearPushButton->setToolTip(tr("Elimina todas la mediciones"));
     connect(m_clearPushButton,SIGNAL(clicked(bool)),this,SLOT(clearMeasurements()));
 
-    m_okPushButton = new QPushButton(QIcon(":images/OK.png"),tr("Aceptar"));
+    m_okPushButton = new QPushButton(QIcon(":images/Ok.png"),tr("Aceptar"));
     connect(m_okPushButton,SIGNAL(clicked(bool)),this,SIGNAL(okButtonClicked()));
 
     m_cancelPushButton = new QPushButton(QIcon(":images/No.png"),tr("Cancelar"));

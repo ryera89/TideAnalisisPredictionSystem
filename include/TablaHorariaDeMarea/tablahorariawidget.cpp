@@ -132,11 +132,13 @@ void TablaHorariaWidget::createComponents()
     m_minLabel = new QLabel;
 
     m_iniDateEdit = new QDateEdit;
+    m_iniDateEdit->setCalendarPopup(true);
     m_iniDateEdit->setDisplayFormat("dd/MM/yyyy");
     m_iniDateEdit->setDisabled(true);
     connect(m_iniDateEdit,SIGNAL(dateChanged(QDate)),this,SLOT(setMinimumEndDateEditValue(QDate)));
 
     m_endDateEdit = new QDateEdit;
+    m_endDateEdit->setCalendarPopup(true);
     m_endDateEdit->setDisplayFormat("dd/MM/yyyy");
     m_endDateEdit->setDisabled(true);
 

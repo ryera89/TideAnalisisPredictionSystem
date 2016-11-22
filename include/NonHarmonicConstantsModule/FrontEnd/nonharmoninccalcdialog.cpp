@@ -34,6 +34,7 @@ NonHarmonicCalcDialog::NonHarmonicCalcDialog(qreal longitud,QWidget *parent):QDi
     //m_NMMSpinBox->setSpinAndComboBoxesValues(unit,nmm);
     m_longitudEditor->setEditorAndComboValue(longitud);
 
+    this->setWindowIcon(QIcon(":images/non_harmonic-analisis.png"));
     setModal(true);
     setAttribute(Qt::WA_DeleteOnClose);
 }

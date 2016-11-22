@@ -152,7 +152,13 @@ void CentralWidget::setSeriesData()
     //m_tideChartView->chart()->removeSeries(m_series);
     //m_tideChartView->chart()->removeAxis(m_timeAxis);
 
-    m_timeAxis->setRange(QDateTime::fromMSecsSinceEpoch(m_series->at(0).x()),QDateTime::fromMSecsSinceEpoch(m_series->at(0).x() + 24*3600*1000));
+    if (!m_series->pointsVector().isEmpty()){
+        qreal max = m_series->at(0).x() + 24*3600*1000;
+        if (max <= m_series->pointsVector().last().x())
+        m_timeAxis->setRange(QDateTime::fromMSecsSinceEpoch(m_series->at(0).x()),QDateTime::fromMSecsSinceEpoch(max));
+        else m_timeAxis->setRange(QDateTime::fromMSecsSinceEpoch(m_series->at(0).x()),QDateTime::fromMSecsSinceEpoch(m_series->pointsVector().last().x()));
+    }
+
 
     //m_tideChartView->chart()->addSeries(m_series);
     //m_tideChartView->chart()->createDefaultAxes();
@@ -542,6 +548,8 @@ void CentralWidget::createComponents()
     connect(m_tideChartView,SIGNAL(selectionUpdated(QPointF,QPointF)),this,SLOT(updateOnRealTimeSelectionRange(QPointF,QPointF)));
     //Display facilities
     m_rangeSlider =  new QSlider(Qt::Horizontal,this);
+    m_rangeSlider->setFixedWidth(80);
+    m_rangeSlider->setTickInterval(1);
     m_rangeSpinBox = new QSpinBox(this);
 
     m_rangeSlider->setMinimum(1);
@@ -575,7 +583,7 @@ void CentralWidget::createComponents()
     m_cursorPosDDLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
     m_selectionPointRange = new SelectionRangeLabel(tr("Selección"),this);
-    m_selectionPointRange->setFixedWidth(450);
+    m_selectionPointRange->setFixedWidth(370);
     m_selectionPointRange->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
     //QHBoxLayout *cursorLayout =  new QHBoxLayout;
@@ -617,6 +625,7 @@ void CentralWidget::setInterfazLayout()
     QHBoxLayout *rangeLayout = new QHBoxLayout; //Parte de Abajo
     rangeLayout->addWidget(m_cursorPosDDLabel);
     rangeLayout->addWidget(m_selectionPointRange);
+    rangeLayout->addStretch();
     rangeLayout->addWidget(m_rangeSlider);
     rangeLayout->addWidget(m_rangeSpinBox);
 

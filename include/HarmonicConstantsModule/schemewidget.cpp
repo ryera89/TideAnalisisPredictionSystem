@@ -26,6 +26,7 @@ SchemeWidget::SchemeWidget(const QDateTime &iniDateTime, const QDateTime &endDat
     crearComponentes(iniDateTime,endDateTime,schemesLabels,componentsLabels);
     interfazLayout();
 
+    setWindowIcon(QIcon(":images/harmonic-analisis.png"));
     this->setModal(true);
     this->setAttribute(Qt::WA_DeleteOnClose);
 }
@@ -311,6 +312,7 @@ void SchemeWidget::interfazLayout()
     QVBoxLayout *mainLeftLayout = new QVBoxLayout;
     mainLeftLayout->addWidget(m_dataSelectionComboBox);
     mainLeftLayout->addWidget(m_customDataSelectionGroupBox);
+    mainLeftLayout->addStretch();
     mainLeftLayout->addWidget(buttonGroupBox);
 
     m_dataSelectionGroupBox->setLayout(mainLeftLayout);

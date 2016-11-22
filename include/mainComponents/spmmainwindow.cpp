@@ -61,7 +61,7 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
    // mainLayout->addWidget(m_freqEditor);
 
     //this->layout()->addItem(mainLayout);
-
+    setWindowIcon(QIcon(":images/aquarius-48.png"));
 }
 
 QVector<double> SPMmainWindow::funcion(const double &t)
@@ -109,12 +109,16 @@ void SPMmainWindow::createManualDataIntWidget()
 
 void SPMmainWindow::crearTablaHoraria()
 {
+    if (m_central->tableModel()->measurementData().isEmpty()){
+        QMessageBox::information(this,tr("Error"),tr("No existen datos validos que mostrar"));
+    }else{
     TidalData data(m_central->tableModel()->measurementData());
     m_tablaHorariaWidget = new TablaHorariaWidget;
     m_tablaHorariaWidget->loadTableData(data);
 
     m_tablaHorariaWidget->show();
 
+    }
 }
 
 void SPMmainWindow::createMetaDataDialog()
@@ -611,8 +615,7 @@ void SPMmainWindow::createActions()
     m_harmonicAnalisisAction = new QAction(QIcon(":images/harmonic-analisis.png"),tr("Análisis Armónico"),this);
     m_harmonicAnalisisAction->setToolTip(tr("Análisis Armónico"));
     connect(m_harmonicAnalisisAction,SIGNAL(triggered(bool)),this,SLOT(createHarmonicAnalisisDialog()));
-    m_nonHarmonicAnalisisAction = new QAction(tr("Constantes No Armonicas"),this);
-    //TODO: icon
+    m_nonHarmonicAnalisisAction = new QAction(QIcon(":images/non_harmonic-analisis.png"),tr("Constantes No Armonicas"),this);
     m_nonHarmonicAnalisisAction->setToolTip(tr("Constantes No Armonicas"));
     connect(m_nonHarmonicAnalisisAction,SIGNAL(triggered(bool)),this,SLOT(createNonHarmonicDialog()));
 
@@ -759,6 +762,7 @@ void SPMmainWindow::createToolBars()
     m_analsisToolBar = addToolBar(tr("Analisis"));
     m_analsisToolBar->addAction(m_tablaHorariadeMareaAction);
     m_analsisToolBar->addAction(m_harmonicAnalisisAction);
+    m_analsisToolBar->addAction(m_nonHarmonicAnalisisAction);
 }
 
 void SPMmainWindow::syncData(const QVector<HarmonicConstant> &components) //Para sync si hay un cambio en los componentes que se editan en otra facilidad
