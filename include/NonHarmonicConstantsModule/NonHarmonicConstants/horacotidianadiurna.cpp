@@ -11,10 +11,10 @@ HoraCotidianaDiurna::HoraCotidianaDiurna(const HarmonicConstant &K1, const Harmo
 
 void HoraCotidianaDiurna::calculate()
 {
-    double hcd = (m_K1.phase() + m_O1.phase() + 2*m_longitud)/30.0;
+    double hcd = (m_K1.phase() + m_O1.phase() - 2*m_longitud)/30.0;
 
     if (qFabs(m_K1.phase() - m_O1.phase()) > 180.0){
-        if ((m_K1.phase() + m_O1.phase() + 2*m_longitud) >= 360.0){
+        if ((m_K1.phase() + m_O1.phase() - 2*m_longitud) >= 360.0){
             hcd-=12;
         }else{
             hcd+=12;

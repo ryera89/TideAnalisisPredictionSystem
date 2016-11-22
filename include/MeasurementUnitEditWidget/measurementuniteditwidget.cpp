@@ -17,6 +17,7 @@ MeasurementUnitEditWidget::MeasurementUnitEditWidget(QWidget *parent):QFrame(par
     m_comboBox->addItem("dm");
     m_comboBox->addItem("cm");
     m_comboBox->addItem("mm");
+    m_comboBox->setFixedWidth(43);
 
     QHBoxLayout *myLayout = new QHBoxLayout;
     myLayout->addWidget(m_spinBox);

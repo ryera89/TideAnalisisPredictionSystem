@@ -24,11 +24,15 @@
 #include "include/NonHarmonicConstantsModule/NonHarmonicConstants/alturasemimarea.h"
 #include "include/NonHarmonicConstantsModule/NonHarmonicConstants/pleabajamedia.h"
 
+#include <QtMath>
 #include "include/CoordinatesEditionWidget/mycoordinateseditorwidget.h"
-NonHarmonicCalcDialog::NonHarmonicCalcDialog(QWidget *parent):QDialog(parent)
+NonHarmonicCalcDialog::NonHarmonicCalcDialog(qreal longitud,QWidget *parent):QDialog(parent)
 {
     createComponents();
     setInterfaceLayout();
+
+    //m_NMMSpinBox->setSpinAndComboBoxesValues(unit,nmm);
+    m_longitudEditor->setEditorAndComboValue(longitud);
 
     setModal(true);
     setAttribute(Qt::WA_DeleteOnClose);
@@ -90,20 +94,119 @@ void NonHarmonicCalcDialog::loadHarmonicConstants(const QVector<HarmonicConstant
     m_semidiurnalRelationLineEdit->setText(QString::number(semidiurnalRelation,'g',3));
 
     m_tipoMareaLineEdit->setText(tipoDeMarea(ampRelation));
+
+    enableNonHarmonicConstantCalc(ampRelation);
 }
 
 
 void NonHarmonicCalcDialog::calculate(int index)
 {
 
-    m_displayResultWidgetVector.at(index)->setLineEditText(QString::number(index));
-    /*switch (index) {
-    case 0:
-
+    //m_displayResultWidgetVector.at(index)->setLineEditText(QString::number(index));
+    switch (index) {
+    case 0:{
+        double val = calculateHPM();
+        m_displayResultWidgetVector.at(index)->setLineEditText(fromDoubleToHoursAndMinutes(val));
         break;
+    }
+    case 1:{
+        double val = calculateHP();
+        m_displayResultWidgetVector.at(index)->setLineEditText(fromDoubleToHoursAndMinutes(val));
+        break;
+    }
+    case 2:{
+        double val = calculateDV();
+        m_displayResultWidgetVector.at(index)->setLineEditText(fromDoubleToHoursAndMinutes(val));
+        break;
+    }
+    case 3:{
+        double val = calculateDLL();
+        m_displayResultWidgetVector.at(index)->setLineEditText(fromDoubleToHoursAndMinutes(val));
+        break;
+    }
+    case 4:{
+        double val = calculateCMS();
+        m_displayResultWidgetVector.at(index)->setLineEditText(fromDoubleToDaysAndHours(val));
+        break;
+    }
+    case 5:{
+        double val = calculateCMP();
+        m_displayResultWidgetVector.at(index)->setLineEditText(fromDoubleToDaysAndHours(val));
+        break;
+    }
+    case 6:{
+        double val = calculateCMD();
+        m_displayResultWidgetVector.at(index)->setLineEditText(fromDoubleToDaysAndHours(val));
+        break;
+    }
+    case 7:{
+        double val = calculateHCMS();
+        m_displayResultWidgetVector.at(index)->setLineEditText(fromDoubleToHoursAndMinutes(val));
+        break;
+    }
+    case 8:{
+        double val = calculateHCMD();
+        m_displayResultWidgetVector.at(index)->setLineEditText(fromDoubleToHoursAndMinutes(val));
+        break;
+    }
+    case 9:{
+        double val = calculateAPMS();
+        m_displayResultWidgetVector.at(index)->setLineEditText(QString::number(val,'g',3) + "m");
+        break;
+    }
+    case 10:{
+        double val = calculateAPMSS();
+        m_displayResultWidgetVector.at(index)->setLineEditText(QString::number(val,'g',3) + "m");
+        break;
+    }
+    case 11:{
+        double val = calculateAPMC();
+        m_displayResultWidgetVector.at(index)->setLineEditText(QString::number(val,'g',3) + "m");
+        break;
+    }
+    case 12:{
+        double val = calculateAPMT();
+        m_displayResultWidgetVector.at(index)->setLineEditText(QString::number(val,'g',3) + "m");
+        break;
+    }
+    case 13:{
+        double val = calculateAS();
+        m_displayResultWidgetVector.at(index)->setLineEditText(QString::number(val,'g',3) + "m");
+        break;
+    }
+    case 14:{
+        double val = calculatePMS();
+        m_displayResultWidgetVector.at(index)->setLineEditText(QString::number(val,'g',3) + "m");
+        break;
+    }
+    case 15:{
+        double val = calculatePMC();
+        m_displayResultWidgetVector.at(index)->setLineEditText(QString::number(val,'g',3) + "m");
+        break;
+    }
+    case 16:{
+        double val = calculatePMMT();
+        m_displayResultWidgetVector.at(index)->setLineEditText(QString::number(val,'g',3) + "m");
+        break;
+    }
+    case 17:{
+        double val = calculateBMSS();
+        m_displayResultWidgetVector.at(index)->setLineEditText(QString::number(val,'g',3) + "m");
+        break;
+    }
+    case 18:{
+        double val = calculateBMC();
+        m_displayResultWidgetVector.at(index)->setLineEditText(QString::number(val,'g',3) + "m");
+        break;
+    }
+    case 19:{
+        double val = calculateBMMT();
+        m_displayResultWidgetVector.at(index)->setLineEditText(QString::number(val,'g',3) + "m");
+        break;
+    }
     default:
         break;
-    }*/
+    }
 }
 
 void NonHarmonicCalcDialog::createComponents()
@@ -129,8 +232,7 @@ void NonHarmonicCalcDialog::createComponents()
     m_semidiurnalRelationLabel = new QLabel(tr("Va Imagen!!!"));
     m_tipoMareaLabel = new QLabel(tr("Tipo de Marea:"),this);
 
-    m_NMMSpinBox = new QDoubleSpinBox;
-    m_NMMSpinBox->setRange(0.0,INT64_MAX);
+    m_NMMSpinBox = new MeasurementUnitEditWidget;
 
     m_longitudEditor = new MyCoordinatesEditorWidget;
     m_longitudEditor->setHType(MyCoordinatesEditorWidget::longitud);
@@ -264,6 +366,36 @@ QString NonHarmonicCalcDialog::tipoDeMarea(double ampRelation)
     return "ERROR DE DATOS";
 }
 
+void NonHarmonicCalcDialog::enableNonHarmonicConstantCalc(double ampRelation)
+{
+    if (0.0 < ampRelation && 0.5 >= ampRelation){
+        for (int i = 0; i < m_displayResultWidgetVector.size(); ++i){
+            if (i != 12 && i != 16 && i != 19) m_displayResultWidgetVector.at(i)->setPushButtonStatus(true);
+        }
+        return;
+    }
+    if (0.5 < ampRelation && 2.0 >= ampRelation){
+        for (int i = 0; i < m_displayResultWidgetVector.size(); ++i){
+            m_displayResultWidgetVector.at(i)->setPushButtonStatus(true);
+        }
+        return;
+    }
+    if (2.0 < ampRelation && 4.0 >= ampRelation){
+        for (int i = 0; i < m_displayResultWidgetVector.size(); ++i){
+            if (i != 1 && i != 2 && i != 3 && i != 9 && i != 10 && i != 11 && i != 14 && i != 15 && i != 17 && i != 18)
+                m_displayResultWidgetVector.at(i)->setPushButtonStatus(true);
+        }
+        return;
+    }
+    if (4.0 < ampRelation){
+        for (int i = 0; i < m_displayResultWidgetVector.size(); ++i){
+            if (i != 1 && i != 2 && i != 3 && i != 9 && i != 10 && i != 11 && i != 14 && i != 15 && i != 17 && i != 18)
+                m_displayResultWidgetVector.at(i)->setPushButtonStatus(true);
+        }
+        return;
+    }
+}
+
 double NonHarmonicCalcDialog::calculateHPM()
 {
     HPM hpm(m_M2,m_M4,m_M6);
@@ -315,14 +447,14 @@ double NonHarmonicCalcDialog::calculateCMD()
 
 double NonHarmonicCalcDialog::calculateHCMS()
 {
-    HoraCotidianaSemidiurna hcms(m_M2,m_M4,m_M6,m_longitud);
+    HoraCotidianaSemidiurna hcms(m_M2,m_M4,m_M6,m_longitudEditor->coordinate());
 
     return hcms.HCS();
 }
 
 double NonHarmonicCalcDialog::calculateHCMD()
 {
-    HoraCotidianaDiurna hcmd(m_K1,m_O1,m_longitud);
+    HoraCotidianaDiurna hcmd(m_K1,m_O1,m_longitudEditor->coordinate());
 
     return hcmd.HCD();
 }
@@ -360,50 +492,97 @@ double NonHarmonicCalcDialog::calculateAPMT()
 
 double NonHarmonicCalcDialog::calculateAS()
 {
-    AlturaSemimarea as(m_M2,m_K1,m_O1,m_M4,m_nivelMedio);
+    AlturaSemimarea as(m_M2,m_K1,m_O1,m_M4,m_NMMSpinBox->value());
 
     return as.AlturaDeSemimarea();
 }
 
 double NonHarmonicCalcDialog::calculatePMS()
 {
-    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_nivelMedio));
+    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_NMMSpinBox->value()));
 
     return pbm.PleamarMediaSicigias();
 }
 
 double NonHarmonicCalcDialog::calculatePMC()
 {
-    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_nivelMedio));
+    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_NMMSpinBox->value()));
 
     return pbm.PleamarMediaCuadratura();
 }
 
 double NonHarmonicCalcDialog::calculatePMMT()
 {
-    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_nivelMedio));
+    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_NMMSpinBox->value()));
 
     return pbm.PleamarMediaTropical();
 }
 
 double NonHarmonicCalcDialog::calculateBMSS()
 {
-    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_nivelMedio));
+    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_NMMSpinBox->value()));
 
     return pbm.BajamarMediaSicigias();
 }
 
 double NonHarmonicCalcDialog::calculateBMC()
 {
-    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_nivelMedio));
+    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_NMMSpinBox->value()));
 
     return pbm.BajamarMediaCuadratura();
 }
 
 double NonHarmonicCalcDialog::calculateBMMT()
 {
-    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_nivelMedio));
+    PleaBajaMedia pbm(AlturaPromedioMarea(m_M2,m_S2,m_N2,m_K2,m_K1,m_O1,m_P1,m_Q1,m_M4,m_M6),AlturaSemimarea(m_M2,m_K1,m_O1,m_M4,m_NMMSpinBox->value()));
 
     return pbm.BajamarMediaTropical();
 }
+
+QString NonHarmonicCalcDialog::fromDoubleToDaysAndHours(double value)
+{
+    QString resp("0");
+
+    if (value > 0.0){
+        int days = qFloor(value);
+
+        int hours = qFloor((value-days)*24);
+
+        resp = QString::number(days) + " Días " + QString::number(hours) + " Horas";
+        return resp;
+    }
+    if (value < 0.0){
+        int days = qCeil(value);
+
+        int hours = qCeil((value - days)*24);
+
+        resp = QString::number(days) + " Días " + QString::number(hours) + " Horas";
+        return resp;
+    }
+    return resp;
+}
+
+QString NonHarmonicCalcDialog::fromDoubleToHoursAndMinutes(double value)
+{
+    QString resp("0");
+
+    if (value > 0.0){
+        int days = qFloor(value);
+
+        int hours = qFloor((value-days)*60);
+
+        resp = QString::number(days) + " Horas " + QString::number(hours) + " Minutos";
+        return resp;
+    }
+    if (value < 0.0){
+        int days = qCeil(value);
+
+        int hours = qCeil((value - days)*60);
+
+        resp = QString::number(days) + " Horas " + QString::number(hours) + " Minutos";
+        return resp;
+    }
+    return resp;
+}
+
 

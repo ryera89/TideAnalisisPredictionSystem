@@ -44,7 +44,7 @@ void HoraCotidianaSemidiurna::calculate()
     double v = shallowWaterInfluence1();
     double w = shallowWaterInfluence2();
 
-    double hcs = (m_M2.phase() + 2*m_longitud - (v+w)/2)/30;
+    double hcs = (m_M2.phase() - 2*m_longitud - (v+w)/2)/30;
 
     if (hcs > 12.0) hcs-=12.0;
     if (hcs < 0) hcs+=12.0;

@@ -5,7 +5,7 @@
 #include "displayresultwidget.h"
 #include <QSignalMapper>
 #include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
-
+#include "include/MeasurementUnitEditWidget/measurementuniteditwidget.h"
 class QLabel;
 class QDoubleSpinBox;
 class MyCoordinatesEditorWidget;
@@ -15,7 +15,7 @@ class NonHarmonicCalcDialog : public QDialog
     Q_OBJECT
 
 public:
-    NonHarmonicCalcDialog(QWidget *parent = 0);
+    NonHarmonicCalcDialog(qreal longitud, QWidget *parent = 0);
     void loadHarmonicConstants(const QVector<HarmonicConstant> &harmonicConstants);
     ~NonHarmonicCalcDialog(){}
 
@@ -38,7 +38,7 @@ private:
     QLabel *m_semidiurnalRelationLabel;
     QLabel *m_tipoMareaLabel;
 
-    QDoubleSpinBox *m_NMMSpinBox;
+    MeasurementUnitEditWidget *m_NMMSpinBox;
     MyCoordinatesEditorWidget *m_longitudEditor;
     QLineEdit *m_ampRelationLineEdit;
     QLineEdit *m_semidiurnalRelationLineEdit;
@@ -63,8 +63,8 @@ private:
     HarmonicConstant m_M4; //Bajo Fondo
     HarmonicConstant m_M6;
 
-    qreal m_longitud;
-    qreal m_nivelMedio;
+    //qreal m_longitud;
+    //qreal m_nivelMedio;
 
     void createComponents();
     void createDisplaysResultWidgets();
@@ -73,6 +73,7 @@ private:
     double calculateAmplitudRelation();
     double calculateSemidiurnalRelation();
     QString tipoDeMarea(double ampRelation);
+    void enableNonHarmonicConstantCalc(double ampRelation);
 
     double calculateHPM();
     double calculateHP();
@@ -94,6 +95,10 @@ private:
     double calculateBMSS();
     double calculateBMC();
     double calculateBMMT();
+
+
+    QString fromDoubleToDaysAndHours(double value);
+    QString fromDoubleToHoursAndMinutes(double value);
 };
 
 #endif // NONHARMONINCCALCDIALOG_H

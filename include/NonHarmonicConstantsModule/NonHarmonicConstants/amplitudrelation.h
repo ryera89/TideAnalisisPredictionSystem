@@ -5,7 +5,7 @@
 Depende de las constantes armonicas M2, K1, O1*/
 
 #include <QString>
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h";
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 
 class AmplitudRelation
 {

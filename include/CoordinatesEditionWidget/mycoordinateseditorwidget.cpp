@@ -21,6 +21,7 @@ MyCoordinatesEditorWidget::MyCoordinatesEditorWidget(QWidget *parent)
     m_HemisphereComboBox = new QComboBox(this);
     m_HemisphereComboBox->addItem("N");
     m_HemisphereComboBox->addItem("S");
+    m_HemisphereComboBox->setFixedWidth(43);
 
     QHBoxLayout *editLayout = new QHBoxLayout;
     editLayout->addWidget(m_coordinatesSpinBox);
