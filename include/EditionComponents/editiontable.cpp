@@ -25,7 +25,7 @@ bool EditionTable::removeRows()
     if (indexes.size() > 0){
         int row = indexes.at(0).row();
         int cont = indexes.last().row() - row;
-        this->model()->removeRows(row,cont);
+        //this->model()->removeRows(row,cont);
 
         emit rowsRemoved(row,cont);
         return true;
@@ -38,9 +38,10 @@ void EditionTable::insertRow()
 {
     QModelIndex index = currentIndex();
 
-    this->model()->insertRow(index.row());
-
-    emit rowInserted();
+    if (index.isValid())
+        this->model()->insertRow(index.row());
+    else
+       emit rowInserted();
 }
 
 void EditionTable::contextMenuEvent(QContextMenuEvent *event)

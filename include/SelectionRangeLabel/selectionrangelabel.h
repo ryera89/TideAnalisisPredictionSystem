@@ -15,6 +15,7 @@ public slots:
     void setLabel(const QString &label);
     void setIniRangeValues(const QDateTime &iniDateTime, qreal iniValue);
     void setEndRangeValues(const QDateTime &endDateTime, qreal endValue);
+
 private:
     QString m_label;
 

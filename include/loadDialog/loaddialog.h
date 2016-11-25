@@ -3,6 +3,7 @@
 
 #include <QDialog>
 #include "linenumbereditor.h" //Custom Text Editor with line Numbers
+#include "include/ProjectMetaData/metadatawidget.h"
 //#include "include/metadatawidget.h"
 
 class QLabel;
@@ -89,7 +90,7 @@ private:
     QPushButton* m_cancelButton;
 
     LineNumberEditor* m_importTextEdit;
-    //metaDataWidget *m_dataWidget;
+    metaDataWidget *m_metaDataWidget;
 
     QLabel *m_dateLabel;
     QLabel *m_timeLabel;

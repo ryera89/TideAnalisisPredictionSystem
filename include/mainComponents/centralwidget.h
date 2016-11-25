@@ -67,6 +67,7 @@ private:
     customChartView *m_tideChartView;
 
     QDateTimeAxis *m_timeAxis;
+    QValueAxis *m_yAxis;
     //QValueAxis *m_yAxis;
     QSplineSeries *m_series;
     QScatterSeries *m_selectionSeries;

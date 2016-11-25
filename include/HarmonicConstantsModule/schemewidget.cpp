@@ -306,14 +306,14 @@ void SchemeWidget::interfazLayout()
     saveButtonLayout->addStretch();
     saveButtonLayout->addWidget(m_saveSelectedData);
 
-    QGroupBox *buttonGroupBox = new QGroupBox;
-    buttonGroupBox->setLayout(saveButtonLayout);
+    //QGroupBox *buttonGroupBox = new QGroupBox;
+    //buttonGroupBox->setLayout(saveButtonLayout);
 
     QVBoxLayout *mainLeftLayout = new QVBoxLayout;
     mainLeftLayout->addWidget(m_dataSelectionComboBox);
     mainLeftLayout->addWidget(m_customDataSelectionGroupBox);
     mainLeftLayout->addStretch();
-    mainLeftLayout->addWidget(buttonGroupBox);
+    mainLeftLayout->addWidget(m_saveSelectedData);
 
     m_dataSelectionGroupBox->setLayout(mainLeftLayout);
 

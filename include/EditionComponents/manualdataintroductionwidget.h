@@ -5,6 +5,7 @@
 
 #include "editiontable.h"
 #include "include/model_view/tablemodel.h"
+#include "include/ProjectMetaData/metadatawidget.h"
 
 class QLabel;
 class QTimeEdit;
@@ -12,6 +13,8 @@ class QDateEdit;
 class QPushButton;
 class QGroupBox;
 class QComboBox;
+class QRadioButton;
+
 
 class ManualDataIntroductionWidget : public QDialog
 {
@@ -36,16 +39,18 @@ private slots:
     void setTimeInterval(const QTime &time); //Para conectar con el m_intervalTimeEdit
 
     void removeLastMeasurement();
+    void removeRows(int row,int cont);
     void insertMeasurement();
     void clearMeasurements();
     //void beginDataTranfer();
 
     void generateData(); //Para conectar con el genPushButton
 
-
 private:
     EditionTable *m_editionTable;
     TableModel *m_model;
+
+    metaDataWidget *m_metaData;
 
     quint64 m_timeInterval;
 
@@ -53,6 +58,8 @@ private:
     QLabel *m_endDateLabel;
     QLabel *m_iniTimeLabel;
     QLabel *m_endTimeLabel;
+    QLabel *m_timeIntervalLabel;
+    QLabel *m_customIntervalLabel;
 
     QDateEdit *m_iniDateEdit;
     QDateEdit *m_endDateEdit;
@@ -65,7 +72,7 @@ private:
 
     QGroupBox *m_mainGroupBox;
     QGroupBox *m_ini_endGroupBox;
-    QGroupBox *m_timeIntervalGroupBox;
+    //QGroupBox *m_timeIntervalGroupBox;
 
     QPushButton *m_genPushButton;
 
@@ -79,6 +86,11 @@ private:
 
     QPushButton *m_okPushButton;
     QPushButton *m_cancelPushButton;
+
+    QRadioButton *m_levelRadioButton;
+    QRadioButton *m_correctionsRadioButton;
+
+    QComboBox *m_measurementUnitComboBox;
 
     void createComponents();
     void settingTableWidth();

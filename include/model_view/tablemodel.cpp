@@ -114,8 +114,8 @@ bool TableModel::removeRows(int row, int count, const QModelIndex &parent)
     //if (!parent.isValid()) return false;
     //int r = row;
 
-    beginRemoveRows(parent, row, row+count-1);
-    measurements.remove(row,count);
+    beginRemoveRows(parent, row, row+count);
+    measurements.remove(row,count+1);
     endRemoveRows();
     return true;
 }

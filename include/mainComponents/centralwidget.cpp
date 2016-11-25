@@ -116,15 +116,19 @@ void CentralWidget::setSeriesData()
 {
     settingZoomPosibleValues();
     //NOTE: Si luego hay problemas es por haber comentariado esto
-    m_series->clear();
+    //m_series->clear();
+    m_selectionSeries->clear();
     m_mapForValuesInMainAndSelectionSeries.clear();
     m_tideChartView->chart()->removeAxis(m_timeAxis);
-    m_tideChartView->chart()->removeAllSeries();
+    m_tideChart->removeAxis(m_yAxis);
+    //m_tideChartView->chart()->removeAllSeries();
 
-    m_series = new QSplineSeries;
-    m_series->setPointsVisible(true);
-    m_selectionSeries = new QScatterSeries;
-    m_selectionSeries->setMarkerSize(8);
+    //m_series = new QSplineSeries;
+    //m_series->setUseOpenGL(true);
+    //m_series->setPointsVisible(true);
+    //m_selectionSeries = new QScatterSeries;
+    //m_selectionSeries->setUseOpenGL(true);
+    //m_selectionSeries->setMarkerSize(8);
     //m_scatterSerie = new QScatterSeries;
     //m_scatterSerie->setColor(Qt::red);
     //m_scatterSerie->setMarkerSize(5);
@@ -133,7 +137,7 @@ void CentralWidget::setSeriesData()
     int rowNumber = m_tidalTableModel->rowCount(QModelIndex());
     //int columnNumber = m_model->columnCount(QModelIndex());
 
-    QList<QPointF> datos;
+    QVector<QPointF> datos;
     for (int i = 0; i < rowNumber; ++i){
         double y_value;
         QDateTime x_value;
@@ -145,7 +149,7 @@ void CentralWidget::setSeriesData()
     }
 
     //m_series->chart()->axisX(m_series)->setRange(QDateTime::fromMSecsSinceEpoch(datos.first().x()),QDateTime::fromMSecsSinceEpoch(datos.last().x()));
-    m_series->append(datos);
+    m_series->replace(datos);
     //m_scatterSerie->append(datos);
 
 
@@ -163,11 +167,14 @@ void CentralWidget::setSeriesData()
     //m_tideChartView->chart()->addSeries(m_series);
     //m_tideChartView->chart()->createDefaultAxes();
 
-    m_tideChartView->chart()->addSeries(m_series);
-    m_tideChartView->chart()->addSeries(m_selectionSeries);
+    //m_tideChartView->chart()->addSeries(m_series);
+    //m_tideChartView->chart()->addSeries(m_selectionSeries);
     m_tideChartView->chart()->createDefaultAxes();
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
+    //m_tideChart->setAxisY(m_yAxis,m_series);
+    //m_tideChart->setAxisY(m_yAxis,m_selectionSeries);
+    //m_yAxis->applyNiceNumbers();
     //m_tideChartView->chart()->setAxisX(m_timeAxis,m_scatterSerie);
 
     //m_mapper->setSeries(m_series);
@@ -179,8 +186,10 @@ void CentralWidget::zoomXAxis(int level)
     if (m_series){
         if (m_series->pointsVector().isEmpty()) return;
 
-        quint64 xMin = m_series->at(0).x();
-        quint64 xMax = m_series->at(m_series->count()-1).x();
+        QVector<QPointF> seriesPoints = m_series->pointsVector();
+
+        quint64 xMin = seriesPoints.first().x();
+        quint64 xMax = seriesPoints.last().x();
 
         quint64 showXMin = m_timeAxis->min().toMSecsSinceEpoch();
         quint64 showXMax = m_timeAxis->max().toMSecsSinceEpoch();
@@ -250,14 +259,16 @@ void CentralWidget::zoomXAxis(int level)
 
 void CentralWidget::getAndDisplayCursorPosInSeries(QPointF point)
 {
-    QDateTime time = QDateTime::fromMSecsSinceEpoch(point.x());
+    QPointF seriesPoint = m_tideChart->mapToValue(point,m_series);
+    QDateTime time = QDateTime::fromMSecsSinceEpoch(seriesPoint.x());
 
-    m_cursorPosDDLabel->setInternalData(time,point.y());
+    m_cursorPosDDLabel->setInternalData(time,seriesPoint.y());
 }
 
 void CentralWidget::getAndDisplayClickedPosInSeries(QPointF point)
 {
-    m_selectionSeries->clear();
+    //TODO VER COMO MEJORAMOS EL ALGORITMO
+    QVector<QPointF> selectedPoints;
     m_mapForValuesInMainAndSelectionSeries.clear();
 
     QVector<QPointF> seriesPointsVector;
@@ -282,13 +293,16 @@ void CentralWidget::getAndDisplayClickedPosInSeries(QPointF point)
     }
     if (distance <= 5){
         QPointF selectedPoint = m_tideChart->mapToValue(closest,m_series);
-        m_selectionSeries->append(selectedPoint);
+        selectedPoints.append(selectedPoint);
         m_mapForValuesInMainAndSelectionSeries[posInMainSeries] = 0;
 
         QDateTime time = QDateTime::fromMSecsSinceEpoch(selectedPoint.x());
 
         m_selectionPointRange->setInternalData(time,selectedPoint.y(),time,selectedPoint.y());
+    }else{
+        m_selectionPointRange->setText(tr("<b><font color = green> SIN SELECCIÓN</b></font>"));
     }
+    m_selectionSeries->replace(selectedPoints);
     /*QVector<QPointF> seriesPointsVector = m_series->pointsVector();
 
     qreal distance = INT64_MAX; //distancia al punto
@@ -317,31 +331,36 @@ void CentralWidget::setPointSelectedRange(QPointF pPoint, QPointF rPoint)
         m_tideChartView->chart()->addSeries(m_selectionSeries);
         m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
     }*/
-    m_selectionSeries->clear();
+    //m_selectionSeries->clear();
     m_mapForValuesInMainAndSelectionSeries.clear();
 
     QPointF pSeriesPoint = m_tideChart->mapToValue(pPoint,m_series);
     QPointF rSeriesPoint = m_tideChart->mapToValue(rPoint,m_series);
+
+    QVector<QPointF> selectedPoints;
 
     int posInMain = 0;
     int posInSelection = 0;
     foreach (QPointF point, m_series->pointsVector()) {
         if (pSeriesPoint.x() <= rSeriesPoint.x()){
             if (point.x() >= pSeriesPoint.x() && point.x() <= rSeriesPoint.x()){
-                m_selectionSeries->append(point);
+                selectedPoints.append(point);
                 m_mapForValuesInMainAndSelectionSeries[posInMain] = posInSelection;
                 ++posInSelection;
             }
+            if (point.x() > rSeriesPoint.x()) break;
         }else{
             if (point.x() >= rSeriesPoint.x() && point.x() <= pSeriesPoint.x()){
-                m_selectionSeries->append(point);
+                selectedPoints.append(point);
                 m_mapForValuesInMainAndSelectionSeries[posInMain] = posInSelection;
                 ++posInSelection;
             }
-
+            if (point.x() > pSeriesPoint.x()) break;
         }
         ++posInMain;
     }
+
+    m_selectionSeries->replace(selectedPoints);
     updateDisplayRangeLabel();
 }
 
@@ -380,16 +399,19 @@ void CentralWidget::updateSelectionSeriesData(const QModelIndex &topLeft, const 
     int topRow = topLeft.row();
     int bottomRow = bottomRight.row();
 
+
     if (m_selectionSeries->pointsVector().isEmpty()) return;
 
+    //QVector<QPointF> selectedPoints = m_selectionSeries->pointsVector();
     for (int i = topRow; i <= bottomRow; ++i){
         if (m_mapForValuesInMainAndSelectionSeries.contains(i)){
            qreal y_value = m_series->at(i).y();
            qreal x_value = m_series->at(i).x();
 
-           m_selectionSeries->replace(m_mapForValuesInMainAndSelectionSeries[i],x_value,y_value);
+           m_selectionSeries->replace(m_mapForValuesInMainAndSelectionSeries[i],QPointF(x_value,y_value));
         }
     }
+    //m_selectionSeries->replace(selectedPoints);
 }
 
 void CentralWidget::updateSeriesData(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
@@ -401,7 +423,6 @@ void CentralWidget::updateSeriesData(const QModelIndex &topLeft, const QModelInd
 
     //int firstColumn = topLeft.column();
     //int lastColumn = bottomRight.column();
-
     for (int i = topRow; i <= bottomRow; ++i){
         double y_value;
         QDateTime x_value;
@@ -497,6 +518,8 @@ void CentralWidget::updateDisplayRangeLabel()
         qreal endValue = m_selectionSeries->pointsVector().last().y();
 
         m_selectionPointRange->setInternalData(iniDateTime,iniValue,endDateTime,endValue);
+    }else{
+        m_selectionPointRange->setText(tr("<b><font color = green> SIN SELECCIÓN</b></font>"));
     }
 }
 void CentralWidget::createComponents()
@@ -516,11 +539,14 @@ void CentralWidget::createComponents()
     //m_tideChart->setAnimationOptions(QChart::AllAnimations);
 
     m_series = new QSplineSeries;
+    m_series->setPointsVisible(true);
+    //m_series->setUseOpenGL(true);
     //m_series = new MySeries;
     //m_mapper = new XYTidalChartModelMapper(m_tidalTableModel,m_series);
     connect(m_tidalTableModel,SIGNAL(modelReset()),this,SLOT(setSeriesData()));
 
     m_selectionSeries = new QScatterSeries;
+    //m_selectionSeries->setUseOpenGL(true);
     m_selectionSeries->setMarkerSize(8);
 
     m_tideChartView = new customChartView(m_tideChart,this);
@@ -531,6 +557,9 @@ void CentralWidget::createComponents()
     m_timeAxis = new QDateTimeAxis;
     m_timeAxis->setFormat("d/M/yy h:mm");
 
+    m_yAxis = new QValueAxis;
+
+
     //NOTE: Valorar Remover esto
     m_tideChart->addSeries(m_series);
     m_tideChart->addSeries(m_selectionSeries);
@@ -538,6 +567,9 @@ void CentralWidget::createComponents()
 
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
+    m_tideChart->setAxisY(m_yAxis,m_series);
+    m_tideChart->setAxisY(m_yAxis,m_selectionSeries);
+    m_yAxis->applyNiceNumbers();
     m_tideChartView->chart()->axisX(m_series)->setTitleText(tr("Tiempo"));
     m_tideChartView->chart()->axisY(m_series)->setTitleText(tr("Nivel"));
 
@@ -583,6 +615,7 @@ void CentralWidget::createComponents()
     m_cursorPosDDLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
     m_selectionPointRange = new SelectionRangeLabel(tr("Selección"),this);
+    m_selectionPointRange->setText(tr("<b><font color = green> SIN SELECCIÓN</b></font>"));
     m_selectionPointRange->setFixedWidth(370);
     m_selectionPointRange->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
@@ -687,13 +720,23 @@ void CentralWidget::deletePoints()
     int maxFlag = 0;
     int begin = 0;
     bool flag = false;
+    int i = 0;
     //m_tideChartView->chart()->removeSeries(m_series);
     //m_tideChartView->chart()->removeSeries(m_selectionSeries);
     foreach (QPointF point, m_selectionSeries->pointsVector()){
         QDateTime time = QDateTime::fromMSecsSinceEpoch(point.x());
-        int i = 0;
+        //int i = 0;
         //QVector<TidesMeasurement> dataMeasurement = m_tidalTableModel->measurementData();
-        foreach (TidesMeasurement measu, m_tidalTableModel->measurementData()) { //Paracomparar elementos
+        for (int k = i; k < m_tidalTableModel->measurementData().size();++k){
+            if (m_tidalTableModel->measurementData().at(k).measurementDateTime() == time){ //Si coinciden en el tiempo eliminarlos
+                if (!flag){ begin = i; flag = true;}  //Para guardar la primera ves que se entra en el loop
+                ++maxFlag;
+                ++i;
+                break;
+            }
+            ++i;
+        }
+        /*foreach (TidesMeasurement measu, m_tidalTableModel->measurementData()) { //Paracomparar elementos
             if (measu.measurementDateTime() == time){ //Si coinciden en el tiempo eliminarlos
                 if (!flag){ begin = i; flag = true;}  //Para guardar la primera ves que se entra en el loop
                 ++maxFlag;
@@ -703,11 +746,12 @@ void CentralWidget::deletePoints()
                 break;
             }
              ++i;
-        }
+        }*/
     }
     m_selectionSeries->clear(); //vacia la serie donde se almacenan los datos seleccionados
     m_mapForValuesInMainAndSelectionSeries.clear();
-    m_tidalTableModel->removeRows(begin,maxFlag,QModelIndex());
+    m_tidalTableModel->removeRows(begin,maxFlag-1,QModelIndex());
+    m_selectionPointRange->setText(tr("<b><font color = green> SIN SELECCIÓN</b></font>"));
     //m_tideChartView->chart()->addSeries(m_series);
     //m_tideChartView->chart()->addSeries(m_selectionSeries);
 

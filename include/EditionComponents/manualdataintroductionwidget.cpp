@@ -15,6 +15,7 @@
 #include <QGridLayout>
 #include <QHeaderView>
 #include <QMessageBox>
+#include <QRadioButton>
 
 ManualDataIntroductionWidget::ManualDataIntroductionWidget(QWidget *parent) : QDialog(parent)
 {
@@ -88,6 +89,10 @@ void ManualDataIntroductionWidget::removeLastMeasurement()
     m_model->removeRow(m_model->measurementData().size() - 1,QModelIndex());
 }
 
+void ManualDataIntroductionWidget::removeRows(int row, int cont)
+{
+    m_model->removeRows(row,cont);
+}
 void ManualDataIntroductionWidget::insertMeasurement()
 {
     m_model->insertRow(m_model->measurementData().size(),QModelIndex());
@@ -95,10 +100,13 @@ void ManualDataIntroductionWidget::insertMeasurement()
 
 void ManualDataIntroductionWidget::clearMeasurements()
 {
-    int button = QMessageBox::question(this,tr("Introducción manual de datos"),tr("Se borraran todos los datos,"
-                                                                    "¿Desea continuar?"));
-    if (button == QMessageBox::Yes){
-        m_model->removeRows(0,m_model->rowCount(QModelIndex()) - 1,QModelIndex());
+    if (m_model->rowCount(QModelIndex()) > 0){
+        int button = QMessageBox::question(this,tr("Introducción manual de datos"),tr("Se borraran todos los datos,"
+                                                                                      "¿Desea continuar?"));
+        if (button == QMessageBox::Yes){
+
+            m_model->removeRows(0,m_model->rowCount(QModelIndex()) - 1,QModelIndex());
+        }
     }
 }
 
@@ -148,9 +156,47 @@ void ManualDataIntroductionWidget::generateData()
 
 void ManualDataIntroductionWidget::createComponents()
 {
+    m_editionTable = new EditionTable(this);
+    connect(m_editionTable,SIGNAL(rowsRemoved(int,int)),this,SLOT(removeRows(int,int)));
+    connect(m_editionTable,SIGNAL(rowInserted()),this,SLOT(insertMeasurement()));
+
+    m_metaData = new metaDataWidget(this);
+
+    QGroupBox *metaDataGroupBox = new QGroupBox;
+
+    QHBoxLayout *metaLayout = new QHBoxLayout;
+    metaLayout->addWidget(m_metaData);
+
+    metaDataGroupBox->setLayout(metaLayout);
+
     m_mainGroupBox = new QGroupBox(this);
 
-    m_ini_endGroupBox  = new QGroupBox(tr("Inicio y Fin de las Mediciones"));
+    m_levelRadioButton = new QRadioButton(tr("Niveles"));
+    m_correctionsRadioButton = new QRadioButton(tr("Correcciones"));
+
+    m_measurementUnitComboBox = new QComboBox;
+    m_measurementUnitComboBox->addItem("m");
+    m_measurementUnitComboBox->addItem("dm");
+    m_measurementUnitComboBox->addItem("cm");
+    m_measurementUnitComboBox->addItem("mm");
+
+    QGroupBox *tipoDeDatosGroupBox = new QGroupBox(tr("Datos:"));
+
+    QHBoxLayout *datosLayout = new QHBoxLayout;
+    datosLayout->addWidget(m_levelRadioButton);
+    datosLayout->addWidget(m_correctionsRadioButton);
+
+    tipoDeDatosGroupBox->setLayout(datosLayout);
+
+
+    QGroupBox *unitGroupBox = new QGroupBox(tr("Unidad de Medida:"));
+
+    QHBoxLayout *unitLayout = new QHBoxLayout;
+    unitLayout->addWidget(m_measurementUnitComboBox);
+
+    unitGroupBox->setLayout(unitLayout);
+
+    m_ini_endGroupBox  = new QGroupBox(tr("Inicio y Fin de las Mediciones:"));
 
     m_iniDateLabel = new QLabel(tr("Fecha de Inicio"));
     m_iniDateLabel->setAlignment(Qt::AlignCenter);
@@ -181,19 +227,8 @@ void ManualDataIntroductionWidget::createComponents()
     m_endTimeEdit = new QTimeEdit;
     m_endTimeEdit->setDisplayFormat("hh:mm");
 
-    QGridLayout *ini_endGridLayout = new QGridLayout;
-    ini_endGridLayout->addWidget(m_iniDateLabel,0,0,1,1);
-    ini_endGridLayout->addWidget(m_endDateLabel,0,1,1,1);
-    ini_endGridLayout->addWidget(m_iniDateEdit,1,0,2,1,Qt::AlignTop);
-    ini_endGridLayout->addWidget(m_endDateEdit,1,1,2,1,Qt::AlignTop);
-    ini_endGridLayout->addWidget(m_iniTimeLabel,3,0,1,1);
-    ini_endGridLayout->addWidget(m_endTimeLabel,3,1,1,1);
-    ini_endGridLayout->addWidget(m_iniTimeEdit,4,0,1,1);
-    ini_endGridLayout->addWidget(m_endTimeEdit,4,1,1,1);
-
-    m_ini_endGroupBox->setLayout(ini_endGridLayout);
-
-    m_timeIntervalGroupBox = new QGroupBox(tr("Intervalo de Medición"),m_mainGroupBox);
+    m_timeIntervalLabel = new QLabel(tr("Intervalo"));
+    m_timeIntervalLabel->setAlignment(Qt::AlignCenter);
 
     m_timeIntervalComboBox = new QComboBox;
     m_timeIntervalComboBox->addItem(tr("1 Hora"));
@@ -203,47 +238,76 @@ void ManualDataIntroductionWidget::createComponents()
     connect(m_timeIntervalComboBox,SIGNAL(activated(int)),this,SLOT(enableTimeIntervalEdit(int)));
     connect(m_timeIntervalComboBox,SIGNAL(activated(int)),this,SLOT(updateTimeInterval(int)));
 
+    m_customIntervalLabel = new QLabel(tr("Personalizado"));
+    m_customIntervalLabel->setAlignment(Qt::AlignCenter);
+
     m_timeIntervalTimeEdit = new QTimeEdit;
     m_timeIntervalTimeEdit->setDisplayFormat("hh:mm");
     m_timeIntervalTimeEdit->setDisabled(true);
     connect(m_timeIntervalTimeEdit,SIGNAL(timeChanged(QTime)),this,SLOT(setTimeInterval(QTime)));
 
-    QHBoxLayout *timeIntervalLayout = new QHBoxLayout;
-    timeIntervalLayout->addWidget(m_timeIntervalComboBox);
-    timeIntervalLayout->addWidget(m_timeIntervalTimeEdit);
-
-    m_timeIntervalGroupBox->setLayout(timeIntervalLayout);
-
     m_genPushButton = new QPushButton(tr("Generar"),this);
-    //TODO tolTip
+    m_genPushButton->setToolTip(tr("Generar datos"));
     connect(m_genPushButton,SIGNAL(clicked(bool)),this,SLOT(generateData()));
 
-    QHBoxLayout *genButtonLayout = new QHBoxLayout;
-    genButtonLayout->addStretch();
-    genButtonLayout->addWidget(m_genPushButton);
+    QGridLayout *ini_endGridLayout = new QGridLayout;
+    ini_endGridLayout->addWidget(m_iniDateLabel,0,0,1,1);
+    ini_endGridLayout->addWidget(m_endDateLabel,0,1,1,1);
+    ini_endGridLayout->addWidget(m_timeIntervalLabel,0,2,1,1);
+    ini_endGridLayout->addWidget(m_iniDateEdit,1,0,2,1,Qt::AlignTop);
+    ini_endGridLayout->addWidget(m_endDateEdit,1,1,2,1,Qt::AlignTop);
+    ini_endGridLayout->addWidget(m_timeIntervalComboBox,1,2,1,1,Qt::AlignTop);
+    ini_endGridLayout->addWidget(m_iniTimeLabel,3,0,1,1);
+    ini_endGridLayout->addWidget(m_endTimeLabel,3,1,1,1);
+    ini_endGridLayout->addWidget(m_customIntervalLabel,3,2,1,1);
+    ini_endGridLayout->addWidget(m_iniTimeEdit,4,0,1,1,Qt::AlignTop);
+    ini_endGridLayout->addWidget(m_endTimeEdit,4,1,1,1,Qt::AlignTop);
+    ini_endGridLayout->addWidget(m_timeIntervalTimeEdit,4,2,1,1,Qt::AlignTop);
+    ini_endGridLayout->addWidget(m_genPushButton,5,2,1,1);
+
+    m_ini_endGroupBox->setLayout(ini_endGridLayout);
+
+    //m_timeIntervalGroupBox = new QGroupBox(tr("Intervalo de Medición"),m_mainGroupBox);
+
+    //QHBoxLayout *timeIntervalLayout = new QHBoxLayout;
+    //timeIntervalLayout->addWidget(m_timeIntervalComboBox);
+    //timeIntervalLayout->addWidget(m_timeIntervalTimeEdit);
+
+    //m_timeIntervalGroupBox->setLayout(timeIntervalLayout);
+
+    //QHBoxLayout *genButtonLayout = new QHBoxLayout;
+    //genButtonLayout->addStretch();
+    //genButtonLayout->addWidget(m_genPushButton);
+
+    QHBoxLayout *dataLayout = new QHBoxLayout;
+    dataLayout->addWidget(tipoDeDatosGroupBox);
+    dataLayout->addSpacing(50);
+    dataLayout->addWidget(unitGroupBox);
 
     QVBoxLayout *mainGroupBoxLayout = new QVBoxLayout;
-    mainGroupBoxLayout->addSpacing(10);
+    mainGroupBoxLayout->addWidget(metaDataGroupBox);
+    mainGroupBoxLayout->addLayout(dataLayout);
+    //mainGroupBoxLayout->addSpacing(10);
     mainGroupBoxLayout->addWidget(m_ini_endGroupBox);
-    mainGroupBoxLayout->addSpacing(30);
-    mainGroupBoxLayout->addWidget(m_timeIntervalGroupBox);
-    mainGroupBoxLayout->addSpacing(20);
-    mainGroupBoxLayout->addLayout(genButtonLayout);
+    //mainGroupBoxLayout->addSpacing(30);
+    //mainGroupBoxLayout->addWidget(m_timeIntervalGroupBox);
+    //mainGroupBoxLayout->addSpacing(20);
+    //mainGroupBoxLayout->addLayout(genButtonLayout);
 
     m_mainGroupBox->setLayout(mainGroupBoxLayout);
 
     m_buttonsGroupBox = new QGroupBox;
 
     m_insertPushButton = new QPushButton(QIcon(":images/table_row_new.png"),tr("Insertar"));
-    m_insertPushButton->setToolTip(tr("Inserta una nueva medición"));
+    m_insertPushButton->setToolTip(tr("Insertar fila"));
     connect(m_insertPushButton,SIGNAL(clicked(bool)),this,SLOT(insertMeasurement()));
 
     m_removePushButton = new QPushButton(QIcon(":images/table_row_delete.png"),tr("Eliminar"));
-    m_removePushButton->setToolTip(tr("Elimina la última medición"));
-    connect(m_removePushButton,SIGNAL(clicked(bool)),this,SLOT(removeLastMeasurement()));
+    m_removePushButton->setToolTip(tr("Eliminar fila"));
+    connect(m_removePushButton,SIGNAL(clicked(bool)),m_editionTable,SLOT(removeRows()));
 
     m_clearPushButton = new QPushButton(QIcon(":images/table_delete.png"),tr("Limpiar"));
-    m_clearPushButton->setToolTip(tr("Elimina todas la mediciones"));
+    m_clearPushButton->setToolTip(tr("Limpiar tabla"));
     connect(m_clearPushButton,SIGNAL(clicked(bool)),this,SLOT(clearMeasurements()));
 
     m_okPushButton = new QPushButton(QIcon(":images/Ok.png"),tr("Aceptar"));
@@ -252,7 +316,7 @@ void ManualDataIntroductionWidget::createComponents()
     m_cancelPushButton = new QPushButton(QIcon(":images/No.png"),tr("Cancelar"));
     connect(m_cancelPushButton,SIGNAL(clicked(bool)),this,SLOT(close()));
 
-    QVBoxLayout *upButtonsLayout = new QVBoxLayout;
+    QHBoxLayout *upButtonsLayout = new QHBoxLayout;
     upButtonsLayout->addWidget(m_insertPushButton);
     upButtonsLayout->addWidget(m_removePushButton);
     upButtonsLayout->addWidget(m_clearPushButton);
@@ -261,7 +325,7 @@ void ManualDataIntroductionWidget::createComponents()
 
     m_desitionButtonsGroupBox = new QGroupBox;
 
-    QVBoxLayout *downButtonsLayout = new QVBoxLayout;
+    QHBoxLayout *downButtonsLayout = new QHBoxLayout;
     downButtonsLayout->addWidget(m_okPushButton);
     downButtonsLayout->addWidget(m_cancelPushButton);
 
@@ -276,14 +340,14 @@ void ManualDataIntroductionWidget::createComponents()
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(m_mainGroupBox);
-    mainLayout->addSpacing(50);
+    //mainLayout->addSpacing(50);
     mainLayout->addWidget(m_buttonsGroupBox);
-    mainLayout->addSpacing(50);
+    //mainLayout->addSpacing(50);
     mainLayout->addWidget(m_desitionButtonsGroupBox);
 
     //Layout Central
 
-    m_editionTable = new EditionTable(this);
+    //m_editionTable->setModel(m_model);
 
     QHBoxLayout *centralLayout = new QHBoxLayout;
     centralLayout->addWidget(m_editionTable);

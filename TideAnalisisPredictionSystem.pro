@@ -151,6 +151,8 @@ HEADERS  += \
     include/MeasurementUnitEditWidget/measurementuniteditwidget.h \
     include/SelectionRangeLabel/selectionrangelabel.h
 
+RC_ICONS = aquarius-48.ico
+
 RESOURCES += \
     images.qrc
 

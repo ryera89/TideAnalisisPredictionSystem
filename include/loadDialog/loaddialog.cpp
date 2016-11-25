@@ -367,7 +367,7 @@ void LoadDialog::settingUpEveryThing()
     //m_importTextEdit->setFixedHeight(250);
     m_importTextEdit->setFixedWidth(500);
 
-    //m_dataWidget = new metaDataWidget(this);
+    m_metaDataWidget = new metaDataWidget;
 
     m_dateLabel = new QLabel(tr("Fecha"),this);
     m_dateLabel->setAlignment(Qt::AlignVCenter);
@@ -441,7 +441,7 @@ void LoadDialog::settingUpEveryThing()
     m_cancelButton = new QPushButton(QIcon(":images/No.png"),tr("Cancelar"),this);
     connect(m_cancelButton,SIGNAL(clicked(bool)),this,SLOT(close()));
 
-    //m_unitGroupBox = new QGroupBox(tr("Unidad de Medición")); //GroupBox de Medidas
+    //m_unitGroupBox = new QGroupBox(tr("Unidad de Medida:")); //GroupBox de Medidas
     //m_correctionGroupBox = new QGroupBox(tr("Corrección de Nivel")); //GrupoBox de Correciones
     m_firstLineGroupBox  = new QGroupBox(tr("Primera Línea:")); //GroupBox de carga de datos
     m_lastLineGroupBox  = new QGroupBox(tr("Última Línea:")); //GroupBox de carga de datos
@@ -505,7 +505,7 @@ void LoadDialog::settingUpEveryThing()
     //m_correctionGroupBox->setLayout(corrLayout);
 
     //Date and Time Format Facilities----------------
-    m_dateFormatGroupBox = new QGroupBox(tr("Formato de Fecha"));
+    m_dateFormatGroupBox = new QGroupBox(tr("Formato de Fecha:"));
 
     m_dateFormatLineEdit = new QLineEdit;
     m_dateFormatLineEdit->setDisabled(true);
@@ -531,7 +531,7 @@ void LoadDialog::settingUpEveryThing()
     dateFormatLayout->addWidget(m_dateFormatLineEdit);
     m_dateFormatGroupBox->setLayout(dateFormatLayout);
 
-    m_timeFormatGroupBox = new QGroupBox(tr("Formato de Hora"));
+    m_timeFormatGroupBox = new QGroupBox(tr("Formato de Hora:"));
 
     m_timeFormatLineEdit = new QLineEdit;
     m_timeFormatLineEdit->setDisabled(true);
@@ -668,16 +668,16 @@ void LoadDialog::settingUpEveryThing()
 
     bottomLayout->addLayout(buttonLayout);
 
-    //QGroupBox *metaGroupBox = new QGroupBox(tr("DATOS DEL PROYECTO"));
+    QGroupBox *metaGroupBox = new QGroupBox;
 
-    //QVBoxLayout *metaLayout = new QVBoxLayout;
-    //metaLayout->addWidget(m_dataWidget);
-    //metaGroupBox->setLayout(metaLayout);
+    QHBoxLayout *metaLayout = new QHBoxLayout;
+    metaLayout->addWidget(m_metaDataWidget);
+    metaGroupBox->setLayout(metaLayout);
 
-    QGroupBox *primaryData = new QGroupBox(tr("Tipo de Datos Primarios"));
-    m_corrRadioButton = new QRadioButton(tr("Corrección"));
+    QGroupBox *primaryData = new QGroupBox(tr("Tipo de Datos Primarios:"));
+    m_corrRadioButton = new QRadioButton(tr("Correcciones"));
     m_corrRadioButton->setChecked(true);
-    m_levelRadioButton = new QRadioButton(tr("Nivel"));
+    m_levelRadioButton = new QRadioButton(tr("Niveles"));
 
     QVBoxLayout *primaryDataTypeLayout = new QVBoxLayout;
     primaryDataTypeLayout->addWidget(m_corrRadioButton);
@@ -686,7 +686,7 @@ void LoadDialog::settingUpEveryThing()
     primaryData->setLayout(primaryDataTypeLayout);
 
     QVBoxLayout *leftLayout = new QVBoxLayout;
-    //leftLayout->addWidget(metaGroupBox);
+    leftLayout->addWidget(metaGroupBox);
     leftLayout->addWidget(primaryData);
     leftLayout->addWidget(m_measurementGroupBox);
 

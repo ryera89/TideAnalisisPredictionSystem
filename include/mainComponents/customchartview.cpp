@@ -95,17 +95,26 @@ void customChartView::wheelEvent(QWheelEvent *event)
 
 void customChartView::mouseMoveEvent(QMouseEvent *event)
 {
-    if (this->chart()->plotArea().contains(event->pos())){
-        if (chart()->series().first()){
-            QPointF seriesPos = chart()->mapToValue(event->pos(),chart()->series().first()); //Ver esto pues quizas debemos cambiar
-            m_currentMousePos = event->pos();
+   /* if (this->chart()->plotArea().contains(event->pos())){
 
-            emit seriesPoint(seriesPos);
+        m_currentMousePos = event->pos();
 
-            if (rubberBand() != QChartView::NoRubberBand) emit selectionUpdated(m_pressedMousePosition,m_currentMousePos);
-        }
-    }
+        emit seriesPoint(m_currentMousePos);
+
+        //if (rubberBand() != QChartView::NoRubberBand) emit selectionUpdated(m_pressedMousePosition,m_currentMousePos);
+
+    }*/
     QChartView::mouseMoveEvent(event);
+    if (this->chart()->plotArea().contains(event->pos())){
+
+        m_currentMousePos = event->pos();
+
+        emit seriesPoint(m_currentMousePos);
+
+        if (rubberBand() != QChartView::NoRubberBand) emit selectionUpdated(m_pressedMousePosition,m_currentMousePos);
+
+    }
+    //if (rubberBand() != QChartView::NoRubberBand) emit selectionUpdated(m_pressedMousePosition,m_currentMousePos);
 }
 
 void customChartView::mousePressEvent(QMouseEvent *event)
