@@ -138,12 +138,18 @@ void CentralWidget::setSeriesData()
     //int columnNumber = m_model->columnCount(QModelIndex());
 
     QVector<QPointF> datos;
+    qreal ymaxValue = 1.0;
+    qreal yminValue = 0.0;
+
     for (int i = 0; i < rowNumber; ++i){
         double y_value;
         QDateTime x_value;
         x_value.setDate(m_tidalTableModel->measurementData().at(i).measurementDate());
         x_value.setTime(m_tidalTableModel->measurementData().at(i).measurementTime());
         y_value = m_tidalTableModel->measurementData().at(i).seaLevel();
+
+        if (ymaxValue < y_value) ymaxValue = y_value;
+        if (yminValue > y_value) yminValue = y_value;
 
         datos.append(QPointF(x_value.toMSecsSinceEpoch(),y_value));
     }
@@ -163,7 +169,7 @@ void CentralWidget::setSeriesData()
         else m_timeAxis->setRange(QDateTime::fromMSecsSinceEpoch(m_series->at(0).x()),QDateTime::fromMSecsSinceEpoch(m_series->pointsVector().last().x()));
     }
 
-
+    m_yAxis->setRange(yminValue,ymaxValue);
     //m_tideChartView->chart()->addSeries(m_series);
     //m_tideChartView->chart()->createDefaultAxes();
 
@@ -172,9 +178,9 @@ void CentralWidget::setSeriesData()
     m_tideChartView->chart()->createDefaultAxes();
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
-    //m_tideChart->setAxisY(m_yAxis,m_series);
-    //m_tideChart->setAxisY(m_yAxis,m_selectionSeries);
-    //m_yAxis->applyNiceNumbers();
+    m_tideChart->setAxisY(m_yAxis,m_series);
+    m_tideChart->setAxisY(m_yAxis,m_selectionSeries);
+    m_yAxis->applyNiceNumbers();
     //m_tideChartView->chart()->setAxisX(m_timeAxis,m_scatterSerie);
 
     //m_mapper->setSeries(m_series);
