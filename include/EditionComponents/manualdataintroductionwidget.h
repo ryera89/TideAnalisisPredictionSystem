@@ -6,6 +6,7 @@
 #include "editiontable.h"
 #include "include/model_view/tablemodel.h"
 #include "include/ProjectMetaData/metadatawidget.h"
+#include "include/ProjectMetaData/projectmetadata.h"
 
 class QLabel;
 class QTimeEdit;
@@ -23,6 +24,20 @@ public:
     explicit ManualDataIntroductionWidget(QWidget *parent = 0);
 
     TableModel* model()const{return m_model;}
+
+    QString projectName() const{return m_metaDataWidget->projectName();}
+    QString stationName() const{return m_metaDataWidget->stationName();}
+    QString localizationName() const{return m_metaDataWidget->localizationName();}
+    double ceroPuesto() const{return m_metaDataWidget->ceroPuesto();}
+    double nivelReferencia() const{return m_metaDataWidget->nivelReferencia();}
+    MeasurementUnitEditWidget::Units ceroUnit() const{return m_metaDataWidget->ceroUnit();}
+    MeasurementUnitEditWidget::Units referenceUnit() const{return m_metaDataWidget->referenciaUnit();}
+    double latitud() const{return m_metaDataWidget->latitud();}
+    double longitud() const{return m_metaDataWidget->longitud();}
+    QString equipmentID() const{return m_metaDataWidget->equipmentID();}
+
+    void setProjectMetaData(const ProjectMetaData &metadata);
+    double conversionUnit() const{return m_conversionUnit;}
 
 signals:
     void dataTrenfer(const QVector<TidesMeasurement> &data);
@@ -45,12 +60,13 @@ private slots:
     //void beginDataTranfer();
 
     void generateData(); //Para conectar con el genPushButton
+    void setConversionUnit(int index);
 
 private:
     EditionTable *m_editionTable;
     TableModel *m_model;
 
-    metaDataWidget *m_metaData;
+    metaDataWidget *m_metaDataWidget;
 
     quint64 m_timeInterval;
 
@@ -91,6 +107,8 @@ private:
     QRadioButton *m_correctionsRadioButton;
 
     QComboBox *m_measurementUnitComboBox;
+
+    qreal m_conversionUnit;
 
     void createComponents();
     void settingTableWidth();

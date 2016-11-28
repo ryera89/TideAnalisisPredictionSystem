@@ -4,7 +4,7 @@
 #include <QDialog>
 #include "linenumbereditor.h" //Custom Text Editor with line Numbers
 #include "include/ProjectMetaData/metadatawidget.h"
-//#include "include/ProjectMetaData/projectmetadata.h"
+#include "include/ProjectMetaData/projectmetadata.h"
 
 class QLabel;
 class QLineEdit;
@@ -19,6 +19,8 @@ class QStringList;
 class QIntValidator;
 class QSpinBox;
 class QRadioButton;
+class QProgressBar;
+
 
 #include <QVector>
 #include "include/measurement/measurement.h"
@@ -41,12 +43,14 @@ public:
     QString stationName() const{return m_metaDataWidget->stationName();}
     QString localizationName() const{return m_metaDataWidget->localizationName();}
     double ceroPuesto() const{return m_metaDataWidget->ceroPuesto();}
-    double nivelTeferencia() const{return m_metaDataWidget->nivelReferencia();}
+    double nivelReferencia() const{return m_metaDataWidget->nivelReferencia();}
     MeasurementUnitEditWidget::Units ceroUnit() const{return m_metaDataWidget->ceroUnit();}
     MeasurementUnitEditWidget::Units referenceUnit() const{return m_metaDataWidget->referenciaUnit();}
     double latitud() const{return m_metaDataWidget->latitud();}
     double longitud() const{return m_metaDataWidget->longitud();}
     QString equipmentID() const{return m_metaDataWidget->equipmentID();}
+
+    void setProjectMetaData(const ProjectMetaData &metadata);
 
 public slots:
     void getDataPoints();
@@ -151,6 +155,8 @@ private:
 
     QRadioButton *m_corrRadioButton;
     QRadioButton *m_levelRadioButton;
+
+    QProgressBar *m_importProgressBar;
 
     QString m_timeFormat;
     QString m_dateFormat;

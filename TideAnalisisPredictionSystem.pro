@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts qml quick
+QT       += core gui charts qml quick positioning
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -79,7 +79,8 @@ SOURCES += main.cpp\
     include/NonHarmonicConstantsModule/FrontEnd/displayresultwidget.cpp \
     include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.cpp \
     include/MeasurementUnitEditWidget/measurementuniteditwidget.cpp \
-    include/SelectionRangeLabel/selectionrangelabel.cpp
+    include/SelectionRangeLabel/selectionrangelabel.cpp \
+    include/NivelacionAcuatica/nivelacion_acuatica_calculo.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -149,7 +150,8 @@ HEADERS  += \
     include/NonHarmonicConstantsModule/FrontEnd/displayresultwidget.h \
     include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.h \
     include/MeasurementUnitEditWidget/measurementuniteditwidget.h \
-    include/SelectionRangeLabel/selectionrangelabel.h
+    include/SelectionRangeLabel/selectionrangelabel.h \
+    include/NivelacionAcuatica/nivelacion_acuatica_calculo.h
 
 RC_ICONS = aquarius-48.ico
 

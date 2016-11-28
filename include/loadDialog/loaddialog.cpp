@@ -19,6 +19,7 @@
 #include <QTextBlock>
 #include <QSpinBox>
 #include <QRadioButton>
+#include <QProgressBar>
 
 #include <iostream>
 using namespace std;
@@ -65,6 +66,18 @@ LoadDialog::~LoadDialog()
 bool LoadDialog::isLevelRadioButtonChecked()
 {
     return m_levelRadioButton->isChecked();
+}
+
+void LoadDialog::setProjectMetaData(const ProjectMetaData &metadata)
+{
+    m_metaDataWidget->setProjectName(metadata.projectName());
+    m_metaDataWidget->setStationName(metadata.stationName());
+    m_metaDataWidget->setLocalizationName(metadata.localizationName());
+    m_metaDataWidget->setCeroPuestoValueAndUnit(metadata.ceroUnit(),metadata.ceroPuesto());
+    m_metaDataWidget->setNivelReferenciaValueAndUnit(metadata.referenciaUnit(),metadata.nivelReferencia());
+    m_metaDataWidget->setLatitud(metadata.latitud());
+    m_metaDataWidget->setLongitud(metadata.longitud());
+    m_metaDataWidget->setEquipmentID(metadata.equipmentID());
 }
 
 /*QString LoadDialog::loacationName() const
@@ -114,6 +127,10 @@ void LoadDialog::getDataPoints(){
     int from = m_firstLineLineEdit->value();
     int to = m_lastLineLineEdit->value();
 
+    m_importProgressBar->setMaximum((to - from + 1)*2);
+
+    int pro = 0;
+
     QString dateSeparator = m_separatorDateEdit->text();
     QString timeSeparator = m_separatorTimeEdit->text();
     QString levelSeparator = m_separatorHeigthEdit->text();
@@ -124,12 +141,13 @@ void LoadDialog::getDataPoints(){
             QString str = m_importTextEdit->document()->findBlockByLineNumber(i).text();
             QStringList dataPoint = str.split(QRegExp(tr("[\\s+%1%2%3]").arg(dateSeparator).arg(timeSeparator).arg(levelSeparator)));
             pointsOfData.push_back(dataPoint);
+            ++pro;
+            m_importProgressBar->setValue(pro);
         }
 
         int dateField  = m_fieldDateEdit->value();
         int timeField  = m_fieldTimeEdit->value();
         int heightField  = m_fieldHeightEdit->value();
-
 
         int desition = QMessageBox::Yes;
 
@@ -149,6 +167,10 @@ void LoadDialog::getDataPoints(){
                 QVariant heightVariant = level;
                 double height = heightVariant.toDouble(&d_ok);
                 height*=unitScale; //Conversion de unidades llevando a metros
+
+                ++pro; //Progress Bar
+                m_importProgressBar->setValue(pro);
+
                 if (date.isValid() && time.isValid() && d_ok){
                     measurements.push_back(TidesMeasurement(height,date,time));
                 }else{
@@ -629,6 +651,10 @@ void LoadDialog::settingUpEveryThing()
     m_measurementGroupBox->setLayout(midLayout);
     m_measurementGroupBox->setFixedWidth(350);
 
+    m_importProgressBar = new QProgressBar(this);
+    m_importProgressBar->setTextVisible(true);
+    m_importProgressBar->setMinimum(0);
+
     //Location facilities-------------------------------
 
     /*m_localizationGroupBox = new QGroupBox;
@@ -660,6 +686,7 @@ void LoadDialog::settingUpEveryThing()
     //---------------------------------------------------------
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
+    bottomLayout->addWidget(m_importProgressBar);
     bottomLayout->addStretch();
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;

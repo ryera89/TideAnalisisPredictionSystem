@@ -89,6 +89,7 @@ void SPMmainWindow::loadDataFile()
     QString fileName = QFileDialog::getOpenFileName(this,tr("Cargar Archivo"));
     if (!fileName.isEmpty()){
         m_loadDialog = new LoadDialog(fileName,this);
+        m_loadDialog->setProjectMetaData(m_metadataStorage);
         //connect(m_loadDialog,SIGNAL(dataGeted(QVector<QStringList>,int,int,int, const QString&, const QString&)),
                     //this,SLOT(recieveData(QVector<QStringList>,int,int,int, const QString&, const QString&)));
         connect(m_loadDialog,SIGNAL(importButtonClicked()),this,SLOT(beginDataExtrationFromFile()));
@@ -102,6 +103,7 @@ void SPMmainWindow::loadDataFile()
 void SPMmainWindow::createManualDataIntWidget()
 {
     m_manualDataIntroductionWidget = new ManualDataIntroductionWidget(this);
+    m_manualDataIntroductionWidget->setProjectMetaData(m_metadataStorage);
     connect(m_manualDataIntroductionWidget,SIGNAL(okButtonClicked()),
             this,SLOT(beginDataExtration()));
     m_manualDataIntroductionWidget->show();
@@ -552,11 +554,33 @@ void SPMmainWindow::beginDataExtration()
     QVector<TidesMeasurement> datos;
 
     int size = m_manualDataIntroductionWidget->model()->measurementData().size();
+
+    qreal conversion = m_manualDataIntroductionWidget->conversionUnit();
+
+
     for (int i = 0; i < size ; ++i){
         if (m_manualDataIntroductionWidget->model()->measurementData().at(i).isValid()){
+
             datos.push_back(m_manualDataIntroductionWidget->model()->measurementData().at(i));
+
+            if (conversion != 1.0){
+                qreal value = m_manualDataIntroductionWidget->model()->measurementData().at(i).seaLevel()*conversion;
+                datos[i].setSeaLevel(value);
+            }
         }
     }
+
+    m_metadataStorage.setProjectName(m_manualDataIntroductionWidget->projectName());
+    m_metadataStorage.setStationName(m_manualDataIntroductionWidget->stationName());
+    m_metadataStorage.setLocalizationName(m_manualDataIntroductionWidget->localizationName());
+    m_metadataStorage.setCeroPuesto(m_manualDataIntroductionWidget->ceroPuesto());
+    m_metadataStorage.setCeroUnits(m_manualDataIntroductionWidget->ceroUnit());
+    m_metadataStorage.setNivelReferencia(m_manualDataIntroductionWidget->nivelReferencia());
+    m_metadataStorage.setReferenceUnits(m_manualDataIntroductionWidget->referenceUnit());
+    m_metadataStorage.setLatitud(m_manualDataIntroductionWidget->latitud());
+    m_metadataStorage.setLongitud(m_manualDataIntroductionWidget->longitud());
+    m_metadataStorage.setEquipmentID(m_manualDataIntroductionWidget->equipmentID());
+
     m_central->tableModel()->setMeasurements(datos);
 
     m_manualDataIntroductionWidget->close();
@@ -564,7 +588,16 @@ void SPMmainWindow::beginDataExtration()
 
 void SPMmainWindow::beginDataExtrationFromFile()
 {
-
+    m_metadataStorage.setProjectName(m_loadDialog->projectName());
+    m_metadataStorage.setStationName(m_loadDialog->stationName());
+    m_metadataStorage.setLocalizationName(m_loadDialog->localizationName());
+    m_metadataStorage.setCeroPuesto(m_loadDialog->ceroPuesto());
+    m_metadataStorage.setCeroUnits(m_loadDialog->ceroUnit());
+    m_metadataStorage.setNivelReferencia(m_loadDialog->nivelReferencia());
+    m_metadataStorage.setReferenceUnits(m_loadDialog->referenceUnit());
+    m_metadataStorage.setLatitud(m_loadDialog->latitud());
+    m_metadataStorage.setLongitud(m_loadDialog->longitud());
+    m_metadataStorage.setEquipmentID(m_loadDialog->equipmentID());
 
     m_central->tableModel()->setMeasurements(m_loadDialog->measurementsData());
 

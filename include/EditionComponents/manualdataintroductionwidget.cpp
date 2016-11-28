@@ -36,6 +36,18 @@ ManualDataIntroductionWidget::ManualDataIntroductionWidget(QWidget *parent) : QD
 
 }
 
+void ManualDataIntroductionWidget::setProjectMetaData(const ProjectMetaData &metadata)
+{
+    m_metaDataWidget->setProjectName(metadata.projectName());
+    m_metaDataWidget->setStationName(metadata.stationName());
+    m_metaDataWidget->setLocalizationName(metadata.localizationName());
+    m_metaDataWidget->setCeroPuestoValueAndUnit(metadata.ceroUnit(),metadata.ceroPuesto());
+    m_metaDataWidget->setNivelReferenciaValueAndUnit(metadata.referenciaUnit(),metadata.nivelReferencia());
+    m_metaDataWidget->setLatitud(metadata.latitud());
+    m_metaDataWidget->setLongitud(metadata.longitud());
+    m_metaDataWidget->setEquipmentID(metadata.equipmentID());
+}
+
 void ManualDataIntroductionWidget::setMinimumDateEditValue(const QDate &date)
 {
     if (m_endDateEdit->date() < date){
@@ -154,18 +166,42 @@ void ManualDataIntroductionWidget::generateData()
 
 }
 
+void ManualDataIntroductionWidget::setConversionUnit(int index)
+{
+    switch (index) {
+    case 0:
+        m_conversionUnit = 1.0;
+        break;
+    case 1:
+        m_conversionUnit = 0.1;
+        break;
+    case 2:
+        m_conversionUnit = 0.001;
+        break;
+    case 3:
+        m_conversionUnit = 0.0001;
+        break;
+    default:
+        m_conversionUnit = 1.0;
+        break;
+    }
+}
+
 void ManualDataIntroductionWidget::createComponents()
 {
+
+    m_conversionUnit = 1.0;
+
     m_editionTable = new EditionTable(this);
     connect(m_editionTable,SIGNAL(rowsRemoved(int,int)),this,SLOT(removeRows(int,int)));
     connect(m_editionTable,SIGNAL(rowInserted()),this,SLOT(insertMeasurement()));
 
-    m_metaData = new metaDataWidget(this);
+    m_metaDataWidget = new metaDataWidget(this);
 
     QGroupBox *metaDataGroupBox = new QGroupBox;
 
     QHBoxLayout *metaLayout = new QHBoxLayout;
-    metaLayout->addWidget(m_metaData);
+    metaLayout->addWidget(m_metaDataWidget);
 
     metaDataGroupBox->setLayout(metaLayout);
 
@@ -179,6 +215,8 @@ void ManualDataIntroductionWidget::createComponents()
     m_measurementUnitComboBox->addItem("dm");
     m_measurementUnitComboBox->addItem("cm");
     m_measurementUnitComboBox->addItem("mm");
+
+    connect(m_measurementUnitComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(setConversionUnit(int)));
 
     QGroupBox *tipoDeDatosGroupBox = new QGroupBox(tr("Datos:"));
 
