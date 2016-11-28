@@ -564,6 +564,8 @@ void SPMmainWindow::beginDataExtration()
 
 void SPMmainWindow::beginDataExtrationFromFile()
 {
+
+
     m_central->tableModel()->setMeasurements(m_loadDialog->measurementsData());
 
     m_loadDialog->close();

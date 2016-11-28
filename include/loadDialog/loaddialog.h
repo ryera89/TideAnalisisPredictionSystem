@@ -4,7 +4,7 @@
 #include <QDialog>
 #include "linenumbereditor.h" //Custom Text Editor with line Numbers
 #include "include/ProjectMetaData/metadatawidget.h"
-//#include "include/metadatawidget.h"
+//#include "include/ProjectMetaData/projectmetadata.h"
 
 class QLabel;
 class QLineEdit;
@@ -36,17 +36,17 @@ public:
     //metaDataWidget* metaData() const{return m_dataWidget;}
 
     bool isLevelRadioButtonChecked();
-    //QString loacationName() const;
-    //QString equipmentID() const;
-    //QString latitud() const;
-    //QString longitud() const;
-
-    //QString getLocationName() const {return m_locationLineEdit->text();} //Obtiene el nombre de la localizacion
-    //QString getEquipmentId() const {return m_equipmentIDLineEdit->text();} //Retorna el id del equipo
-
-    //NOTE: Ver despues el formato en que se trabaja de latitud y longitud
-   // QString getLatitud() const {return m_latitudLineEdit->text();}
-    //QString getLongitud() const {return m_longitudLineEdit->text();}
+    //Meta Data
+    QString projectName() const{return m_metaDataWidget->projectName();}
+    QString stationName() const{return m_metaDataWidget->stationName();}
+    QString localizationName() const{return m_metaDataWidget->localizationName();}
+    double ceroPuesto() const{return m_metaDataWidget->ceroPuesto();}
+    double nivelTeferencia() const{return m_metaDataWidget->nivelReferencia();}
+    MeasurementUnitEditWidget::Units ceroUnit() const{return m_metaDataWidget->ceroUnit();}
+    MeasurementUnitEditWidget::Units referenceUnit() const{return m_metaDataWidget->referenciaUnit();}
+    double latitud() const{return m_metaDataWidget->latitud();}
+    double longitud() const{return m_metaDataWidget->longitud();}
+    QString equipmentID() const{return m_metaDataWidget->equipmentID();}
 
 public slots:
     void getDataPoints();
@@ -70,19 +70,10 @@ private slots:
     void setDateFormat(const QString &format);
     void setCustomTimeFormat(const QString &format);
     void setCustomDateFormat(const QString &format);
-
     void setMinimumLastLineValue(int);
 
 signals:
     void importButtonClicked();
-
-    //void dataGeted(const QVector<QStringList>&, int, int, int, const QString &dateFormat, const QString &timeFormat);
-    //void sendLocationName(const QString &);
-    //void sendEquipmentID(const QString &);
-    //void sendLatitud(const QString &);
-    //void sendLongitud(const QString &);
-    //void sendDateTimeStringFormat(const QString &dateFormat, const QString &timeFormat); //signal para transmitir el formato
-
 private:
     QVector<TidesMeasurement> measurements;
 
@@ -91,6 +82,7 @@ private:
 
     LineNumberEditor* m_importTextEdit;
     metaDataWidget *m_metaDataWidget;
+    //ProjectMetaData m_metaData;
 
     QLabel *m_dateLabel;
     QLabel *m_timeLabel;
