@@ -81,3 +81,26 @@ void TidalTimeLevel::setSeaLevel(const double &level)
 {
     m_seaLevel = level;
 }
+
+TidesMeasurement diferenciaDeNivel(const TidesMeasurement &m1, const TidesMeasurement &m2)
+{
+    TidesMeasurement measurement;
+
+    qreal dif = m1.seaLevel() - m2.seaLevel();
+
+    measurement.setSeaLevel(dif);
+
+    if (m1.measurementDateTime() == m2.measurementDateTime()){
+        measurement.setMeasurementDate(m1.measurementDate());
+        measurement.setMeasurementTime(m1.measurementTime());
+    }else{
+        measurement.setMeasurementDate(QDate());
+        measurement.setMeasurementTime(QTime());
+    }
+    return measurement;
+}
+
+TidesMeasurement operator -(const TidesMeasurement &m1, const TidesMeasurement &m2)
+{
+    return diferenciaDeNivel(m1,m2);
+}

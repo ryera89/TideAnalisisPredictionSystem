@@ -10,6 +10,7 @@
 #include "include/EditionComponents/manualdataintroductionwidget.h"
 #include "include/ProjectMetaData/projectmetadata.h"
 #include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
+#include "include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.h"
 class SchemeWidget;
 class MetaDataDialog;
 class FreqEditor;
@@ -39,6 +40,7 @@ private slots:
     void crearTablaHoraria();
     void createMetaDataDialog();
     void createNonHarmonicDialog();
+    void createNivelacionAcuaticaWidget();
     void updateMetaData(); //SLOT para connectar al dilogo de los meta datos para guardarlos
 
     /*void recieveData(const QVector<QStringList> &data, int dateField, int timeField,
@@ -96,6 +98,7 @@ private:
      SchemeWidget *m_schemeWidget;
      NonHarmonicCalcDialog *m_nonHarmonicConstantDialog;
      FreqEditor *m_frequencyEditor;
+     NivelacionAcuaticaWidget *m_nivelacionAcuaticaWidget;
 
      /*************************ACTIONS*************************************************/
      //File Menu Actions----------------------------------------------------------------
@@ -138,6 +141,7 @@ private:
 
      //Tools Actions------------------------------------------------------------------------
      QAction *m_freqEditorAction;
+     QAction *m_nivelacionAcuaticaAction;
 
      //View Actions-----------------------------------------------------------------------
 

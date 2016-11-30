@@ -80,7 +80,9 @@ SOURCES += main.cpp\
     include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.cpp \
     include/MeasurementUnitEditWidget/measurementuniteditwidget.cpp \
     include/SelectionRangeLabel/selectionrangelabel.cpp \
-    include/NivelacionAcuatica/nivelacion_acuatica_calculo.cpp
+    include/NivelacionAcuatica/nivelacion_acuatica_calculo.cpp \
+    include/NivelacionAcuatica/Model_View_Delegate/nivelacionacuaticatablemodel.cpp \
+    include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -151,7 +153,9 @@ HEADERS  += \
     include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.h \
     include/MeasurementUnitEditWidget/measurementuniteditwidget.h \
     include/SelectionRangeLabel/selectionrangelabel.h \
-    include/NivelacionAcuatica/nivelacion_acuatica_calculo.h
+    include/NivelacionAcuatica/nivelacion_acuatica_calculo.h \
+    include/NivelacionAcuatica/Model_View_Delegate/nivelacionacuaticatablemodel.h \
+    include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.h
 
 RC_ICONS = aquarius-48.ico
 

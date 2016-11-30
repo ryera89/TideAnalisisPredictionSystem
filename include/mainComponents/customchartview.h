@@ -2,7 +2,7 @@
 #define CUSTOMCHARTVIEW_H
 
 #include <QWidget>
-#include <QtCharts/QChartView>
+#include <QtCharts>
 #include <QKeyEvent>
 #include <QWheelEvent>
 #include <QToolButton>

@@ -49,6 +49,9 @@ public:
 
 };
 
+TidesMeasurement diferenciaDeNivel(const TidesMeasurement &m1, const TidesMeasurement &m2); //Si las mediciones son simutaneas devuelve un medicion valida sino invalida
+
+TidesMeasurement operator -(const TidesMeasurement &m1, const TidesMeasurement &m2); //Si las mediciones son simutaneas devuelve un medicion valida sino invalida
 
 inline bool operator ==(const TidesMeasurement &om1, const TidesMeasurement &om2){
     return om1.seaLevel() == om2.seaLevel() && om1.measurementDate() == om2.measurementDate()

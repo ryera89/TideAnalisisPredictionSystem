@@ -40,35 +40,22 @@ customChartView::customChartView(QChart *chart, QWidget *parent): QChartView(cha
 void customChartView::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
-    case Qt::Key_Left:{
+    case Qt::Key_Left:
         chart()->scroll(-10,0);
-        if (chart()->series().first()){
-            QPointF seriesPos = chart()->mapToValue(m_currentMousePos,chart()->series().first()); //Ver esto pues quizas debemos cambiar
-            emit seriesPoint(seriesPos);
-        }
+        emit seriesPoint(m_currentMousePos);
         break;
-    }
-    case Qt::Key_Right:{
+    case Qt::Key_Right:
         chart()->scroll(10,0);
-        if (chart()->series().first()){
-            QPointF seriesPos = chart()->mapToValue(m_currentMousePos,chart()->series().first()); //Ver esto pues quizas debemos cambiar
-            emit seriesPoint(seriesPos);
-        }
+        emit seriesPoint(m_currentMousePos);
         break;
-    }
+
     case Qt::Key_Up:{
         chart()->scroll(0,10);
-        if (chart()->series().first()){
-            QPointF seriesPos = chart()->mapToValue(m_currentMousePos,chart()->series().first()); //Ver esto pues quizas debemos cambiar
-            emit seriesPoint(seriesPos);
-        }
+        emit seriesPoint(m_currentMousePos);
         break;
-    }
     case Qt::Key_Down:{
         chart()->scroll(0,-10);
-        if (chart()->series().first()){
-            QPointF seriesPos = chart()->mapToValue(m_currentMousePos,chart()->series().first()); //Ver esto pues quizas debemos cambiar
-            emit seriesPoint(seriesPos);
+        emit seriesPoint(m_currentMousePos);
         }
         break;
     }
@@ -85,12 +72,7 @@ void customChartView::keyPressEvent(QKeyEvent *event)
 void customChartView::wheelEvent(QWheelEvent *event)
 {
     this->chart()->scroll(event->angleDelta().y(),0);
-
-    if (chart()->series().first()){
-        QPointF seriesPos = chart()->mapToValue(event->pos(),chart()->series().first()); //Ver esto pues quizas debemos cambiar
-
-        emit seriesPoint(seriesPos);
-    }
+    emit seriesPoint(event->pos());
 }
 
 void customChartView::mouseMoveEvent(QMouseEvent *event)

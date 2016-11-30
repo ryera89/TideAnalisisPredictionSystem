@@ -25,6 +25,7 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
     m_schemeWidget = 0;
     m_nonHarmonicConstantDialog = 0;
     m_frequencyEditor = 0;
+    m_nivelacionAcuaticaWidget = 0;
     setCentralWidget(m_central);
 
     //m_datosDeMarea = TidalData(QVector<TidesMeasurement>(100));
@@ -135,6 +136,12 @@ void SPMmainWindow::createNonHarmonicDialog()
     m_nonHarmonicConstantDialog = new NonHarmonicCalcDialog(m_metadataStorage.longitud(),this);
     m_nonHarmonicConstantDialog->loadHarmonicConstants(SPMmainWindow::m_selectedHarmonicConstantVector);
     m_nonHarmonicConstantDialog->show();
+}
+
+void SPMmainWindow::createNivelacionAcuaticaWidget()
+{
+    m_nivelacionAcuaticaWidget = new NivelacionAcuaticaWidget;
+    m_nivelacionAcuaticaWidget->show();
 }
 
 void SPMmainWindow::updateMetaData()
@@ -657,7 +664,9 @@ void SPMmainWindow::createActions()
     m_freqEditorAction = new QAction(tr("Editor de Componentes"),this);
     //TODO icon
     connect(m_freqEditorAction,SIGNAL(triggered(bool)),this,SLOT(createFrequencyEditor()));
-
+    m_nivelacionAcuaticaAction = new QAction(tr("Nivelación Acuática"));
+    connect(m_nivelacionAcuaticaAction,SIGNAL(triggered(bool)),this,SLOT(createNivelacionAcuaticaWidget()));
+    //TODO icon
 
     //ChartActions--------------------------------------------------------------
     m_themeLightAction = new QAction(tr("Claro"),this);
@@ -767,6 +776,7 @@ void SPMmainWindow::createMenus()
     m_analisisMenu->addAction(m_nonHarmonicAnalisisAction);
 
     m_toolMenu = menuBar()->addMenu(tr("Herramientas"));
+    m_toolMenu->addAction(m_nivelacionAcuaticaAction);
     m_toolMenu->addAction(m_freqEditorAction);
 
     m_chartMenu = menuBar()->addMenu(tr("Gráfico"));

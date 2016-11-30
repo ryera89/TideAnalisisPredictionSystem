@@ -1,0 +1,125 @@
+#ifndef NIVELACIONACUATICAWIDGET_H
+#define NIVELACIONACUATICAWIDGET_H
+
+#include <QWidget>
+#include "include/MeasurementUnitEditWidget/measurementuniteditwidget.h"
+#include "include/CoordinatesEditionWidget/mycoordinateseditorwidget.h"
+#include "include/NivelacionAcuatica/Model_View_Delegate/nivelacionacuaticatablemodel.h"
+#include "include/mainComponents/customchartview.h"
+
+class QGroupBox;
+class QFrame;
+class QLabel;
+class QToolButton;
+class QTableView;
+class QPushButton;
+
+class NivelacionAcuaticaWidget : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit NivelacionAcuaticaWidget(QWidget *parent = 0);
+
+signals:
+
+public slots:
+
+private:
+    //Chart stuff
+    QFrame *m_chartFrame;
+    customChartView *m_chartView;
+    QChart *m_chart;
+    QSplineSeries *m_puestoProvSerie;
+    QSplineSeries *m_puestoPerm1Serie;
+    QSplineSeries *m_puestoPerm2Serie;
+    QLineSeries *m_nivelMedioLineSerie;
+
+    //Table View-Model
+    QTableView *m_dataTableView;
+    NivelacionAcuaticaTableModel *m_dataTableModel;
+
+    //Group Boxes
+    QGroupBox *m_metodoGroupBox;
+    QGroupBox *m_cargaDeDatosGroupBox;
+    QGroupBox *m_puestoProvMetaDataGroupBox;
+    QGroupBox *m_puestoPerm1MetaDataGroupBox;
+    QGroupBox *m_puestoPerm2MetaDataGroupBox;
+
+    //Combo Box
+    QComboBox *m_metodoComboBox;
+
+    //Labels
+    QLabel *m_puestoProvDataLoadLabel;
+    QLabel *m_puestoPerm1DataLoadLabel;
+    QLabel *m_puestoPerm2DataLoadLabel;
+
+    QLabel *m_puestoProvStationLabel;
+    QLabel *m_puestoProvLocationLabel;
+    QLabel *m_puestoProvLatitudLabel;
+    QLabel *m_puestoProvLongitudLabel;
+    QLabel *m_puestoProvNMMLabel;
+
+    QLabel *m_puestoPerm1StationLabel;
+    QLabel *m_puestoPerm1LocationLabel;
+    QLabel *m_puestoPerm1LatitudLabel;
+    QLabel *m_puestoPerm1LongitudLabel;
+    QLabel *m_puestoPerm1NMMLabel;
+
+    QLabel *m_puestoPerm2StationLabel;
+    QLabel *m_puestoPerm2LocationLabel;
+    QLabel *m_puestoPerm2LatitudLabel;
+    QLabel *m_puestoPerm2LongitudLabel;
+    QLabel *m_puestoPerm2NMMLabel;
+
+    //QFrames
+    QFrame *m_puestoProvDataLoadFrame;
+    QFrame *m_puestoPerm1DataLoadFrame;
+    QFrame *m_puestoPerm2DataLoadFrame;
+
+    //Tools Buttons
+    QToolButton *m_puestoProvImportButton;
+    QToolButton *m_puestoProvManualButton;
+    QToolButton *m_puestoProvGetButton;
+
+    QToolButton *m_puestoPerm1ImportButton;
+    QToolButton *m_puestoPerm1ManualButton;
+    QToolButton *m_puestoPerm1GetButton;
+
+    QToolButton *m_puestoPerm2ImportButton;
+    QToolButton *m_puestoPerm2ManualButton;
+    QToolButton *m_puestoPerm2GetButton;
+
+    //Coordinates Widget
+    MyCoordinatesEditorWidget *m_puestoProvLatitudEdit;
+    MyCoordinatesEditorWidget *m_puestoProvLongitudEdit;
+
+    MyCoordinatesEditorWidget *m_puestoPerm1LatitudEdit;
+    MyCoordinatesEditorWidget *m_puestoPerm1LongitudEdit;
+
+    MyCoordinatesEditorWidget *m_puestoPerm2LatitudEdit;
+    MyCoordinatesEditorWidget *m_puestoPerm2LongitudEdit;
+
+    //Measurement Unit
+    MeasurementUnitEditWidget *m_puestoPerm1NMMEdit;
+    MeasurementUnitEditWidget *m_puestoPerm2NMMEdit;
+
+    //Especial Label
+    QLabel *m_puestoProvNMMDisplayResult;
+
+    //QLineEdits
+    QLineEdit *m_puestoProvStationEdit;
+    QLineEdit *m_puestoProvLocationEdit;
+
+    QLineEdit *m_puestoPerm1StationEdit;
+    QLineEdit *m_puestoPerm1LocationEdit;
+
+    QLineEdit *m_puestoPerm2StationEdit;
+    QLineEdit *m_puestoPerm2LocationEdit;
+
+    //PushButtons
+    QPushButton *m_calcNMMButton;
+
+    void createComponents();
+};
+
+#endif // NIVELACIONACUATICAWIDGET_H
