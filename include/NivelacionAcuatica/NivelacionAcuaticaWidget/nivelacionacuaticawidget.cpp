@@ -26,6 +26,7 @@ void NivelacionAcuaticaWidget::createComponents()
     chartLayout->addWidget(m_chartView);
 
     m_chartFrame->setLayout(chartLayout); //upWidgetLayout
+    m_chartFrame->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 
     //----------------------------------------------------------------------------
 
@@ -33,6 +34,7 @@ void NivelacionAcuaticaWidget::createComponents()
     m_dataTableModel = new NivelacionAcuaticaTableModel;
     m_dataTableView = new QTableView;
     m_dataTableView->setModel(m_dataTableModel);
+    m_dataTableView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     //----------------------------------------------------------------------------
 

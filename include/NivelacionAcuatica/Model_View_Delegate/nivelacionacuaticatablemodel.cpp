@@ -1,8 +1,8 @@
 #include "nivelacionacuaticatablemodel.h"
 NivelacionAcuaticaTableModel::NivelacionAcuaticaTableModel(QObject *parent):QAbstractTableModel(parent)
 {
-    m_headers << "Fecha" << "Hora" << "Nivel[m]/nP.Prov" << "Nivel[m]/nP.Perm" << "DIFF[m]/nP.Prov - P.Perm"
-              << "DIFF[m]/nP.Prov - P.Perm1" << "DIFF[m]/nP.Prov - P.Perm2";
+    m_headers << "Fecha" << "Hora" << "Nivel[m]\nP.Prov" << "Nivel[m]\nP.Perm" << "DIFF[m]\nP.Prov - P.Perm"
+              << "DIFF[m]\nP.Prov - P.Perm1" << "DIFF[m]\nP.Prov - P.Perm2";
 
     m_colCount = 5;
     m_rowCount = m_puestoProvisionalDataSeries.size();
@@ -141,18 +141,18 @@ void NivelacionAcuaticaTableModel::setMetodoDeNivelacion(NivelacionAcuaticaTable
         //NOTE si la tabla no se me actualiza automatica ver este codigo
         if (m_metodo == UnPuestoPermanente){
             m_colCount = 5;
-            m_headers[3] = "Nivel [m]/n"
+            m_headers[3] = "Nivel [m]\n"
                            "P.Perm";
-            m_headers[4] = "DIFF [m]/n"
+            m_headers[4] = "DIFF [m]\n"
                            "P.Prov - P.Perm";
             beginRemoveColumns(QModelIndex(),5,6);
             endRemoveColumns();
         }
         if (m_metodo == DosPuestosPermantes){
             m_colCount = 7;
-            m_headers[3] = "Nivel[m]/n"
+            m_headers[3] = "Nivel[m]\n"
                            "P.Perm1";
-            m_headers[4] = "Nivel[m]/n"
+            m_headers[4] = "Nivel[m]\n"
                            "P.Perm2";
             beginInsertColumns(QModelIndex(),5,6);
             endRemoveColumns();
