@@ -6,6 +6,8 @@
 #include "include/CoordinatesEditionWidget/mycoordinateseditorwidget.h"
 #include "include/NivelacionAcuatica/Model_View_Delegate/nivelacionacuaticatablemodel.h"
 #include "include/mainComponents/customchartview.h"
+#include "include/loadDialog/loaddialog.h"
+#include "include/EditionComponents/manualdataintroductionwidget.h"
 
 class QGroupBox;
 class QFrame;
@@ -24,7 +26,27 @@ signals:
 
 public slots:
 
+private slots:
+    void createProvDataLoadDialog();
+    void createPerm1DataLoadDialog();
+    void createPerm2DataLoadDialog();
+    void createProvManualDataIntro();
+    void createPerm1ManualDataIntro();
+    void createPerm2ManualDataIntro();
+    //void loadProvDataFromMainProject();
+    //void loadProvDataFromMainProject();
+    //void loadProvDataFromMainProject();
+
+    void beginDataExtrationFromFile();
+    void beginDataExtration();
+
+    void setMetodoDeNivelacion(int index);
+
 private:
+    //Import Dialog && Manual Data Introduction Widget
+    LoadDialog *m_loadDialog;
+    ManualDataIntroductionWidget *m_manualDataIntroWidget;
+
     //Chart stuff
     QFrame *m_chartFrame;
     customChartView *m_chartView;
@@ -33,6 +55,12 @@ private:
     QSplineSeries *m_puestoPerm1Serie;
     QSplineSeries *m_puestoPerm2Serie;
     QLineSeries *m_nivelMedioLineSerie;
+
+    QValueAxis *m_puestoProvYAxis;
+    QValueAxis *m_puestoPerm1YAxis;
+    QValueAxis *m_puestoPerm2YAxis;
+
+    QDateTimeAxis *m_dateTimeXAxis;
 
     //Table View-Model
     QTableView *m_dataTableView;
@@ -119,7 +147,14 @@ private:
     //PushButtons
     QPushButton *m_calcNMMButton;
 
+    bool m_provDataLoadFlag;
+    bool m_perm1DataLoadFlag;
+    bool m_perm2DataLoadFlag;
+
     void createComponents();
+
+    void createLoadDialog();
+    void createManualDataIntroWidget();
 };
 
 #endif // NIVELACIONACUATICAWIDGET_H

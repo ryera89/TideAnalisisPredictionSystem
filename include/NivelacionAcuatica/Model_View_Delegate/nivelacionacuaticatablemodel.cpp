@@ -74,6 +74,7 @@ QVariant NivelacionAcuaticaTableModel::headerData(int section, Qt::Orientation o
 void NivelacionAcuaticaTableModel::setPuestoProvisionalDataSet(const QVector<TidesMeasurement> &puestoProvicionalData)
 {
     beginResetModel();
+    m_rowCount = puestoProvicionalData.size();
     m_puestoProvisionalDataSeries = puestoProvicionalData;
     m_puestoPermanente1DataSeries.resize(m_puestoProvisionalDataSeries.size());
     m_puestoPermanente2DataSeries.resize(m_puestoProvisionalDataSeries.size());
@@ -90,6 +91,7 @@ void NivelacionAcuaticaTableModel::setPuestoProvisionalDataSet(const QVector<Tid
 void NivelacionAcuaticaTableModel::setPuestoPermanente1DataSet(const QVector<TidesMeasurement> &puestoPermanente1Data)
 {
     beginResetModel();
+    m_rowCount = puestoPermanente1Data.size();
     m_puestoPermanente1DataSeries = puestoPermanente1Data;
     m_puestoProvisionalDataSeries.resize(m_puestoPermanente1DataSeries.size());
     m_puestoPermanente2DataSeries.resize(m_puestoPermanente1DataSeries.size());
@@ -105,6 +107,7 @@ void NivelacionAcuaticaTableModel::setPuestoPermanente1DataSet(const QVector<Tid
 void NivelacionAcuaticaTableModel::setPuestoPermanente2DataSet(const QVector<TidesMeasurement> &puestoPermanente2Data)
 {
     beginResetModel();
+    m_rowCount = puestoPermanente2Data.size();
     m_puestoPermanente2DataSeries = puestoPermanente2Data;
     m_puestoProvisionalDataSeries.resize(m_puestoPermanente2DataSeries.size());
     m_puestoPermanente1DataSeries.resize(m_puestoPermanente2DataSeries.size());
@@ -128,7 +131,7 @@ void NivelacionAcuaticaTableModel::setMetododeNivelacion(int index)
         setMetodoDeNivelacion(DosPuestosPermantes);
         break;
     default:
-        setMetodoDeNivelacion(DosPuestosPermantes);
+        setMetodoDeNivelacion(UnPuestoPermanente);
         break;
     }
 }
@@ -155,7 +158,7 @@ void NivelacionAcuaticaTableModel::setMetodoDeNivelacion(NivelacionAcuaticaTable
             m_headers[4] = "Nivel[m]\n"
                            "P.Perm2";
             beginInsertColumns(QModelIndex(),5,6);
-            endRemoveColumns();
+            endInsertColumns();
         }
     }
 }

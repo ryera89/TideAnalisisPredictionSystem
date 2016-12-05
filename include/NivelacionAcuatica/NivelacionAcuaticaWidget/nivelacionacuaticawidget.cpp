@@ -3,10 +3,167 @@
 NivelacionAcuaticaWidget::NivelacionAcuaticaWidget(QWidget *parent) : QWidget(parent)
 {
     createComponents();
+    m_provDataLoadFlag = false;
+    m_perm1DataLoadFlag = false;
+    m_perm2DataLoadFlag = false;
+
+    m_loadDialog = Q_NULLPTR;
+    m_manualDataIntroWidget = Q_NULLPTR;
+
+    connect(m_puestoProvImportButton,SIGNAL(clicked(bool)),this,SLOT(createProvDataLoadDialog()));
+    connect(m_puestoPerm1ImportButton,SIGNAL(clicked(bool)),this,SLOT(createPerm1DataLoadDialog()));
+    connect(m_puestoPerm2ImportButton,SIGNAL(clicked(bool)),this,SLOT(createPerm2DataLoadDialog()));
+
+    connect(m_puestoProvManualButton,SIGNAL(clicked(bool)),this,SLOT(createProvManualDataIntro()));
+    connect(m_puestoPerm1ManualButton,SIGNAL(clicked(bool)),this,SLOT(createPerm1ManualDataIntro()));
+    connect(m_puestoPerm2ManualButton,SIGNAL(clicked(bool)),this,SLOT(createPerm2ManualDataIntro()));
+
+    connect(m_metodoComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(setMetodoDeNivelacion(int)));
 
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
+void NivelacionAcuaticaWidget::createProvDataLoadDialog()
+{
+    m_provDataLoadFlag = true;
+    m_perm1DataLoadFlag = false;
+    m_perm2DataLoadFlag = false;
+
+    createLoadDialog();
+}
+
+void NivelacionAcuaticaWidget::createPerm1DataLoadDialog()
+{
+    m_provDataLoadFlag = false;
+    m_perm1DataLoadFlag = true;
+    m_perm2DataLoadFlag = false;
+
+    createLoadDialog();
+}
+
+void NivelacionAcuaticaWidget::createPerm2DataLoadDialog()
+{
+    m_provDataLoadFlag = false;
+    m_perm1DataLoadFlag = false;
+    m_perm2DataLoadFlag = true;
+
+    createLoadDialog();
+}
+
+void NivelacionAcuaticaWidget::createProvManualDataIntro()
+{
+    m_provDataLoadFlag = true;
+    m_perm1DataLoadFlag = false;
+    m_perm2DataLoadFlag = false;
+
+    createManualDataIntroWidget();
+}
+
+void NivelacionAcuaticaWidget::createPerm1ManualDataIntro()
+{
+    m_provDataLoadFlag = false;
+    m_perm1DataLoadFlag = true;
+    m_perm2DataLoadFlag = false;
+
+    createManualDataIntroWidget();
+}
+
+void NivelacionAcuaticaWidget::createPerm2ManualDataIntro()
+{
+    m_provDataLoadFlag = false;
+    m_perm1DataLoadFlag = false;
+    m_perm2DataLoadFlag = true;
+
+    createManualDataIntroWidget();
+}
+
+void NivelacionAcuaticaWidget::beginDataExtrationFromFile()
+{
+    if (m_provDataLoadFlag){
+        m_dataTableModel->setPuestoProvisionalDataSet(m_loadDialog->measurementsData());
+        m_loadDialog->close();
+        return;
+    }
+
+    if (m_perm1DataLoadFlag){
+        m_dataTableModel->setPuestoPermanente1DataSet(m_loadDialog->measurementsData());
+        m_loadDialog->close();
+        return;
+    }
+
+    if (m_perm2DataLoadFlag){
+        m_dataTableModel->setPuestoPermanente2DataSet(m_loadDialog->measurementsData());
+        m_loadDialog->close();
+        return;
+    }
+}
+
+void NivelacionAcuaticaWidget::beginDataExtration()
+{
+    QVector<TidesMeasurement> datos;
+
+    int size = m_manualDataIntroWidget->model()->measurementData().size();
+
+    qreal conversion = m_manualDataIntroWidget->conversionUnit();
+
+
+    for (int i = 0; i < size ; ++i){
+        if (m_manualDataIntroWidget->model()->measurementData().at(i).isValid()){
+
+            datos.push_back(m_manualDataIntroWidget->model()->measurementData().at(i));
+
+            if (conversion != 1.0){
+                qreal value = m_manualDataIntroWidget->model()->measurementData().at(i).seaLevel()*conversion;
+                datos[i].setSeaLevel(value);
+            }
+        }
+    }
+
+    /*m_metadataStorage.setProjectName(m_manualDataIntroductionWidget->projectName());
+    m_metadataStorage.setStationName(m_manualDataIntroductionWidget->stationName());
+    m_metadataStorage.setLocalizationName(m_manualDataIntroductionWidget->localizationName());
+    m_metadataStorage.setCeroPuesto(m_manualDataIntroductionWidget->ceroPuesto());
+    m_metadataStorage.setCeroUnits(m_manualDataIntroductionWidget->ceroUnit());
+    m_metadataStorage.setNivelReferencia(m_manualDataIntroductionWidget->nivelReferencia());
+    m_metadataStorage.setReferenceUnits(m_manualDataIntroductionWidget->referenceUnit());
+    m_metadataStorage.setLatitud(m_manualDataIntroductionWidget->latitud());
+    m_metadataStorage.setLongitud(m_manualDataIntroductionWidget->longitud());
+    m_metadataStorage.setEquipmentID(m_manualDataIntroductionWidget->equipmentID());*/
+
+    if (m_provDataLoadFlag){
+        m_dataTableModel->setPuestoProvisionalDataSet(datos);
+        m_manualDataIntroWidget->close();
+        return;
+    }
+
+    if (m_perm1DataLoadFlag){
+        m_dataTableModel->setPuestoPermanente1DataSet(datos);
+        m_manualDataIntroWidget->close();
+        return;
+    }
+
+    if (m_perm2DataLoadFlag){
+        m_dataTableModel->setPuestoPermanente2DataSet(datos);
+        m_manualDataIntroWidget->close();
+        return;
+    }
+}
+
+void NivelacionAcuaticaWidget::setMetodoDeNivelacion(int index)
+{
+    switch (index) {
+    case 0:
+        m_puestoPerm2DataLoadFrame->setEnabled(false);
+        break;
+    case 1:
+        m_puestoPerm2DataLoadFrame->setEnabled(true);
+        break;
+    default:
+        m_puestoPerm2DataLoadFrame->setEnabled(false);
+        break;
+    }
+    m_dataTableModel->setMetododeNivelacion(index);
+}
 void NivelacionAcuaticaWidget::createComponents()
 {
     //------------------------------------------------------------------------
@@ -57,10 +214,13 @@ void NivelacionAcuaticaWidget::createComponents()
     m_puestoProvDataLoadLabel = new QLabel(tr("Puesto Provisional"));
 
     m_puestoProvImportButton = new QToolButton;
+    m_puestoProvImportButton->setIcon(QIcon(":images/importButton.png"));
     m_puestoProvImportButton->setToolTip(tr("Importar serie desde archivo ASCII"));
     m_puestoProvManualButton = new QToolButton;
+    m_puestoProvManualButton->setIcon(QIcon(":images/table_pencil.png"));
     m_puestoProvManualButton->setToolTip(tr("Introducción manual de serie"));
     m_puestoProvGetButton = new QToolButton;
+    m_puestoProvGetButton->setIcon(QIcon(":images/from_project.png"));
     m_puestoProvGetButton->setToolTip(tr("Cargar serie desde el módulo principal"));
 
     QHBoxLayout *puestoProvDataLoadLayout = new QHBoxLayout;
@@ -79,10 +239,13 @@ void NivelacionAcuaticaWidget::createComponents()
     m_puestoPerm1DataLoadLabel = new QLabel(tr("Puesto Permanente #1"));
 
     m_puestoPerm1ImportButton = new QToolButton;
+    m_puestoPerm1ImportButton->setIcon(QIcon(":images/importButton.png"));
     m_puestoPerm1ImportButton->setToolTip(tr("Importar serie desde archivo ASCII"));
     m_puestoPerm1ManualButton = new QToolButton;
+    m_puestoPerm1ManualButton->setIcon(QIcon(":images/table_pencil.png"));
     m_puestoPerm1ManualButton->setToolTip(tr("Introducción manual de serie"));
     m_puestoPerm1GetButton = new QToolButton;
+    m_puestoPerm1GetButton->setIcon(QIcon(":images/from_project.png"));
     m_puestoPerm1GetButton->setToolTip(tr("Cargar serie desde el módulo principal"));
 
     QHBoxLayout *puestoPerm1DataLoadLayout = new QHBoxLayout;
@@ -102,10 +265,13 @@ void NivelacionAcuaticaWidget::createComponents()
     m_puestoPerm2DataLoadLabel = new QLabel(tr("Puesto Permanente #2"));
 
     m_puestoPerm2ImportButton = new QToolButton;
+    m_puestoPerm2ImportButton->setIcon(QIcon(":images/importButton.png"));
     m_puestoPerm2ImportButton->setToolTip(tr("Importar serie desde archivo ASCII"));
     m_puestoPerm2ManualButton = new QToolButton;
+    m_puestoPerm2ManualButton->setIcon(QIcon(":images/table_pencil.png"));
     m_puestoPerm2ManualButton->setToolTip(tr("Introducción manual de serie"));
     m_puestoPerm2GetButton = new QToolButton;
+    m_puestoPerm2GetButton->setIcon(QIcon(":images/from_project.png"));
     m_puestoPerm2GetButton->setToolTip(tr("Cargar serie desde el módulo principal"));
 
     QHBoxLayout *puestoPerm2DataLoadLayout = new QHBoxLayout;
@@ -249,4 +415,28 @@ void NivelacionAcuaticaWidget::createComponents()
     mainLayout->addLayout(bottomLayout);
 
     this->setLayout(mainLayout);
+}
+
+void NivelacionAcuaticaWidget::createLoadDialog()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Cargar Archivo"));
+    if (!fileName.isEmpty()){
+        m_loadDialog = new LoadDialog(fileName,this);
+        //m_loadDialog->setProjectMetaData(m_metadataStorage);
+        //connect(m_loadDialog,SIGNAL(dataGeted(QVector<QStringList>,int,int,int, const QString&, const QString&)),
+                    //this,SLOT(recieveData(QVector<QStringList>,int,int,int, const QString&, const QString&)));
+        connect(m_loadDialog,SIGNAL(importButtonClicked()),this,SLOT(beginDataExtrationFromFile()));
+
+        //TODO: Las conexiones de los senales del dialogo para coger la localizacion Eq_Id, Lat, Long
+        m_loadDialog->show();
+    }
+}
+
+void NivelacionAcuaticaWidget::createManualDataIntroWidget()
+{
+    m_manualDataIntroWidget = new ManualDataIntroductionWidget(this);
+    //m_manualDataIntroWidget->setProjectMetaData(m_metadataStorage);
+    connect(m_manualDataIntroWidget,SIGNAL(okButtonClicked()),
+            this,SLOT(beginDataExtration()));
+    m_manualDataIntroWidget->show();
 }
