@@ -178,9 +178,11 @@ void NivelacionAcuaticaWidget::setMetodoDeNivelacion(int index)
         m_puestoPerm1Serie->setName(tr("Puesto Permanente #1"));
         m_chart->addSeries(m_puestoPerm2Serie);
         m_puestoPerm2YAxis->show();
+        if (m_chart->axisX(m_puestoPerm2Serie) != m_dateTimeXAxis){
+            m_chart->setAxisX(m_dateTimeXAxis,m_puestoPerm2Serie);
+        }
         break;
     default:
-        m_puestoPerm2DataLoadFrame->setEnabled(false);
         break;
     }
 
@@ -235,11 +237,16 @@ void NivelacionAcuaticaWidget::createComponents()
     m_chart = new QChart;
 
     m_chartView = new customChartView(m_chart);
+    m_chartView->setRenderHint(QPainter::Antialiasing,true);
 
     m_puestoProvSerie = new QSplineSeries;
     m_puestoPerm1Serie = new QSplineSeries;
     m_puestoPerm2Serie = new QSplineSeries;
     m_nivelMedioLineSerie = new QLineSeries;
+
+    m_puestoProvSerie->setPointsVisible(true);
+    m_puestoPerm1Serie->setPointsVisible(true);
+    m_puestoPerm1Serie->setPointsVisible(true);
 
     m_puestoProvSerie->setName(tr("Puesto Provisional"));
     m_puestoPerm1Serie->setName(tr("Puesto Permanente"));
@@ -638,6 +645,23 @@ void NivelacionAcuaticaWidget::calculateMetodoDeUnPuestoPermanente()
     qreal value = calcularNivelacionAcuatica1PuestoPermanete(m_dataTableModel->diffPProvPuestoPerm1(),nmm0);
 
     m_puestoProvNMMDisplayResult->setText(QString::number(value,'g',3));
+
+    m_nivelMedioLineSerie->append(m_puestoProvSerie->pointsVector().first().x(),value);
+    m_nivelMedioLineSerie->append(m_puestoProvSerie->pointsVector().last().x(),value);
+
+    if (!m_chart->series().contains(m_nivelMedioLineSerie)){
+        m_chart->addSeries(m_nivelMedioLineSerie);
+        if (m_chart->axisY(m_nivelMedioLineSerie) != m_puestoProvYAxis){
+            m_chart->setAxisY(m_puestoProvYAxis,m_nivelMedioLineSerie);
+        }
+        if (m_chart->axisX(m_nivelMedioLineSerie) != m_dateTimeXAxis){
+            m_chart->setAxisX(m_dateTimeXAxis,m_nivelMedioLineSerie);
+        }
+    }
+
+    QString color = m_nivelMedioLineSerie->color().name();
+
+    m_puestoProvNMMDisplayResult->setText("<b><font color = "+color+">"+QString::number(value,'g',3)+"</b></font>");
 }
 
 void NivelacionAcuaticaWidget::calculateMetodoDeDosPuestosPermanentes()
@@ -652,5 +676,20 @@ void NivelacionAcuaticaWidget::calculateMetodoDeDosPuestosPermanentes()
     qreal value = calcularNivelacionAcuatica2PuestoPermanete(m_dataTableModel->diffPProvPuestoPerm1(),m_dataTableModel->diffPProvPuestoPerm2(),
                                                              nmm01,nmm02,pProvCoordinates,pPerm1Coordinates,pPerm2Coordinates);
 
-    m_puestoProvNMMDisplayResult->setText(QString::number(value,'g',3));
+    m_nivelMedioLineSerie->append(m_puestoProvSerie->pointsVector().first().x(),value);
+    m_nivelMedioLineSerie->append(m_puestoProvSerie->pointsVector().last().x(),value);
+
+    if (!m_chart->series().contains(m_nivelMedioLineSerie)){
+        m_chart->addSeries(m_nivelMedioLineSerie);
+        if (m_chart->axisY(m_nivelMedioLineSerie) != m_puestoProvYAxis){
+            m_chart->setAxisY(m_puestoProvYAxis,m_nivelMedioLineSerie);
+        }
+        if (m_chart->axisX(m_nivelMedioLineSerie) != m_dateTimeXAxis){
+            m_chart->setAxisX(m_dateTimeXAxis,m_nivelMedioLineSerie);
+        }
+    }
+
+    QString color = m_nivelMedioLineSerie->color().name();
+
+    m_puestoProvNMMDisplayResult->setText("<b><font color = "+color+">"+QString::number(value,'g',3)+"</b></font>");
 }
