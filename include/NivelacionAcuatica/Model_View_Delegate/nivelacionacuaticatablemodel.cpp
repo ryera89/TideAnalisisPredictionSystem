@@ -1,4 +1,6 @@
 #include "nivelacionacuaticatablemodel.h"
+#include <QPointF>
+
 NivelacionAcuaticaTableModel::NivelacionAcuaticaTableModel(QObject *parent):QAbstractTableModel(parent)
 {
     m_headers << "Fecha" << "Hora" << "Nivel[m]\nP.Prov" << "Nivel[m]\nP.Perm" << "DIFF[m]\nP.Prov - P.Perm"
@@ -12,11 +14,13 @@ NivelacionAcuaticaTableModel::NivelacionAcuaticaTableModel(QObject *parent):QAbs
 
 int NivelacionAcuaticaTableModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
     return m_rowCount;
 }
 
 int NivelacionAcuaticaTableModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent);
     return m_colCount;
 }
 
@@ -118,6 +122,48 @@ void NivelacionAcuaticaTableModel::setPuestoPermanente2DataSet(const QVector<Tid
         m_diffConPuestoPermanente2DataSeries[i] = m_puestoProvisionalDataSeries.at(i) - m_puestoPermanente2DataSeries.at(i);
     }
     endResetModel();
+}
+
+QVector<QPointF> NivelacionAcuaticaTableModel::puestoProvDataForGraph() const
+{
+    QVector<QPointF> data;
+
+    foreach (const TidesMeasurement &measurement, m_puestoProvisionalDataSeries) {
+        QDateTime dateTime = measurement.measurementDateTime();
+        qreal y = measurement.seaLevel();
+        qreal x = dateTime.toMSecsSinceEpoch();
+
+        data.append(QPointF(x,y));
+    }
+    return data;
+}
+
+QVector<QPointF> NivelacionAcuaticaTableModel::puestoPerm1DataForGraph() const
+{
+    QVector<QPointF> data;
+
+    foreach (const TidesMeasurement &measurement, m_puestoPermanente1DataSeries) {
+        QDateTime dateTime = measurement.measurementDateTime();
+        qreal y = measurement.seaLevel();
+        qreal x = dateTime.toMSecsSinceEpoch();
+
+        data.append(QPointF(x,y));
+    }
+    return data;
+}
+
+QVector<QPointF> NivelacionAcuaticaTableModel::puestoPerm2DataForGraph() const
+{
+    QVector<QPointF> data;
+
+    foreach (const TidesMeasurement &measurement, m_puestoPermanente2DataSeries) {
+        QDateTime dateTime = measurement.measurementDateTime();
+        qreal y = measurement.seaLevel();
+        qreal x = dateTime.toMSecsSinceEpoch();
+
+        data.append(QPointF(x,y));
+    }
+    return data;
 }
 
 

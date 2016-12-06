@@ -30,6 +30,10 @@ public:
     QVector<TidesMeasurement> puestoPerm1Data() const{return m_puestoPermanente1DataSeries;}
     QVector<TidesMeasurement> puestoPerm2Data() const{return m_puestoPermanente2DataSeries;}
 
+    QVector<QPointF> puestoProvDataForGraph() const;
+    QVector<QPointF> puestoPerm1DataForGraph() const;
+    QVector<QPointF> puestoPerm2DataForGraph() const;
+
 public slots:
     void setMetododeNivelacion(int index);
 

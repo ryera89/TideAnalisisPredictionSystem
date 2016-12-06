@@ -153,6 +153,10 @@ private:
 
     void createComponents();
 
+    void setPuestoProvYAxis();
+    void setPuestoPerm1YAxis();
+    void setPuestoPerm2YAxis();
+
     void createLoadDialog();
     void createManualDataIntroWidget();
 };

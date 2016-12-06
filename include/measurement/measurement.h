@@ -27,7 +27,7 @@ private:
     QDate m_date;
     QTime m_time;
 public:
-    TidesMeasurement(){}
+    TidesMeasurement();
     TidesMeasurement(const qreal &seaLevel,const QDate &measurementDate,
                              const QTime &measurementTime);
 

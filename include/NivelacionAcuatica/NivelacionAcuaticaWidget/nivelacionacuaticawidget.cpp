@@ -81,18 +81,24 @@ void NivelacionAcuaticaWidget::beginDataExtrationFromFile()
 {
     if (m_provDataLoadFlag){
         m_dataTableModel->setPuestoProvisionalDataSet(m_loadDialog->measurementsData());
+        m_puestoProvSerie->replace(m_dataTableModel->puestoProvDataForGraph());
+        setPuestoProvYAxis();
         m_loadDialog->close();
         return;
     }
 
     if (m_perm1DataLoadFlag){
         m_dataTableModel->setPuestoPermanente1DataSet(m_loadDialog->measurementsData());
+        m_puestoProvSerie->replace(m_dataTableModel->puestoPerm1DataForGraph());
+        setPuestoPerm1YAxis();
         m_loadDialog->close();
         return;
     }
 
     if (m_perm2DataLoadFlag){
         m_dataTableModel->setPuestoPermanente2DataSet(m_loadDialog->measurementsData());
+        m_puestoProvSerie->replace(m_dataTableModel->puestoPerm2DataForGraph());
+        setPuestoPerm2YAxis();
         m_loadDialog->close();
         return;
     }
@@ -132,21 +138,29 @@ void NivelacionAcuaticaWidget::beginDataExtration()
 
     if (m_provDataLoadFlag){
         m_dataTableModel->setPuestoProvisionalDataSet(datos);
+        m_puestoProvSerie->replace(m_dataTableModel->puestoProvDataForGraph());
+        setPuestoProvYAxis();
         m_manualDataIntroWidget->close();
         return;
     }
 
     if (m_perm1DataLoadFlag){
         m_dataTableModel->setPuestoPermanente1DataSet(datos);
+        m_puestoProvSerie->replace(m_dataTableModel->puestoPerm1DataForGraph());
+        setPuestoPerm1YAxis();
         m_manualDataIntroWidget->close();
         return;
     }
 
     if (m_perm2DataLoadFlag){
         m_dataTableModel->setPuestoPermanente2DataSet(datos);
+        m_puestoProvSerie->replace(m_dataTableModel->puestoPerm2DataForGraph());
+        setPuestoPerm2YAxis();
         m_manualDataIntroWidget->close();
         return;
     }
+
+
 }
 
 void NivelacionAcuaticaWidget::setMetodoDeNivelacion(int index)
@@ -154,14 +168,21 @@ void NivelacionAcuaticaWidget::setMetodoDeNivelacion(int index)
     switch (index) {
     case 0:
         m_puestoPerm2DataLoadFrame->setEnabled(false);
+        m_puestoPerm1Serie->setName("Puesto Permanente");
+        if (m_chart->series().contains(m_puestoPerm2Serie)) m_chart->removeSeries(m_puestoPerm2Serie);
+        if (m_chart->axes().contains(m_puestoPerm2YAxis)) m_puestoPerm2YAxis->hide();
         break;
     case 1:
         m_puestoPerm2DataLoadFrame->setEnabled(true);
+        m_puestoPerm1Serie->setName(tr("Puesto Permanente #1"));
+        m_chart->addSeries(m_puestoPerm2Serie);
+        m_puestoPerm2YAxis->show();
         break;
     default:
         m_puestoPerm2DataLoadFrame->setEnabled(false);
         break;
     }
+
     m_dataTableModel->setMetododeNivelacion(index);
 }
 void NivelacionAcuaticaWidget::createComponents()
@@ -179,11 +200,26 @@ void NivelacionAcuaticaWidget::createComponents()
     m_puestoPerm2Serie = new QSplineSeries;
     m_nivelMedioLineSerie = new QLineSeries;
 
+    m_puestoProvSerie->setName(tr("Puesto Provisional"));
+    m_puestoPerm1Serie->setName(tr("Puesto Permanente"));
+    m_puestoPerm2Serie->setName(tr("Puesto Permanente #2"));
+
+    m_nivelMedioLineSerie->setName(tr("Nivel Medio"));
+
+    m_chart->addSeries(m_puestoProvSerie);
+    m_chart->addSeries(m_puestoPerm1Serie);
+
     QHBoxLayout *chartLayout = new QHBoxLayout;
     chartLayout->addWidget(m_chartView);
 
     m_chartFrame->setLayout(chartLayout); //upWidgetLayout
     m_chartFrame->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+
+    m_puestoProvYAxis = new QValueAxis;
+    m_puestoPerm1YAxis = new QValueAxis;
+    m_puestoPerm2YAxis = new QValueAxis;
+
+    m_dateTimeXAxis = new QDateTimeAxis;
 
     //----------------------------------------------------------------------------
 
@@ -415,6 +451,62 @@ void NivelacionAcuaticaWidget::createComponents()
     mainLayout->addLayout(bottomLayout);
 
     this->setLayout(mainLayout);
+}
+
+void NivelacionAcuaticaWidget::setPuestoProvYAxis()
+{
+    qreal max = 0.0;
+    qreal min = 0.0;
+
+    foreach (QPointF point, m_puestoProvSerie->pointsVector()) {
+        qreal aux = point.y();
+        if (aux > max) max = aux;
+        if (aux < min) min = aux;
+    }
+    m_puestoProvYAxis->setRange(min,max);
+    m_puestoProvYAxis->applyNiceNumbers();
+
+    m_puestoProvYAxis->setLabelsColor(m_puestoProvSerie->color());
+    if (!m_chart->axes().contains(m_puestoProvYAxis))
+       m_chart->setAxisY(m_puestoProvYAxis,m_puestoProvSerie);
+}
+
+void NivelacionAcuaticaWidget::setPuestoPerm1YAxis()
+{
+
+    qreal max = 0.0;
+    qreal min = 0.0;
+
+    foreach (QPointF point, m_puestoPerm1Serie->pointsVector()) {
+        qreal aux = point.y();
+        if (aux > max) max = aux;
+        if (aux < min) min = aux;
+    }
+    m_puestoPerm1YAxis->setRange(min,max);
+    m_puestoPerm1YAxis->applyNiceNumbers();
+
+    m_puestoPerm1YAxis->setLabelsColor(m_puestoPerm1Serie->color());
+    if (!m_chart->axes().contains(m_puestoPerm1YAxis))
+       m_chart->setAxisY(m_puestoPerm1YAxis,m_puestoPerm1Serie);
+}
+
+void NivelacionAcuaticaWidget::setPuestoPerm2YAxis()
+{
+
+    qreal max = 0.0;
+    qreal min = 0.0;
+
+    foreach (QPointF point, m_puestoPerm2Serie->pointsVector()) {
+        qreal aux = point.y();
+        if (aux > max) max = aux;
+        if (aux < min) min = aux;
+    }
+    m_puestoPerm2YAxis->setRange(min,max);
+    m_puestoPerm2YAxis->applyNiceNumbers();
+
+    m_puestoPerm2YAxis->setLabelsColor(m_puestoPerm2Serie->color());
+    if (!m_chart->axes().contains(m_puestoPerm2YAxis))
+       m_chart->setAxisY(m_puestoPerm2YAxis,m_puestoPerm2Serie);
 }
 
 void NivelacionAcuaticaWidget::createLoadDialog()

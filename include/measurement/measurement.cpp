@@ -1,7 +1,10 @@
 #include "measurement.h"
 
 
-
+TidesMeasurement::TidesMeasurement()
+{
+    m_seaLevel = 0.0;
+}
 TidesMeasurement::TidesMeasurement(const qreal &seaLevel, const QDate &measurementDate,
                                    const QTime &measurementTime):  m_seaLevel(seaLevel), m_date(measurementDate), m_time(measurementTime){
 }
@@ -104,3 +107,4 @@ TidesMeasurement operator -(const TidesMeasurement &m1, const TidesMeasurement &
 {
     return diferenciaDeNivel(m1,m2);
 }
+
