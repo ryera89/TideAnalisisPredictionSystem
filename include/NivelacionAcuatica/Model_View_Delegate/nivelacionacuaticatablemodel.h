@@ -29,6 +29,8 @@ public:
     QVector<TidesMeasurement> puestoProvData() const{return m_puestoProvisionalDataSeries;}
     QVector<TidesMeasurement> puestoPerm1Data() const{return m_puestoPermanente1DataSeries;}
     QVector<TidesMeasurement> puestoPerm2Data() const{return m_puestoPermanente2DataSeries;}
+    QVector<TidesMeasurement> diffPProvPuestoPerm1() const{return m_diffConPuestoPermanente1DataSeries;}
+    QVector<TidesMeasurement> diffPProvPuestoPerm2() const{return m_diffConPuestoPermanente2DataSeries;}
 
     QVector<QPointF> puestoProvDataForGraph() const;
     QVector<QPointF> puestoPerm1DataForGraph() const;

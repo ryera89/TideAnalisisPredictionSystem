@@ -42,6 +42,8 @@ private slots:
 
     void setMetodoDeNivelacion(int index);
 
+    void calculate();
+
 private:
     //Import Dialog && Manual Data Introduction Widget
     LoadDialog *m_loadDialog;
@@ -153,12 +155,19 @@ private:
 
     void createComponents();
 
-    void setPuestoProvYAxis();
-    void setPuestoPerm1YAxis();
-    void setPuestoPerm2YAxis();
+    void setPuestoProvAxis();
+    void setPuestoPerm1Axis();
+    void setPuestoPerm2Axis();
+
+    void setPuestoProvXAxis();
+    void setPuestoPerm1XAxis();
+    void setPuestoPerm2XAxis();
 
     void createLoadDialog();
     void createManualDataIntroWidget();
+
+    void calculateMetodoDeUnPuestoPermanente();
+    void calculateMetodoDeDosPuestosPermanentes();
 };
 
 #endif // NIVELACIONACUATICAWIDGET_H

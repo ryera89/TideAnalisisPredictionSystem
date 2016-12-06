@@ -1,4 +1,5 @@
 #include "nivelacionacuaticawidget.h"
+#include "include/NivelacionAcuatica/nivelacion_acuatica_calculo.h"
 
 NivelacionAcuaticaWidget::NivelacionAcuaticaWidget(QWidget *parent) : QWidget(parent)
 {
@@ -82,23 +83,23 @@ void NivelacionAcuaticaWidget::beginDataExtrationFromFile()
     if (m_provDataLoadFlag){
         m_dataTableModel->setPuestoProvisionalDataSet(m_loadDialog->measurementsData());
         m_puestoProvSerie->replace(m_dataTableModel->puestoProvDataForGraph());
-        setPuestoProvYAxis();
+        setPuestoProvAxis();
         m_loadDialog->close();
         return;
     }
 
     if (m_perm1DataLoadFlag){
         m_dataTableModel->setPuestoPermanente1DataSet(m_loadDialog->measurementsData());
-        m_puestoProvSerie->replace(m_dataTableModel->puestoPerm1DataForGraph());
-        setPuestoPerm1YAxis();
+        m_puestoPerm1Serie->replace(m_dataTableModel->puestoPerm1DataForGraph());
+        setPuestoPerm1Axis();
         m_loadDialog->close();
         return;
     }
 
     if (m_perm2DataLoadFlag){
         m_dataTableModel->setPuestoPermanente2DataSet(m_loadDialog->measurementsData());
-        m_puestoProvSerie->replace(m_dataTableModel->puestoPerm2DataForGraph());
-        setPuestoPerm2YAxis();
+        m_puestoPerm2Serie->replace(m_dataTableModel->puestoPerm2DataForGraph());
+        setPuestoPerm2Axis();
         m_loadDialog->close();
         return;
     }
@@ -139,23 +140,23 @@ void NivelacionAcuaticaWidget::beginDataExtration()
     if (m_provDataLoadFlag){
         m_dataTableModel->setPuestoProvisionalDataSet(datos);
         m_puestoProvSerie->replace(m_dataTableModel->puestoProvDataForGraph());
-        setPuestoProvYAxis();
+        setPuestoProvAxis();
         m_manualDataIntroWidget->close();
         return;
     }
 
     if (m_perm1DataLoadFlag){
         m_dataTableModel->setPuestoPermanente1DataSet(datos);
-        m_puestoProvSerie->replace(m_dataTableModel->puestoPerm1DataForGraph());
-        setPuestoPerm1YAxis();
+        m_puestoPerm1Serie->replace(m_dataTableModel->puestoPerm1DataForGraph());
+        setPuestoPerm1Axis();
         m_manualDataIntroWidget->close();
         return;
     }
 
     if (m_perm2DataLoadFlag){
         m_dataTableModel->setPuestoPermanente2DataSet(datos);
-        m_puestoProvSerie->replace(m_dataTableModel->puestoPerm2DataForGraph());
-        setPuestoPerm2YAxis();
+        m_puestoPerm1Serie->replace(m_dataTableModel->puestoPerm2DataForGraph());
+        setPuestoPerm2Axis();
         m_manualDataIntroWidget->close();
         return;
     }
@@ -185,6 +186,46 @@ void NivelacionAcuaticaWidget::setMetodoDeNivelacion(int index)
 
     m_dataTableModel->setMetododeNivelacion(index);
 }
+
+void NivelacionAcuaticaWidget::calculate()
+{
+    if (m_metodoComboBox->currentIndex() == 0){
+        //Metodo de un puesto de nivel
+
+        //Checking data time relation;
+        bool okToCalculate = true;
+        foreach (const TidesMeasurement &measurement, m_dataTableModel->diffPProvPuestoPerm1()){
+            if (!measurement.isValid()){
+                okToCalculate = false;
+                QMessageBox::information(this,tr("Info"), tr("Los mediciones del Puesto Provicional y del"
+                                                             "Puesto Permanente no son simultaneas"));
+            }
+        }
+        if (okToCalculate){ //calculate
+            calculateMetodoDeUnPuestoPermanente();
+        }
+    }
+    if (m_metodoComboBox->currentIndex() == 1){
+        //Metodo de 2 puestos de nivel
+
+        //Checking data time relation;
+        bool okToCalculate = true;
+
+        for (int i = 0; i < m_dataTableModel->puestoPerm1Data().size(); ++i){
+            if (!m_dataTableModel->diffPProvPuestoPerm1().at(i).isValid() || !m_dataTableModel->diffPProvPuestoPerm2().at(i).isValid()){
+                okToCalculate = false;
+
+                QMessageBox::information(this,tr("Info"), tr("Los mediciones del Puesto Provicional y la/s del"
+                                                             "Puesto Permanente #1 y Puesto Permanente #2 no son"
+                                                             " simultaneas"));
+            }
+        }
+
+        if (okToCalculate){ //calculate
+            calculateMetodoDeDosPuestosPermanentes();
+        }
+    }
+}
 void NivelacionAcuaticaWidget::createComponents()
 {
     //------------------------------------------------------------------------
@@ -209,6 +250,8 @@ void NivelacionAcuaticaWidget::createComponents()
     m_chart->addSeries(m_puestoProvSerie);
     m_chart->addSeries(m_puestoPerm1Serie);
 
+    m_chart->createDefaultAxes();
+
     QHBoxLayout *chartLayout = new QHBoxLayout;
     chartLayout->addWidget(m_chartView);
 
@@ -220,6 +263,10 @@ void NivelacionAcuaticaWidget::createComponents()
     m_puestoPerm2YAxis = new QValueAxis;
 
     m_dateTimeXAxis = new QDateTimeAxis;
+    m_dateTimeXAxis->setFormat("d/M/yy h:mm");
+    //m_dateTimeXAxis->setRange(QDateTime::currentDateTime(), QDateTime::currentDateTime().addDays(1));
+
+    //m_chart->setAxisX(m_dateTimeXAxis);
 
     //----------------------------------------------------------------------------
 
@@ -427,6 +474,7 @@ void NivelacionAcuaticaWidget::createComponents()
     //PushButtons
     m_calcNMMButton = new QPushButton(tr("Calcular"));
     m_calcNMMButton->setToolTip(tr("Calcular nivelación acuática"));
+    connect(m_calcNMMButton,SIGNAL(clicked(bool)),this,SLOT(calculate()));
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     buttonLayout->addStretch();
@@ -453,7 +501,7 @@ void NivelacionAcuaticaWidget::createComponents()
     this->setLayout(mainLayout);
 }
 
-void NivelacionAcuaticaWidget::setPuestoProvYAxis()
+void NivelacionAcuaticaWidget::setPuestoProvAxis()
 {
     qreal max = 0.0;
     qreal min = 0.0;
@@ -469,9 +517,11 @@ void NivelacionAcuaticaWidget::setPuestoProvYAxis()
     m_puestoProvYAxis->setLabelsColor(m_puestoProvSerie->color());
     if (!m_chart->axes().contains(m_puestoProvYAxis))
        m_chart->setAxisY(m_puestoProvYAxis,m_puestoProvSerie);
+
+    setPuestoProvXAxis();
 }
 
-void NivelacionAcuaticaWidget::setPuestoPerm1YAxis()
+void NivelacionAcuaticaWidget::setPuestoPerm1Axis()
 {
 
     qreal max = 0.0;
@@ -488,9 +538,11 @@ void NivelacionAcuaticaWidget::setPuestoPerm1YAxis()
     m_puestoPerm1YAxis->setLabelsColor(m_puestoPerm1Serie->color());
     if (!m_chart->axes().contains(m_puestoPerm1YAxis))
        m_chart->setAxisY(m_puestoPerm1YAxis,m_puestoPerm1Serie);
+
+    setPuestoPerm1XAxis();
 }
 
-void NivelacionAcuaticaWidget::setPuestoPerm2YAxis()
+void NivelacionAcuaticaWidget::setPuestoPerm2Axis()
 {
 
     qreal max = 0.0;
@@ -506,9 +558,55 @@ void NivelacionAcuaticaWidget::setPuestoPerm2YAxis()
 
     m_puestoPerm2YAxis->setLabelsColor(m_puestoPerm2Serie->color());
     if (!m_chart->axes().contains(m_puestoPerm2YAxis))
-       m_chart->setAxisY(m_puestoPerm2YAxis,m_puestoPerm2Serie);
+        m_chart->setAxisY(m_puestoPerm2YAxis,m_puestoPerm2Serie);
+
+    setPuestoPerm2XAxis();
 }
 
+void NivelacionAcuaticaWidget::setPuestoProvXAxis()
+{
+    if (m_chart->axisX(m_puestoProvSerie) != m_dateTimeXAxis){
+
+        if (!m_dataTableModel->puestoProvData().isEmpty()){
+           QDateTime inDateTime = m_dataTableModel->puestoProvData().first().measurementDateTime();
+           QDateTime endDateTime = inDateTime.addSecs(3600*24);
+
+           m_dateTimeXAxis->setRange(inDateTime,endDateTime);
+        }
+
+        m_chart->setAxisX(m_dateTimeXAxis,m_puestoProvSerie);
+    }
+}
+
+void NivelacionAcuaticaWidget::setPuestoPerm1XAxis()
+{
+    if (m_chart->axisX(m_puestoPerm1Serie) != m_dateTimeXAxis){
+        if (!m_dataTableModel->puestoPerm1Data().isEmpty()){
+           QDateTime inDateTime = m_dataTableModel->puestoPerm1Data().first().measurementDateTime();
+           QDateTime endDateTime = inDateTime.addSecs(3600*24);
+
+           m_dateTimeXAxis->setRange(inDateTime,endDateTime);
+        }
+
+
+        m_chart->setAxisX(m_dateTimeXAxis,m_puestoPerm1Serie);
+
+    }
+}
+
+void NivelacionAcuaticaWidget::setPuestoPerm2XAxis()
+{
+    if (m_chart->axisX(m_puestoPerm2Serie) != m_dateTimeXAxis){
+        if (!m_dataTableModel->puestoPerm2Data().isEmpty()){
+           QDateTime inDateTime = m_dataTableModel->puestoPerm2Data().first().measurementDateTime();
+           QDateTime endDateTime = inDateTime.addSecs(3600*24);
+
+           m_dateTimeXAxis->setRange(inDateTime,endDateTime);
+        }
+
+        m_chart->setAxisX(m_dateTimeXAxis,m_puestoPerm2Serie);
+    }
+}
 void NivelacionAcuaticaWidget::createLoadDialog()
 {
     QString fileName = QFileDialog::getOpenFileName(this,tr("Cargar Archivo"));
@@ -531,4 +629,28 @@ void NivelacionAcuaticaWidget::createManualDataIntroWidget()
     connect(m_manualDataIntroWidget,SIGNAL(okButtonClicked()),
             this,SLOT(beginDataExtration()));
     m_manualDataIntroWidget->show();
+}
+
+void NivelacionAcuaticaWidget::calculateMetodoDeUnPuestoPermanente()
+{
+    qreal nmm0 = m_puestoPerm1NMMEdit->value();
+
+    qreal value = calcularNivelacionAcuatica1PuestoPermanete(m_dataTableModel->diffPProvPuestoPerm1(),nmm0);
+
+    m_puestoProvNMMDisplayResult->setText(QString::number(value,'g',3));
+}
+
+void NivelacionAcuaticaWidget::calculateMetodoDeDosPuestosPermanentes()
+{
+    qreal nmm01 = m_puestoPerm1NMMEdit->value();
+    qreal nmm02 = m_puestoPerm2NMMEdit->value();
+
+    QGeoCoordinate pProvCoordinates(m_puestoProvLatitudEdit->coordinate(), m_puestoProvLongitudEdit->coordinate());
+    QGeoCoordinate pPerm1Coordinates(m_puestoPerm1LatitudEdit->coordinate(), m_puestoPerm1LongitudEdit->coordinate());
+    QGeoCoordinate pPerm2Coordinates(m_puestoPerm2LatitudEdit->coordinate(), m_puestoPerm2LongitudEdit->coordinate());
+
+    qreal value = calcularNivelacionAcuatica2PuestoPermanete(m_dataTableModel->diffPProvPuestoPerm1(),m_dataTableModel->diffPProvPuestoPerm2(),
+                                                             nmm01,nmm02,pProvCoordinates,pPerm1Coordinates,pPerm2Coordinates);
+
+    m_puestoProvNMMDisplayResult->setText(QString::number(value,'g',3));
 }
