@@ -163,6 +163,7 @@ private:
      QToolBar *m_projectToolBar;
      QToolBar *m_dataToolBar;
      QToolBar *m_analsisToolBar;
+     QToolBar *m_toolToolBar;
 
      /*************************Private Functions For Interface*************************************************/
      void createActions();

@@ -664,9 +664,9 @@ void SPMmainWindow::createActions()
     m_freqEditorAction = new QAction(tr("Editor de Componentes"),this);
     //TODO icon
     connect(m_freqEditorAction,SIGNAL(triggered(bool)),this,SLOT(createFrequencyEditor()));
-    m_nivelacionAcuaticaAction = new QAction(tr("Nivelación Acuática"));
+    m_nivelacionAcuaticaAction = new QAction(QIcon(":images/nivelacion_acuatica.png"),tr("Nivelación Acuática"));
     connect(m_nivelacionAcuaticaAction,SIGNAL(triggered(bool)),this,SLOT(createNivelacionAcuaticaWidget()));
-    //TODO icon
+
 
     //ChartActions--------------------------------------------------------------
     m_themeLightAction = new QAction(tr("Claro"),this);
@@ -808,6 +808,9 @@ void SPMmainWindow::createToolBars()
     m_analsisToolBar->addAction(m_tablaHorariadeMareaAction);
     m_analsisToolBar->addAction(m_harmonicAnalisisAction);
     m_analsisToolBar->addAction(m_nonHarmonicAnalisisAction);
+
+    m_toolToolBar = addToolBar(tr("Herramientas"));
+    m_toolToolBar->addAction(m_nivelacionAcuaticaAction);
 }
 
 void SPMmainWindow::syncData(const QVector<HarmonicConstant> &components) //Para sync si hay un cambio en los componentes que se editan en otra facilidad

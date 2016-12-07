@@ -5,10 +5,6 @@ TableModel::TableModel(QObject *parent): QAbstractTableModel(parent)
 {
     headers << "Fecha" << "Hora" << "Nivel del Mar";
     measurements.resize(100);
-
-    for (int i = 0; i < measurements.size(); ++i){
-        measurements[i].setSeaLevel(0.0);
-    }
 }
 
 int TableModel::rowCount(const QModelIndex& /*parent*/) const

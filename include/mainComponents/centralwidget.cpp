@@ -442,7 +442,6 @@ void CentralWidget::updateSeriesData(const QModelIndex &topLeft, const QModelInd
         y_value = m_tidalTableModel->data(m_tidalTableModel->index(i,2),
                                 Qt::DisplayRole).toDouble();
 
-
         if (i < m_series->count()){
             m_series->replace(i,x_value.toMSecsSinceEpoch(),y_value);
         }else{
@@ -457,7 +456,14 @@ void CentralWidget::updateSeriesData(const QModelIndex &topLeft, const QModelInd
                 m_series->append(x_value.toMSecsSinceEpoch(),y_value);
             }
         }
-
+       if (y_value > m_yAxis->max()){
+           m_yAxis->setMax(y_value);
+           m_yAxis->applyNiceNumbers();
+       }
+       if (y_value < m_yAxis->min()){
+           m_yAxis->setMin(y_value);
+           m_yAxis->applyNiceNumbers();
+       }
     }
     updateSelectionSeriesData(topLeft,bottomRight,roles);
 }
@@ -528,6 +534,7 @@ void CentralWidget::updateDisplayRangeLabel()
         m_selectionPointRange->setText(tr("<b><font color = green> SIN SELECCIÓN</b></font>"));
     }
 }
+
 void CentralWidget::createComponents()
 {
     //QVector<TidesMeasurement> measurement = readTidesDataFromCVSFile("files/prueba7.csv"); //NOTE: probando remover despues
@@ -546,6 +553,7 @@ void CentralWidget::createComponents()
 
     m_series = new QSplineSeries;
     m_series->setPointsVisible(true);
+    m_series->replace(m_tidalTableModel->measurementDataRealPoints());
     //m_series->setUseOpenGL(true);
     //m_series = new MySeries;
     //m_mapper = new XYTidalChartModelMapper(m_tidalTableModel,m_series);
@@ -569,7 +577,7 @@ void CentralWidget::createComponents()
     //NOTE: Valorar Remover esto
     m_tideChart->addSeries(m_series);
     m_tideChart->addSeries(m_selectionSeries);
-    m_tideChart->createDefaultAxes();
+    //m_tideChart->createDefaultAxes();
 
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
@@ -625,15 +633,19 @@ void CentralWidget::createComponents()
     m_selectionPointRange->setFixedWidth(370);
     m_selectionPointRange->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
+    QVector<TidesMeasurement> measurements;
+    for (int i = 0; i < 100; ++i){
+        QDateTime dateTime(QDate::currentDate(),QTime(0,0));
+        dateTime = dateTime.addSecs(i*3600);
+        measurements.push_back(TidesMeasurement(0.0,dateTime.date(),dateTime.time()));
+    }
+    m_tidalTableModel->setMeasurements(measurements);
     //QHBoxLayout *cursorLayout =  new QHBoxLayout;
     //cursorLayout->addWidget(m_cursorPosDDLabel);
 
     //QGroupBox *cursorGroupBox = new QGroupBox(tr("Cursor"),this);
     //cursorGroupBox->setAlignment(Qt::AlignCenter);
     //cursorGroupBox->setLayout(cursorLayout);
-
-
-
 
     //Connections
 
@@ -677,7 +689,6 @@ void CentralWidget::setInterfazLayout()
 
     QHBoxLayout *mainLayout = new QHBoxLayout;
 
-
     mainLayout->addWidget(m_tidalTableView);
     //QVBoxLayout *rigthLayout = new QVBoxLayout; //NOTE: Probando el edit
     //m_edit = new QPlainTextEdit(this);                                //NOTE: creando el edit
@@ -698,6 +709,7 @@ void CentralWidget::settingUpTable()
 
     connect(m_tidalTableModel,SIGNAL(dataChanged(QModelIndex,QModelIndex,QVector<int>)),this,SLOT(updateSeriesData(QModelIndex,QModelIndex,QVector<int>)));
     connect(m_tidalTableModel,SIGNAL(rowsRemoved(QModelIndex,int,int)),this,SLOT(updateSeriesDataAtRowRemove(QModelIndex,int,int)));
+
     int width = 20 + m_tidalTableView->verticalHeader()->width();
     for (int i = 0; i < m_tidalTableModel->columnCount(QModelIndex()); ++i){
          width += m_tidalTableView->columnWidth(i);

@@ -98,6 +98,7 @@ private:
 
     void deletePoints();
     void updateDisplayRangeLabel();
+
 };
 
 #endif // CENTRALWIDGET_H

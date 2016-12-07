@@ -24,6 +24,9 @@
 #include "include/NonHarmonicConstantsModule/NonHarmonicConstants/alturasemimarea.h"
 #include "include/NonHarmonicConstantsModule/NonHarmonicConstants/pleabajamedia.h"
 
+#include <QFile>
+#include <QTextStream>
+
 #include <QtMath>
 #include "include/CoordinatesEditionWidget/mycoordinateseditorwidget.h"
 NonHarmonicCalcDialog::NonHarmonicCalcDialog(qreal longitud,QWidget *parent):QDialog(parent)
@@ -603,6 +606,15 @@ QString NonHarmonicCalcDialog::fromDoubleToHoursAndMinutes(double value)
         return resp;
     }
     return resp;
+}
+
+void NonHarmonicCalcDialog::saveNonHarmonicConstants(const QString &filePath)
+{
+    QFile file(filePath);
+
+    if (file.open(QIODevice::WriteOnly)){
+        //TODO: Me quede por aqui
+    }
 }
 
 

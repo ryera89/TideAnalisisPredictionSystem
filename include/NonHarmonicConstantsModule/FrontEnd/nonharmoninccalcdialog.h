@@ -101,6 +101,8 @@ private:
 
     QString fromDoubleToDaysAndHours(double value);
     QString fromDoubleToHoursAndMinutes(double value);
+
+    void saveNonHarmonicConstants(const QString &filePath);
 };
 
 #endif // NONHARMONINCCALCDIALOG_H
