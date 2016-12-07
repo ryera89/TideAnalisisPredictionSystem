@@ -36,6 +36,10 @@ NonHarmonicCalcDialog::NonHarmonicCalcDialog(qreal longitud,QWidget *parent):QDi
 
     this->setWindowIcon(QIcon(":images/non_harmonic-analisis.png"));
     setModal(true);
+
+    Qt::WindowFlags flag = Qt::Dialog | Qt::WindowCloseButtonHint;
+    this->setWindowFlags(flag);
+
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -210,6 +214,15 @@ void NonHarmonicCalcDialog::calculate(int index)
     }
 }
 
+void NonHarmonicCalcDialog::calculateAll()
+{
+    foreach (displayResultWidget *dispWid, m_displayResultWidgetVector) {
+        if (dispWid->pushButtonStatus()){
+            dispWid->pushButtonClicked();
+        }
+    }
+}
+
 void NonHarmonicCalcDialog::createComponents()
 {
     m_inputFrame = new QFrame(this);
@@ -254,10 +267,12 @@ void NonHarmonicCalcDialog::createComponents()
 
     m_calcAllPushButton = new QPushButton(tr("Calcular Todos"));
     m_calcAllPushButton->setToolTip(tr("Calcula todas las posibles constantes no armonicas"));
+    connect(m_calcAllPushButton,SIGNAL(clicked(bool)),this,SLOT(calculateAll()));
 
     m_savePushButton = new QPushButton(QIcon(":images/save.png"),tr("Guardar"));
     //TODO: Conexion
     m_closePushButton = new QPushButton(QIcon(":images/No.png"),tr("Cerrar"));
+    connect(m_closePushButton,SIGNAL(clicked(bool)),this,SLOT(close()));
 
     createDisplaysResultWidgets();
 }
@@ -440,7 +455,7 @@ double NonHarmonicCalcDialog::calculateCMP()
 {
     CrecimientoMareaParactica cmp(m_M2,m_N2);
 
-    cmp.CMP();
+    return cmp.CMP();
 }
 
 double NonHarmonicCalcDialog::calculateCMD()

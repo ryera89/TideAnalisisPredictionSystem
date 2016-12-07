@@ -25,6 +25,10 @@ void displayResultWidget::setPushButtonStatus(bool status)
     m_pushButton->setEnabled(status);
 }
 
+bool displayResultWidget::pushButtonStatus() const
+{
+    return m_pushButton->isEnabled();
+}
 void displayResultWidget::createComponets()
 {
     m_lineEdit = new QLineEdit;

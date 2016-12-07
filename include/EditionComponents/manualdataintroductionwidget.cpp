@@ -30,6 +30,9 @@ ManualDataIntroductionWidget::ManualDataIntroductionWidget(QWidget *parent) : QD
 
     settingTableWidth();
 
+    Qt::WindowFlags flag = Qt::Dialog | Qt::WindowCloseButtonHint;
+    this->setWindowFlags(flag);
+
     this->setFixedSize(sizeHint());
 
     this->setAttribute(Qt::WA_DeleteOnClose);

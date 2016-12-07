@@ -22,6 +22,8 @@ public:
 private slots:
     void calculate(int index);
 
+    void calculateAll();
+
 private:
     QVector<displayResultWidget*> m_displayResultWidgetVector;
 

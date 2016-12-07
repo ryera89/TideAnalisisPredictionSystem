@@ -22,6 +22,9 @@ SchemeConfigDialog::SchemeConfigDialog(const QStringList &schemesLabels, const Q
     createComponent(schemesLabels,componentsLabels);
     settingLayout();
 
+    Qt::WindowFlags flag = Qt::Dialog | Qt::WindowCloseButtonHint;
+    this->setWindowFlags(flag);
+
     this->setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -153,12 +156,12 @@ void SchemeConfigDialog::createComponent(const QStringList &schemesLabels, const
     m_addButton->setFocusPolicy(Qt::NoFocus);
     connect(m_addButton,SIGNAL(clicked(bool)),m_schemesList,SLOT(insertNewItem()));
 
-    m_removeButton = new QPushButton(QIcon(":images/Erase.png"),tr("Eliminar"),this);
+    m_removeButton = new QPushButton(QIcon(":images/delete.png"),tr("Eliminar"),this);
     m_removeButton->setToolTip(tr("Eliminar esquema"));
     m_removeButton->setFocusPolicy(Qt::NoFocus);
     connect(m_removeButton,SIGNAL(clicked(bool)),m_schemesList,SLOT(removeItem()));
 
-    m_okButton = new QPushButton(QIcon(":images/OK.png"),tr("Aceptar"),this);
+    m_okButton = new QPushButton(QIcon(":images/Ok.png"),tr("Aceptar"),this);
     m_okButton->setFocusPolicy(Qt::NoFocus);
     connect(m_okButton,SIGNAL(clicked(bool)),this,SLOT(writeSchemesFile()));
 

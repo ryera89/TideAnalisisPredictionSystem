@@ -28,6 +28,10 @@ SchemeWidget::SchemeWidget(const QDateTime &iniDateTime, const QDateTime &endDat
 
     setWindowIcon(QIcon(":images/harmonic-analisis.png"));
     this->setModal(true);
+
+    Qt::WindowFlags flag = Qt::Dialog | Qt::WindowCloseButtonHint;
+    this->setWindowFlags(flag);
+
     this->setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -225,7 +229,7 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
 
     connect(m_dataSelectionComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(enableCustomDataSelection(int)));
 
-    m_saveSelectedData = new QPushButton(tr("Guardar Datos"));
+    m_saveSelectedData = new QPushButton(QIcon(":images/save.png"),tr("Guardar Datos"));
     connect(m_saveSelectedData,SIGNAL(clicked(bool)),this,SIGNAL(saveDataButtonClicked()));
 
     //********************************************************************
