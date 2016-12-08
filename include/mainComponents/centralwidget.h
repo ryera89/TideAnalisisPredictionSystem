@@ -70,6 +70,10 @@ private:
     QValueAxis *m_yAxis;
     //QValueAxis *m_yAxis;
     QSplineSeries *m_series;
+    
+    qreal m_maxSerieYValue;
+    qreal m_minSerieYValue;
+    
     QScatterSeries *m_selectionSeries;
     //QScatterSeries *m_scatterSerie;
     //MySeries *m_series;

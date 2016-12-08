@@ -138,8 +138,8 @@ void CentralWidget::setSeriesData()
     //int columnNumber = m_model->columnCount(QModelIndex());
 
     QVector<QPointF> datos;
-    qreal ymaxValue = 1.0;
-    qreal yminValue = 0.0;
+    m_maxSerieYValue = 1.0;
+    m_minSerieYValue = 0.0;
 
     for (int i = 0; i < rowNumber; ++i){
         double y_value;
@@ -148,8 +148,8 @@ void CentralWidget::setSeriesData()
         x_value.setTime(m_tidalTableModel->measurementData().at(i).measurementTime());
         y_value = m_tidalTableModel->measurementData().at(i).seaLevel();
 
-        if (ymaxValue < y_value) ymaxValue = y_value;
-        if (yminValue > y_value) yminValue = y_value;
+        if (m_maxSerieYValue < y_value) m_maxSerieYValue = y_value;
+        if (m_minSerieYValue > y_value) m_minSerieYValue = y_value;
 
         datos.append(QPointF(x_value.toMSecsSinceEpoch(),y_value));
     }
@@ -169,18 +169,19 @@ void CentralWidget::setSeriesData()
         else m_timeAxis->setRange(QDateTime::fromMSecsSinceEpoch(m_series->at(0).x()),QDateTime::fromMSecsSinceEpoch(m_series->pointsVector().last().x()));
     }
 
-    m_yAxis->setRange(yminValue,ymaxValue);
+    m_yAxis->setRange(m_minSerieYValue,m_maxSerieYValue);
+    m_yAxis->applyNiceNumbers();
     //m_tideChartView->chart()->addSeries(m_series);
     //m_tideChartView->chart()->createDefaultAxes();
 
     //m_tideChartView->chart()->addSeries(m_series);
     //m_tideChartView->chart()->addSeries(m_selectionSeries);
-    m_tideChartView->chart()->createDefaultAxes();
+    //m_tideChartView->chart()->createDefaultAxes();
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
     m_tideChart->setAxisY(m_yAxis,m_series);
     m_tideChart->setAxisY(m_yAxis,m_selectionSeries);
-    m_yAxis->applyNiceNumbers();
+
     //m_tideChartView->chart()->setAxisX(m_timeAxis,m_scatterSerie);
 
     //m_mapper->setSeries(m_series);
@@ -443,7 +444,29 @@ void CentralWidget::updateSeriesData(const QModelIndex &topLeft, const QModelInd
                                 Qt::DisplayRole).toDouble();
 
         if (i < m_series->count()){
+            qreal valueChanged = m_series->at(i).y();
+
             m_series->replace(i,x_value.toMSecsSinceEpoch(),y_value);
+
+            if (valueChanged == m_maxSerieYValue){ //Para arreglar el eje vertical
+                m_maxSerieYValue = m_series->pointsVector().first().y();
+                foreach(QPointF point, m_series->pointsVector()){
+                    qreal aux = point.y();
+                    if (aux > m_maxSerieYValue) m_maxSerieYValue = aux;
+                }
+                m_yAxis->setMax(m_maxSerieYValue);
+                m_yAxis->applyNiceNumbers();
+            }
+            if (valueChanged == m_minSerieYValue){ //Para arreglar el eje vertical
+                m_minSerieYValue = m_series->pointsVector().first().y();
+                foreach(QPointF point, m_series->pointsVector()){
+                    qreal aux = point.y();
+                    if (aux < m_minSerieYValue) m_minSerieYValue = aux;
+                }
+                m_yAxis->setMin(m_minSerieYValue);
+                m_yAxis->applyNiceNumbers();
+            }
+
         }else{
             if (i == m_series->count()){
                 m_series->append(x_value.toMSecsSinceEpoch(),y_value);
@@ -457,10 +480,12 @@ void CentralWidget::updateSeriesData(const QModelIndex &topLeft, const QModelInd
             }
         }
        if (y_value > m_yAxis->max()){
+           m_maxSerieYValue = y_value;
            m_yAxis->setMax(y_value);
            m_yAxis->applyNiceNumbers();
        }
        if (y_value < m_yAxis->min()){
+           m_minSerieYValue = y_value;
            m_yAxis->setMin(y_value);
            m_yAxis->applyNiceNumbers();
        }

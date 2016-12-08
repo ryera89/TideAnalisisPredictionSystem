@@ -2,13 +2,13 @@
 #define MINSQR_H
 
 /*********************************************************************
-Esta es una libraria que implementa el metodo de minimos cuadrados
+Esta es una libreria que implementa el metodo de minimos cuadrados
 aqui se resolvera el problema apicando la solucion de sistema de ecuaciones
 lineales por el metodo de LU, Gauss-Jordan, SVD y QR. El metodo fue implementado
 en junio del 2016 y permite la eleccion de los parametros Ak que deben ser ajustados
 los cual pueden ser escogidos por el usuario, ademas se obtine la matriz
 covariante que nos brinda la varianza de los parametros ajustados. Esta
-libreria esta implementada en C++ sin uso de las librerias de Qt.
+libreria esta implementada en C++ usando QVector de Qt
 **********************************************************************/
 
 #include <QVector>

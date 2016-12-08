@@ -33,6 +33,7 @@ public:
     QSize sizeHint() const;
 
 signals:
+    void progressBarProgress(int i);
 
 private slots:
     void loadDataFile();

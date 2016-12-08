@@ -268,18 +268,16 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
         MinSqr minimosCuadrados(timeValarray,levelValarray,var,SPMmainWindow::funcion);
         minimosCuadrados.fitLU();
 
-
-
         for (int k = 0; k < SPMmainWindow::m_selectedHarmonicConstantVector.size(); ++k){
             SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(minimosCuadrados.parametros()[k+1],minimosCuadrados.parametros()[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
         }
 
-        for (uint k = 0; k < minimosCuadrados.parametros().size(); ++k){
+        /*for (uint k = 0; k < minimosCuadrados.parametros().size(); ++k){
             std::cout << minimosCuadrados.parametros()[k] << std::endl;
         }
 
         std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() << std::endl;
-         std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;
+         std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;*/
     }else{
 
         Fitsvd test(timeValarray,levelValarray,var,SPMmainWindow::funcion);
@@ -289,12 +287,12 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
             SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(test.a[k+1],test.a[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
         }
 
-        for (uint k = 0; k < test.a.size(); ++k){
+        /*for (uint k = 0; k < test.a.size(); ++k){
             std::cout << test.a[k] << std::endl;
         }
 
         std::cout << "Chi cuadrado=" << test.chisq << std::endl;
-        std::cout << "Nivel Medio=" << test.a[0] << std::endl;
+        std::cout << "Nivel Medio=" << test.a[0] << std::endl;*/
     }
 
 
