@@ -26,6 +26,7 @@
 
 #include <QFile>
 #include <QTextStream>
+#include <QFileDialog>
 
 #include <QtMath>
 #include "include/CoordinatesEditionWidget/mycoordinateseditorwidget.h"
@@ -104,6 +105,11 @@ void NonHarmonicCalcDialog::loadHarmonicConstants(const QVector<HarmonicConstant
     m_tipoMareaLineEdit->setText(tipoDeMarea(ampRelation));
 
     enableNonHarmonicConstantCalc(ampRelation);
+}
+
+void NonHarmonicCalcDialog::setMetaData(const ProjectMetaData &metadata)
+{
+    m_metaData = metadata;
 }
 
 
@@ -217,6 +223,16 @@ void NonHarmonicCalcDialog::calculate(int index)
     }
 }
 
+void NonHarmonicCalcDialog::saveToFile()
+{
+    QString fileName = QFileDialog::getSaveFileName(this,tr("Guardar Constantes No Armonicas"),QString(),"*.txt");
+    if (!fileName.isEmpty()){
+        if (QFileInfo(fileName).suffix().isEmpty()) fileName.append(".txt");
+
+        saveNonHarmonicConstants(fileName);
+    }
+}
+
 void NonHarmonicCalcDialog::calculateAll()
 {
     foreach (displayResultWidget *dispWid, m_displayResultWidgetVector) {
@@ -273,7 +289,7 @@ void NonHarmonicCalcDialog::createComponents()
     connect(m_calcAllPushButton,SIGNAL(clicked(bool)),this,SLOT(calculateAll()));
 
     m_savePushButton = new QPushButton(QIcon(":images/save.png"),tr("Guardar"));
-    //TODO: Conexion
+    connect(m_savePushButton,SIGNAL(clicked(bool)),this,SLOT(saveToFile()));
     m_closePushButton = new QPushButton(QIcon(":images/No.png"),tr("Cerrar"));
     connect(m_closePushButton,SIGNAL(clicked(bool)),this,SLOT(close()));
 
@@ -613,8 +629,46 @@ void NonHarmonicCalcDialog::saveNonHarmonicConstants(const QString &filePath)
     QFile file(filePath);
 
     if (file.open(QIODevice::WriteOnly)){
-        //TODO: Me quede por aqui
+        QTextStream out(&file);
+
+        out << "CONSTANTES NO ARMONICAS" << endl;
+        out << endl;
+
+
+
+        qreal latitud = m_metaData.latitud();
+        qreal longitud = m_metaData.longitud();
+
+        out << "PROYECTO: "<< m_metaData.projectName() << endl;
+        out << "ESTACION: " << m_metaData.stationName() << endl;
+        out << "SITUACION: " << m_metaData.localizationName() << endl;
+
+        if (latitud < 0.0)  out << "LATITUD: " << qFabs(latitud) << "S" << endl;
+        if (latitud > 0.0)  out << "LATITUD: " << latitud << "N" << endl;
+        if (latitud == 0.0) out << "LATITUD: " << "0.000" << endl;
+
+        if (longitud < 0.0)  out << "LONGITUD: " << qFabs(longitud) << "W" << endl;
+        if (longitud > 0.0)  out << "LONGITUD: " << longitud << "E" << endl;
+        if (longitud == 0.0) out << "LONGITUD: " << "0.000" << endl;
+
+        out << endl;
+
+        out << "TIPO DE MAREA: " << m_tipoMareaLineEdit->text() <<endl;
+        out << "RELACION DE AMPLITUD: " << m_ampRelationLineEdit->text() << endl;
+        out << "RELACION SEMIDIURNA: " << m_semidiurnalRelationLineEdit->text() << endl;
+
+        foreach (displayResultWidget *disp, m_displayResultWidgetVector) {
+            if (!disp->lineEditText().isEmpty()){
+                out << disp->title() << " " << disp->lineEditText() << endl;
+            }
+        }
+
+
+    }else{
+        QMessageBox::information(this,tr("Error Guardando Archivo"),tr("No se puede escribir el archivo"
+                                                                       "%1").arg(file.fileName()));
     }
+    file.close();
 }
 
 

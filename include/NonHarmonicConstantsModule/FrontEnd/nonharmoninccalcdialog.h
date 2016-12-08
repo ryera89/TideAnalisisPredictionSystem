@@ -6,6 +6,7 @@
 #include <QSignalMapper>
 #include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 #include "include/MeasurementUnitEditWidget/measurementuniteditwidget.h"
+#include "include/ProjectMetaData/projectmetadata.h"
 class QLabel;
 class QDoubleSpinBox;
 class MyCoordinatesEditorWidget;
@@ -19,8 +20,12 @@ public:
     void loadHarmonicConstants(const QVector<HarmonicConstant> &harmonicConstants);
     ~NonHarmonicCalcDialog(){}
 
+    void setMetaData(const ProjectMetaData &metadata);
+
 private slots:
     void calculate(int index);
+
+    void saveToFile();
 
     void calculateAll();
 
@@ -64,6 +69,8 @@ private:
 
     HarmonicConstant m_M4; //Bajo Fondo
     HarmonicConstant m_M6;
+
+    ProjectMetaData m_metaData;
 
     //qreal m_longitud;
     //qreal m_nivelMedio;

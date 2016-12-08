@@ -29,6 +29,16 @@ bool displayResultWidget::pushButtonStatus() const
 {
     return m_pushButton->isEnabled();
 }
+
+QString displayResultWidget::lineEditText() const
+{
+    return m_lineEdit->text();
+}
+
+/*QString displayResultWidget::groupBoxText() const
+{
+    return m_groupBox->title();
+}*/
 void displayResultWidget::createComponets()
 {
     m_lineEdit = new QLineEdit;

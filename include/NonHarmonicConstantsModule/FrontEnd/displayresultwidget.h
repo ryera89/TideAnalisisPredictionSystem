@@ -18,11 +18,14 @@ public:
 
     bool pushButtonStatus() const;
 
+    QString lineEditText() const;
+    //QString groupBoxText() const;
+
 signals:
     void pushButtonClicked();
 
 private:
-    QGroupBox *m_groupBox;
+    //QGroupBox *m_groupBox;
     QLineEdit *m_lineEdit;
     QPushButton *m_pushButton;
 
