@@ -43,9 +43,9 @@ public:
 signals:
     void analizeButtonClicked();
     void saveDataButtonClicked();
-
+    void saveHarmonicConstantsButtonClicked();
 public slots:
-
+    void enableSaveHarmonicConstantButton();
 private slots:
     void createConfigSchemeDialog();
     void selectAnalisisScheme(const QString &str);
@@ -61,12 +61,11 @@ private slots:
     void updateTimeInterval(QTime time);
     void enableCustomDataSelection(int index);
 
-
 private:
     QStringList m_schemesLabels;
     QStringList m_componentsLabels;
     QMap<QString,QMap<QString,bool>> m_schemes_componentMap;
-    QMap<QString,QString> m_schemeDescriptionMap;
+    QMap<QString,QString> m_schemeDescriptionMap; 
 
     QGroupBox *m_descriptionGroupBox;
     QGroupBox *m_componentGroupBox; //Para el Widget de los componentes
@@ -77,7 +76,7 @@ private:
 
     QToolButton *m_configEsquemaToolButton;
     QPushButton *m_analizarPushButton;
-    QProgressBar *m_analizandoProgressBar;
+    //QProgressBar *m_analizandoProgressBar;
 
     QTableView *m_harmonicConstantTableView;
     HarmonicConstantFullTableModel *m_harmonicConstantTableModel;
@@ -105,6 +104,7 @@ private:
     quint64 m_timeInterval;
 
     QPushButton *m_saveSelectedData;
+    QPushButton *m_saveHarmonicConstantsButton;
     //************************************************************************
 
 

@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts qml quick positioning
+QT       += core gui charts qml quick positioning quickwidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -164,8 +164,9 @@ RESOURCES += \
 
 DISTFILES += \
     TideAnalisisPredictionSystem.pro.aV1876 \
-    button.qml \
     images/add.png \
     images/analisis.png \
     images/configure.png \
-    images/erase.png
+    images/erase.png \
+    Processing.qml \
+    analizing.qml

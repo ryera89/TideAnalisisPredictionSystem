@@ -28,6 +28,8 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
     m_nivelacionAcuaticaWidget = 0;
     setCentralWidget(m_central);
 
+
+
     //m_datosDeMarea = TidalData(QVector<TidesMeasurement>(100));
 
     //m_tidalTableModel = new ReadOnlyTableModel(m_datosDeMarea);
@@ -189,6 +191,8 @@ void SPMmainWindow::createHarmonicAnalisisDialog()
     }
     connect(m_schemeWidget,SIGNAL(analizeButtonClicked()),this,SLOT(harmonicAnalisis()));
     connect(m_schemeWidget,SIGNAL(saveDataButtonClicked()),this,SLOT(saveAnalisisData()));
+    connect(m_schemeWidget,SIGNAL(saveHarmonicConstantsButtonClicked()),this,SLOT(saveHarmonicConstantToFile()));
+    connect(this,SIGNAL(harmonicAnalisisFinished()),m_schemeWidget,SLOT(enableSaveHarmonicConstantButton()));
     m_schemeWidget->show();
 
 }
@@ -219,15 +223,19 @@ bool SPMmainWindow::saveFrequencyFile()
 
 void SPMmainWindow::harmonicAnalisis()
 {
+
     if (m_schemeWidget->currentSelectionComboBoxIndex()){
         harmonicAnalisisWithCustomData();
     }else{
         harmonicAnalisisWithAllData();
     }
+
+    emit harmonicAnalisisFinished();
 }
 
 void SPMmainWindow::harmonicAnalisisWithAllData()
 {
+
     QMap<QString,bool> harmonicComponentStatus = m_schemeWidget->selectedSchemeComponentStatus();
     SPMmainWindow::m_selectedHarmonicConstantVector.clear();
     foreach (HarmonicConstant harmonic, m_harmonicConstantVector) {
@@ -393,6 +401,16 @@ void SPMmainWindow::harmonicAnalisisWithCustomData()
 
     m_schemeWidget->showHarmonicConstantTable();
 
+}
+
+void SPMmainWindow::saveHarmonicConstantToFile()
+{
+    QString fileName = QFileDialog::getSaveFileName(this,tr("Guardar Constantes No Armonicas"),QString(),"*.txt");
+    if (!fileName.isEmpty()){
+        if (QFileInfo(fileName).suffix().isEmpty()) fileName.append(".txt");
+
+        saveHarmonicConstants(fileName);
+    }
 }
 
 bool SPMmainWindow::writeFrequencyFile(const QString &filePath)
@@ -1042,6 +1060,91 @@ bool SPMmainWindow::saveAnalisisDataToFile(const QString &filePath)
         return false;
     }
     return true;
+}
+
+void SPMmainWindow::saveHarmonicConstants(const QString &filePath)
+{
+    QFile file(filePath);
+
+    if (file.open(QIODevice::WriteOnly)){
+        QTextStream out(&file);
+
+        out << "CONSTANTES ARMONICAS" << endl;
+        out << endl;
+
+
+
+        qreal latitud = m_metadataStorage.latitud();
+        qreal longitud = m_metadataStorage.longitud();
+
+        out << "PROYECTO: "<< m_metadataStorage.projectName() << endl;
+        out << "ESTACION: " << m_metadataStorage.stationName() << endl;
+        out << "SITUACION: " << m_metadataStorage.localizationName() << endl;
+
+        if (latitud < 0.0)  out << "LATITUD: " << qFabs(latitud) << "S" << endl;
+        if (latitud > 0.0)  out << "LATITUD: " << latitud << "N" << endl;
+        if (latitud == 0.0) out << "LATITUD: " << "0.000" << endl;
+
+        if (longitud < 0.0)  out << "LONGITUD: " << qFabs(longitud) << "W" << endl;
+        if (longitud > 0.0)  out << "LONGITUD: " << longitud << "E" << endl;
+        if (longitud == 0.0) out << "LONGITUD: " << "0.000" << endl;
+
+        out << endl;
+
+        /*out << "TIPO DE MAREA: " << m_tipoMareaLineEdit->text() <<endl;
+        out << "RELACION DE AMPLITUD: " << m_ampRelationLineEdit->text() << endl;
+        out << "RELACION SEMIDIURNA: " << m_semidiurnalRelationLineEdit->text() << endl;*/
+
+        QString constituente("CONSTITUENTE");
+        QString v_ang("V. ANGULAR[grad/seg]");
+        QString amp("AMPLITUD[m]");
+        QString fase("FASE[grad]");
+
+
+        out << constituente << "  " << v_ang << "  " << amp << "  " << fase << endl;
+        out << "------------" << "  " << "--------------------" << "  " << "-----------" << "  " << "----------" << endl;
+
+        foreach (HarmonicConstant hc, m_selectedHarmonicConstantVector) {
+            out.setFieldWidth(constituente.length());
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << hc.name();
+
+
+            out.setFieldWidth(0);
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << "  ";
+
+            out.setFieldWidth(v_ang.length());
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << hc.frequency();
+
+            out.setFieldWidth(0);
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << "  ";
+
+            out.setFieldWidth(amp.length());
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << hc.amplitud();
+
+            out.setFieldWidth(0);
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << "  ";
+
+            out.setFieldWidth(fase.length());
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << hc.phase();
+
+            out.setFieldWidth(0);
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << endl;
+        }
+
+
+    }else{
+        QMessageBox::information(this,tr("Error Guardando Archivo"),tr("No se puede escribir el archivo"
+                                                                       "%1").arg(file.fileName()));
+    }
+    file.close();
 }
 
 

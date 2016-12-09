@@ -60,6 +60,10 @@ int SchemeWidget::currentSelectionComboBoxIndex() const
     return m_dataSelectionComboBox->currentIndex();
 }
 
+void SchemeWidget::enableSaveHarmonicConstantButton()
+{
+    m_saveHarmonicConstantsButton->setEnabled(true);
+}
 void SchemeWidget::setSchemesLabels(const QStringList &schemesLabels)
 {
     m_schemesLabels = schemesLabels;
@@ -138,7 +142,6 @@ void SchemeWidget::enableCustomDataSelection(int index)
     if (index) m_customDataSelectionGroupBox->setEnabled(true);
     else m_customDataSelectionGroupBox->setEnabled(false);
 }
-
 void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTime &endDateTime, const QStringList &schemesLabels, const QStringList &componentsLabels)
 {
      //TODO:connections
@@ -170,8 +173,13 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
     m_analizarPushButton->setToolTip(tr("Calcular constantes armónicas"));
     connect(m_analizarPushButton,SIGNAL(clicked(bool)),this,SIGNAL(analizeButtonClicked()));
 
-    m_analizandoProgressBar = new QProgressBar;
-    m_analizandoProgressBar->setTextVisible(true);
+    //m_analizandoProgressBar = new QProgressBar;
+    //m_analizandoProgressBar->setTextVisible(true);
+
+    m_saveHarmonicConstantsButton = new QPushButton(QIcon(":images/save.png"),tr("Guardar C.Armonicas"));
+    m_saveHarmonicConstantsButton->setToolTip(tr("Guardar Constantes Armónicas"));
+    m_saveHarmonicConstantsButton->setEnabled(false);
+    connect(m_saveHarmonicConstantsButton,SIGNAL(clicked(bool)),this,SIGNAL(saveHarmonicConstantsButtonClicked()));
 
     m_harmonicConstantTableView = new QTableView(this);
 
@@ -253,7 +261,8 @@ void SchemeWidget::interfazLayout()
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
     bottomLayout->addWidget(m_analizarPushButton);
-    bottomLayout->addWidget(m_analizandoProgressBar);
+    bottomLayout->addStretch();
+    bottomLayout->addWidget(m_saveHarmonicConstantsButton);
 
     QHBoxLayout *radioLayout = new QHBoxLayout;
     radioLayout->addWidget(m_luRadioButton);

@@ -11,6 +11,7 @@
 #include "include/ProjectMetaData/projectmetadata.h"
 #include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 #include "include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.h"
+
 class SchemeWidget;
 class MetaDataDialog;
 class FreqEditor;
@@ -33,8 +34,7 @@ public:
     QSize sizeHint() const;
 
 signals:
-    void progressBarProgress(int i);
-
+    void harmonicAnalisisFinished();
 private slots:
     void loadDataFile();
     void createManualDataIntWidget();
@@ -55,6 +55,7 @@ private slots:
     void harmonicAnalisis();
     void harmonicAnalisisWithAllData();
     void harmonicAnalisisWithCustomData();
+    void saveHarmonicConstantToFile();
 
 protected slots:
     void setChartLightTheme(bool);
@@ -100,6 +101,9 @@ private:
      NonHarmonicCalcDialog *m_nonHarmonicConstantDialog;
      FreqEditor *m_frequencyEditor;
      NivelacionAcuaticaWidget *m_nivelacionAcuaticaWidget;
+
+     //QML component
+
 
      /*************************ACTIONS*************************************************/
      //File Menu Actions----------------------------------------------------------------
@@ -187,6 +191,7 @@ private:
      bool loadHarmonicConstantsFromFile();
      //static void setSelectectedHarmonicConstants();
      bool saveAnalisisDataToFile(const QString &filePath);
+     void saveHarmonicConstants(const QString &filePath);
 
 };
 

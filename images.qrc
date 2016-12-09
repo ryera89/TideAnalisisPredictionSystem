@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>analizing.qml</file>
         <file>images/arrow_left.png</file>
         <file>images/arrow_right.png</file>
         <file>images/No.png</file>
@@ -29,5 +30,6 @@
         <file>images/aquarius-48.png</file>
         <file>images/from_project.png</file>
         <file>images/nivelacion_acuatica.png</file>
+        <file>images/load.png</file>
     </qresource>
 </RCC>
