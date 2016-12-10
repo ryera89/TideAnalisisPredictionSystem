@@ -56,6 +56,7 @@ private slots:
     void createHarmonicAnalisisDialog();
     void createFrequencyEditor();
     void createSamplingDilalog();
+    void loadSampledData();
 
     bool saveFrequencyFile();
     void harmonicAnalisis();

@@ -3,7 +3,8 @@
 
 #include <QDialog>
 #include "include/measurement/measurement.h"
-
+#include <QMap>
+#include <QDate>
 
 class QDateEdit;
 class QTimeEdit;
@@ -17,14 +18,22 @@ class SamplingDialog : public QDialog
 public:
     explicit SamplingDialog(const QVector<TidesMeasurement> &inputMeasurements, QWidget *parent = 0);
 
+    QVector<TidesMeasurement> dataSampled() const{return m_reducedData;}
+
 private slots:
     void sampleData();
+
+    void updateFinalDateEditRange(const QDate &iniDate);
+    void updatePotentialPoints();
 
 private:
     QVector<TidesMeasurement> m_allData;
     QVector<TidesMeasurement> m_reducedData;
 
     quint64 m_potentialPoints;
+
+    QMap<QDate,int> m_mapForFirstDatePos;
+    QMap<QDate,int> m_mapForEndDatePos;
 
     QLabel *m_fechaInicialLabel;
     QLabel *m_fechaFinalLabel;

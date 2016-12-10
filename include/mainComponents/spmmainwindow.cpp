@@ -216,7 +216,15 @@ void SPMmainWindow::createSamplingDilalog()
         return;
     }
     m_samplingDialog = new SamplingDialog(m_central->tableModel()->measurementData(),this);
+    connect(m_samplingDialog,SIGNAL(accepted()),this,SLOT(loadSampledData()));
     m_samplingDialog->show();
+}
+
+void SPMmainWindow::loadSampledData()
+{
+    m_central->tableModel()->setMeasurements(m_samplingDialog->dataSampled());
+
+    m_samplingDialog->close();
 }
 
 bool SPMmainWindow::saveFrequencyFile()
@@ -356,6 +364,9 @@ void SPMmainWindow::harmonicAnalisisWithCustomData()
     bool flag = true; //Para guardar la primera medicion que se va a usar en el calculo
     foreach (TidesMeasurement meas, m_central->tableModel()->measurementData()) {
         if (auxDateTime <= endDateTime){
+            while (auxDateTime < meas.measurementDateTime()){
+                auxDateTime = auxDateTime.addSecs(timeInterval);
+            }
             if (auxDateTime == meas.measurementDateTime()){
                 //Variante 1 principio year begining
                 //quint64 seconds = yearBegin.secsTo(QDateTime(meas.measurementDate(),meas.measurementTime(),Qt::UTC));
@@ -369,9 +380,6 @@ void SPMmainWindow::harmonicAnalisisWithCustomData()
 
                 timeVector.push_back(timeInHours);
                 levelVector.push_back(meas.seaLevel());
-                auxDateTime = auxDateTime.addSecs(timeInterval);
-            }
-            while (auxDateTime < meas.measurementDateTime()){
                 auxDateTime = auxDateTime.addSecs(timeInterval);
             }
 
@@ -1088,19 +1096,17 @@ bool SPMmainWindow::saveAnalisisDataToFile(const QString &filePath)
             QDateTime auxDateTime = initialDateTime;
             foreach (TidesMeasurement meas, m_central->tableModel()->measurementData()) {
                 if (auxDateTime <= endDateTime){
+                    while (auxDateTime < meas.measurementDateTime()){
+                        auxDateTime = auxDateTime.addSecs(timeInterval);
+                    }
                     if (auxDateTime == meas.measurementDateTime()){
                        out << meas.measurementDate().toString("yyyy/MM/dd") << " " << meas.measurementTime().toString("hh:mm") << " " << meas.seaLevel() << endl;
                        auxDateTime = auxDateTime.addSecs(timeInterval);
                     }
-                    while (auxDateTime < meas.measurementDateTime()){
-                        auxDateTime = auxDateTime.addSecs(timeInterval);
-                    }
 
                 }
                 if (auxDateTime > endDateTime) break;
-
             }
-
         }else{
             foreach (TidesMeasurement meas, m_central->tableModel()->measurementData()) {
                 out << meas.measurementDate().toString("yyyy/MM/dd") << " " << meas.measurementTime().toString("hh:mm") << " " << meas.seaLevel() << endl;
