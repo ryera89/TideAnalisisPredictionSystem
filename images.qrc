@@ -31,5 +31,7 @@
         <file>images/from_project.png</file>
         <file>images/nivelacion_acuatica.png</file>
         <file>images/load.png</file>
+        <file>images/supercargando.gif</file>
+        <file>images/cargando.gif</file>
     </qresource>
 </RCC>

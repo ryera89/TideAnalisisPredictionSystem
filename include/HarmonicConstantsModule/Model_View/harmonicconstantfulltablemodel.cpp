@@ -2,7 +2,7 @@
 
 HarmonicConstantFullTableModel::HarmonicConstantFullTableModel(QObject *parent):QAbstractTableModel(parent)
 {
-    m_headers << "Componente" << "Velocidad Angular" << "C" << "S" << "Amplitud" << "fase";
+    m_headers << "Componente" << "Velocidad Angular[°/h]" << "C" << "S" << "Amplitud[m]" << "Fase[°]";
 
     m_data = QVector<HarmonicConstant>(28,HarmonicConstant());
 }
@@ -10,17 +10,19 @@ HarmonicConstantFullTableModel::HarmonicConstantFullTableModel(QObject *parent):
 HarmonicConstantFullTableModel::HarmonicConstantFullTableModel(const QVector<HarmonicConstant> &datos, QObject *parent):QAbstractTableModel(parent),
     m_data(datos)
 {
-    m_headers << "Componente" << "Velocidad Angular" << "C" << "S" << "Amplitud" << "fase";
+    m_headers << "Componente" << "Velocidad Angular[°/h]" << "C" << "S" << "Amplitud[m]" << "Fase[°]";
 
 }
 
 int HarmonicConstantFullTableModel::rowCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     return m_data.size();
 }
 
 int HarmonicConstantFullTableModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     return 6;
 }
 

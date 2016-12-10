@@ -43,6 +43,7 @@ LUdcmp::LUdcmp(Matrix &a):lu(a), n(a.dim1()), indx(n), aref(a){
             temp = lu.column(k)[i]/=lu[k][k];
             for (j = k+1; j < n; ++j)
                 lu[i][j]-=temp*lu[k][j];
+
         }
 
     }
@@ -66,6 +67,7 @@ void LUdcmp::solve(valarray<double> &vb, valarray<double> &vx){
             ii=i+1;
 
         vx[i] = sum;
+
 
     }
     for (i = n-1; i >=0; --i){    //Backsubstitution

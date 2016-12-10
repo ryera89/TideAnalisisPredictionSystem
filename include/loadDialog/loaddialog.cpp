@@ -687,7 +687,8 @@ void LoadDialog::settingUpEveryThing()
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
     bottomLayout->addWidget(m_importProgressBar);
-    bottomLayout->addStretch();
+    //bottomLayout->addStretch();
+
 
     QHBoxLayout *buttonLayout = new QHBoxLayout;
     buttonLayout->addWidget(m_importButton);

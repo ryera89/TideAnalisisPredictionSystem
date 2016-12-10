@@ -307,7 +307,7 @@ void CentralWidget::getAndDisplayClickedPosInSeries(QPointF point)
 
         m_selectionPointRange->setInternalData(time,selectedPoint.y(),time,selectedPoint.y());
     }else{
-        m_selectionPointRange->setText(tr("<b><font color = green> SIN SELECCIÓN</b></font>"));
+        m_selectionPointRange->setText(tr("<b>[Sin Selección]</b>"));
     }
     m_selectionSeries->replace(selectedPoints);
     /*QVector<QPointF> seriesPointsVector = m_series->pointsVector();
@@ -556,7 +556,7 @@ void CentralWidget::updateDisplayRangeLabel()
 
         m_selectionPointRange->setInternalData(iniDateTime,iniValue,endDateTime,endValue);
     }else{
-        m_selectionPointRange->setText(tr("<b><font color = green> SIN SELECCIÓN</b></font>"));
+        m_selectionPointRange->setText(tr("<b>[Sin Selección]</b>"));
     }
 }
 
@@ -578,6 +578,7 @@ void CentralWidget::createComponents()
 
     m_series = new QSplineSeries;
     m_series->setPointsVisible(true);
+    m_series->setName(tr("Serie de Datos"));
     m_series->replace(m_tidalTableModel->measurementDataRealPoints());
     //m_series->setUseOpenGL(true);
     //m_series = new MySeries;
@@ -587,6 +588,8 @@ void CentralWidget::createComponents()
     m_selectionSeries = new QScatterSeries;
     //m_selectionSeries->setUseOpenGL(true);
     m_selectionSeries->setMarkerSize(8);
+    m_selectionSeries->setName(tr("Selección"));
+
 
     m_tideChartView = new customChartView(m_tideChart,this);
 
@@ -598,8 +601,6 @@ void CentralWidget::createComponents()
 
     m_yAxis = new QValueAxis;
 
-
-    //NOTE: Valorar Remover esto
     m_tideChart->addSeries(m_series);
     m_tideChart->addSeries(m_selectionSeries);
     //m_tideChart->createDefaultAxes();
@@ -610,7 +611,7 @@ void CentralWidget::createComponents()
     m_tideChart->setAxisY(m_yAxis,m_selectionSeries);
     m_yAxis->applyNiceNumbers();
     m_tideChartView->chart()->axisX(m_series)->setTitleText(tr("Tiempo"));
-    m_tideChartView->chart()->axisY(m_series)->setTitleText(tr("Nivel"));
+    m_tideChartView->chart()->axisY(m_series)->setTitleText(tr("Nivel [m]"));
 
     connect(m_tideChartView,SIGNAL(seriesPoint(QPointF)),this,SLOT(getAndDisplayCursorPosInSeries(QPointF)));
     connect(m_tideChartView,SIGNAL(seriesPointPressed(QPointF)),this,SLOT(getAndDisplayClickedPosInSeries(QPointF)));
@@ -650,11 +651,11 @@ void CentralWidget::createComponents()
     labelFont.setBold(true);
     m_cursorPosDDLabel->setFont(labelFont);
     m_cursorPosDDLabel->setLabel(tr("Cursor"));
-    m_cursorPosDDLabel->setFixedWidth(200);
+    m_cursorPosDDLabel->setFixedWidth(220);
     m_cursorPosDDLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 
     m_selectionPointRange = new SelectionRangeLabel(tr("Selección"),this);
-    m_selectionPointRange->setText(tr("<b><font color = green> SIN SELECCIÓN</b></font>"));
+    m_selectionPointRange->setText(tr("<b>[Sin Selección]</b>"));
     m_selectionPointRange->setFixedWidth(370);
     m_selectionPointRange->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
 

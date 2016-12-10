@@ -11,11 +11,16 @@
 #include "include/ProjectMetaData/projectmetadata.h"
 #include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 #include "include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.h"
+#include "include/SamplingDialog/samplingdialog.h"
+#include <QtConcurrent/QtConcurrent>
+
+using namespace QtConcurrent;
 
 class SchemeWidget;
 class MetaDataDialog;
 class FreqEditor;
 class NonHarmonicCalcDialog;
+
 
 //NOTE: el analisis armonico se hace con la horas respecto al inicio del year
 
@@ -50,6 +55,7 @@ private slots:
     //void beginDataRecieve(const QVector<TidesMeasurement> &datos);
     void createHarmonicAnalisisDialog();
     void createFrequencyEditor();
+    void createSamplingDilalog();
 
     bool saveFrequencyFile();
     void harmonicAnalisis();
@@ -101,6 +107,7 @@ private:
      NonHarmonicCalcDialog *m_nonHarmonicConstantDialog;
      FreqEditor *m_frequencyEditor;
      NivelacionAcuaticaWidget *m_nivelacionAcuaticaWidget;
+     SamplingDialog *m_samplingDialog;
 
      //QML component
 
@@ -139,6 +146,9 @@ private:
      QAction *m_manualDataIntroductionAction;
      QAction *m_importFrom_ASCII_Action;
 
+     //Edit Action
+     QAction *m_samplingDialogAction;
+
      //Analisis Actions-------------------------------------------------------------------
      QAction *m_tablaHorariadeMareaAction;
      QAction *m_harmonicAnalisisAction;
@@ -154,6 +164,8 @@ private:
      QMenu *m_fileMenu;
 
      QMenu *m_dataMenu;
+
+     QMenu *m_editMenu;
 
      QMenu *m_analisisMenu;
      QMenu *m_toolMenu;
@@ -187,6 +199,9 @@ private:
 
      /******************************Private Functions For Funcionality*******************************************/
      void syncData(const QVector<HarmonicConstant> &components);
+
+
+
      bool createHarmonicAnalisisDialogFromConfigFile();
      bool loadHarmonicConstantsFromFile();
      //static void setSelectectedHarmonicConstants();

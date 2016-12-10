@@ -98,7 +98,7 @@ void DisplayedDataLabels::setValue(const double &value)
 void DisplayedDataLabels::updateDisplayedData()
 {
     if (m_date.isValid() && m_time.isValid()){
-        this->setText(m_label + ": " + m_date.toString("dd/MM/yyyy") + " " + m_time.toString("hh:mm") + " " + QString::number(m_value,'g',4));
+        this->setText(m_label + ": " + m_date.toString("dd/MM/yyyy") + " " + m_time.toString("hh:mm") + " " + QString::number(m_value,'g',4) + "m");
     }else{
         this->setText(m_label + ": ");
     }

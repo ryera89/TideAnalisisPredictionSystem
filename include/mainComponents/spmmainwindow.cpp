@@ -12,6 +12,7 @@
 #include <QtMath>
 #include <iostream>
 
+
 QVector<HarmonicConstant> SPMmainWindow::m_selectedHarmonicConstantVector = QVector<HarmonicConstant>();
 
 SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
@@ -26,6 +27,8 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
     m_nonHarmonicConstantDialog = 0;
     m_frequencyEditor = 0;
     m_nivelacionAcuaticaWidget = 0;
+    m_samplingDialog = 0;
+
     setCentralWidget(m_central);
 
 
@@ -206,6 +209,16 @@ void SPMmainWindow::createFrequencyEditor()
 
 }
 
+void SPMmainWindow::createSamplingDilalog()
+{
+    if (m_central->tableModel()->measurementData().isEmpty()){
+        QMessageBox::information(this,tr("Error"),tr("No hay datos para realizar sampling"));
+        return;
+    }
+    m_samplingDialog = new SamplingDialog(m_central->tableModel()->measurementData(),this);
+    m_samplingDialog->show();
+}
+
 bool SPMmainWindow::saveFrequencyFile()
 {
     if (this->writeFrequencyFile(m_frequencyFilePath)){
@@ -220,19 +233,6 @@ bool SPMmainWindow::saveFrequencyFile()
     return false;
 
 }
-
-void SPMmainWindow::harmonicAnalisis()
-{
-
-    if (m_schemeWidget->currentSelectionComboBoxIndex()){
-        harmonicAnalisisWithCustomData();
-    }else{
-        harmonicAnalisisWithAllData();
-    }
-
-    emit harmonicAnalisisFinished();
-}
-
 void SPMmainWindow::harmonicAnalisisWithAllData()
 {
 
@@ -242,6 +242,7 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
         if (harmonicComponentStatus.value(harmonic.name())){
            SPMmainWindow::m_selectedHarmonicConstantVector.append(harmonic);
         }
+
     }
     //SPMmainWindow::m_selectedHarmonicConstantVector = aux;
 
@@ -249,25 +250,38 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
 
     //TODO pensar ne filtrado de datos
     if (m_central->tableModel()->measurementData().isEmpty()) return;
-    int year = m_central->tableModel()->measurementData().first().measurementDate().year();
-    QDateTime yearBegin(QDate(year,1,1),QTime(0,0),Qt::UTC);
+
+    if (m_central->tableModel()->measurementData().size() < SPMmainWindow::m_selectedHarmonicConstantVector.size()){
+        QMessageBox::information(this,tr("Error de Datos"),tr("Numero de mediciones insuficientes "
+                                                              "para realizar el análisis armonico."));
+        return;
+    }
+
+     //Para Variante 1
+    //int year = m_central->tableModel()->measurementData().first().measurementDate().year();
+    //QDateTime yearBegin(QDate(year,1,1),QTime(0,0),Qt::UTC);
 
     valarray<double> timeValarray(m_central->tableModel()->measurementData().size());
     valarray<double> levelValarray(m_central->tableModel()->measurementData().size());
 
     int i = 0;
+    QDateTime firstDateTime(m_central->tableModel()->measurementData().first().measurementDateTime());
     foreach (TidesMeasurement meas, m_central->tableModel()->measurementData()) {
-        quint64 seconds = yearBegin.secsTo(QDateTime(meas.measurementDate(),meas.measurementTime(),Qt::UTC));
-        double t = seconds/3600.0;
+        //quint64 seconds = yearBegin.secsTo(QDateTime(meas.measurementDate(),meas.measurementTime(),Qt::UTC));
+        //double t = seconds/3600.0;
 
-        timeValarray[i] = t;
+        //timeValarray[i] = t;
+        //levelValarray[i] = meas.seaLevel();
+        //++i;
+
+        //VAriante 2
+        quint64 seconds = firstDateTime.secsTo(meas.measurementDateTime());
+        qreal timeInHours = seconds/3600.0 + 1; //+1 porque las mediciones empiezan a partir de 1;
+
+        timeValarray[i] = timeInHours;
         levelValarray[i] = meas.seaLevel();
         ++i;
 
-        //VAriante 2
-        //timeValarray[i] = i + 1;
-        //levelValarray[i] = meas.seaLevel();
-        //++i;
     }
 
     valarray<double> var(1.0,m_central->tableModel()->measurementData().size());
@@ -304,9 +318,9 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
     }
 
 
-    m_schemeWidget->setHarmonicConstantModelData(SPMmainWindow::m_selectedHarmonicConstantVector);
+    //m_schemeWidget->setHarmonicConstantModelData(SPMmainWindow::m_selectedHarmonicConstantVector);
 
-    m_schemeWidget->showHarmonicConstantTable();
+    //m_schemeWidget->showHarmonicConstantTable();
 
 }
 
@@ -326,31 +340,49 @@ void SPMmainWindow::harmonicAnalisisWithCustomData()
     foreach (HarmonicConstant harmonic, m_harmonicConstantVector) {
         if (harmonicComponentStatus.value(harmonic.name())){
            SPMmainWindow::m_selectedHarmonicConstantVector.append(harmonic);
+
         }
     }
 
     if (m_central->tableModel()->measurementData().isEmpty()) return;
-    QDateTime yearBegin(QDate(initialDateTime.date().year(),1,1),QTime(0,0),Qt::UTC);
+    //Para Variante 1
+    //QDateTime yearBegin(QDate(initialDateTime.date().year(),1,1),QTime(0,0),Qt::UTC);
 
     QVector<double> timeVector;
     QVector<double> levelVector;
 
     QDateTime auxDateTime = initialDateTime;
+    QDateTime firstDateTime;
+    bool flag = true; //Para guardar la primera medicion que se va a usar en el calculo
     foreach (TidesMeasurement meas, m_central->tableModel()->measurementData()) {
         if (auxDateTime <= endDateTime){
             if (auxDateTime == meas.measurementDateTime()){
-                quint64 seconds = yearBegin.secsTo(QDateTime(meas.measurementDate(),meas.measurementTime(),Qt::UTC));
-                double t = seconds/3600.0;
+                //Variante 1 principio year begining
+                //quint64 seconds = yearBegin.secsTo(QDateTime(meas.measurementDate(),meas.measurementTime(),Qt::UTC));
+                //double t = seconds/3600.0;
 
-                timeVector.push_back(t);
+                //VAriante 2
+                if (flag){firstDateTime = auxDateTime; flag = false;}
+
+                quint64 seconds = firstDateTime.secsTo(auxDateTime);
+                qreal timeInHours = seconds/3600.0 + 1; //+1 porque las mediciones empiezan a partir de 1;
+
+                timeVector.push_back(timeInHours);
                 levelVector.push_back(meas.seaLevel());
+                auxDateTime = auxDateTime.addSecs(timeInterval);
             }
-            while (auxDateTime <= meas.measurementDateTime()){
+            while (auxDateTime < meas.measurementDateTime()){
                 auxDateTime = auxDateTime.addSecs(timeInterval);
             }
 
         }
 
+        if (auxDateTime > endDateTime) break;
+    }
+    if (levelVector.size() < SPMmainWindow::m_selectedHarmonicConstantVector.size()){
+        QMessageBox::information(this,tr("Error de Datos"),tr("Numero de mediciones insuficientes "
+                                                              "para realizar el análisis armonico."));
+        return;
     }
     valarray<double> timeValarray(timeVector.size());
     valarray<double> levelValarray(levelVector.size());
@@ -373,12 +405,12 @@ void SPMmainWindow::harmonicAnalisisWithCustomData()
             SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(minimosCuadrados.parametros()[k+1],minimosCuadrados.parametros()[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
         }
 
-        for (uint k = 0; k < minimosCuadrados.parametros().size(); ++k){
+        /*for (uint k = 0; k < minimosCuadrados.parametros().size(); ++k){
             std::cout << minimosCuadrados.parametros()[k] << std::endl;
         }
 
-        std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() << std::endl;
-         std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;
+         std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() << std::endl;
+         std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;*/
     }else{
 
         Fitsvd test(timeValarray,levelValarray,var,SPMmainWindow::funcion);
@@ -388,19 +420,31 @@ void SPMmainWindow::harmonicAnalisisWithCustomData()
             SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(test.a[k+1],test.a[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
         }
 
-        for (uint k = 0; k < test.a.size(); ++k){
+       /* for (uint k = 0; k < test.a.size(); ++k){
             std::cout << test.a[k] << std::endl;
         }
 
         std::cout << "Chi cuadrado=" << test.chisq << std::endl;
-        std::cout << "Nivel Medio=" << test.a[0] << std::endl;
+        std::cout << "Nivel Medio=" << test.a[0] << std::endl;*/
+    }
+}
+void SPMmainWindow::harmonicAnalisis()
+{
+    QFuture<void> future;
+
+    if (m_schemeWidget->currentSelectionComboBoxIndex()){
+        future = QtConcurrent::run(this,harmonicAnalisisWithCustomData);
+    }else{
+        future = QtConcurrent::run(this,harmonicAnalisisWithAllData);
     }
 
+    while(future.isRunning()){
+        qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+    }
 
     m_schemeWidget->setHarmonicConstantModelData(SPMmainWindow::m_selectedHarmonicConstantVector);
 
-    m_schemeWidget->showHarmonicConstantTable();
-
+    emit harmonicAnalisisFinished();
 }
 
 void SPMmainWindow::saveHarmonicConstantToFile()
@@ -765,6 +809,9 @@ void SPMmainWindow::createActions()
     m_importFrom_ASCII_Action->setToolTip(tr("Importar datos desde archivo ASCII"));
     connect(m_importFrom_ASCII_Action,SIGNAL(triggered(bool)),this,SLOT(loadDataFile()));
 
+    //Edit ACtion
+    m_samplingDialogAction = new QAction(tr("Sampling"));
+    connect(m_samplingDialogAction,SIGNAL(triggered(bool)),this,SLOT(createSamplingDilalog()));
 }
 
 void SPMmainWindow::createMenus()
@@ -784,6 +831,9 @@ void SPMmainWindow::createMenus()
     m_dataMenu = menuBar()->addMenu(tr("Datos"));
     m_dataMenu->addAction(m_manualDataIntroductionAction);
     m_dataMenu->addAction(m_importFrom_ASCII_Action);
+
+    m_editMenu = menuBar()->addMenu(tr("Edición"));
+    m_editMenu->addAction(m_samplingDialogAction);
 
     m_analisisMenu = menuBar()->addMenu(tr("Análisis"));
     m_analisisMenu->addAction(m_tablaHorariadeMareaAction);
@@ -905,7 +955,6 @@ void SPMmainWindow::syncData(const QVector<HarmonicConstant> &components) //Para
 
 
 }
-
 bool SPMmainWindow::createHarmonicAnalisisDialogFromConfigFile()
 {
     QFile file(m_schemesFilePath);
@@ -1041,12 +1090,14 @@ bool SPMmainWindow::saveAnalisisDataToFile(const QString &filePath)
                 if (auxDateTime <= endDateTime){
                     if (auxDateTime == meas.measurementDateTime()){
                        out << meas.measurementDate().toString("yyyy/MM/dd") << " " << meas.measurementTime().toString("hh:mm") << " " << meas.seaLevel() << endl;
+                       auxDateTime = auxDateTime.addSecs(timeInterval);
                     }
-                    while (auxDateTime <= meas.measurementDateTime()){
+                    while (auxDateTime < meas.measurementDateTime()){
                         auxDateTime = auxDateTime.addSecs(timeInterval);
                     }
 
                 }
+                if (auxDateTime > endDateTime) break;
 
             }
 

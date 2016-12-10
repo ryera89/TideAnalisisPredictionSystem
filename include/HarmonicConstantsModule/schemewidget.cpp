@@ -13,10 +13,8 @@
 #include <QLabel>
 #include <QTimeEdit>
 
-
 #include "include/HarmonicConstantsModule/Model_View/harmonicconstantfulltablemodel.h"
 #include "include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytabledelegate.h"
-
 
 SchemeWidget::SchemeWidget(const QDateTime &iniDateTime, const QDateTime &endDateTime, const QStringList &schemesLabels, const QStringList &componentsLabels, const QMap<QString,QMap<QString,bool>> &schemes_componentMap,const QMap<QString,QString> &schemeDescription, QWidget *parent):
     QDialog(parent),m_schemesLabels(schemesLabels), m_componentsLabels(componentsLabels),m_schemes_componentMap(schemes_componentMap), m_schemeDescriptionMap(schemeDescription)
@@ -62,8 +60,20 @@ int SchemeWidget::currentSelectionComboBoxIndex() const
 
 void SchemeWidget::enableSaveHarmonicConstantButton()
 {
+
+    showHarmonicConstantTable();
+
+    m_loadingQuickWidget->setVisible(false);
+
     m_saveHarmonicConstantsButton->setEnabled(true);
 }
+void SchemeWidget::beginHarmonicAnalisis()
+{
+    m_loadingQuickWidget->setVisible(true);
+
+    emit analizeButtonClicked();
+}
+
 void SchemeWidget::setSchemesLabels(const QStringList &schemesLabels)
 {
     m_schemesLabels = schemesLabels;
@@ -94,6 +104,9 @@ void SchemeWidget::selectAnalisisScheme(const QString &str)
     m_tidalSchemeComponents->setCheckBoxesStatus(m_schemes_componentMap.value(str));
     //new code
     m_schemeDescriptionPlainTextEdit->setPlainText(m_schemeDescriptionMap.value(str));
+
+    if (str == "-Selecciona un esquema de análisis-") m_analizarPushButton->setEnabled(false);
+    else m_analizarPushButton->setEnabled(true);
 }
 
 void SchemeWidget::updateInternalData()
@@ -146,6 +159,22 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
 {
      //TODO:connections
 
+    m_loadingQuickWidget = new QQuickWidget(QUrl(QStringLiteral("qrc:/analizing.qml")));
+
+    QSurfaceFormat format;
+    if (QCoreApplication::arguments().contains(QStringLiteral("--coreprofile"))) {
+        format.setVersion(4, 4);
+        format.setProfile(QSurfaceFormat::CoreProfile);
+    }
+    if (QCoreApplication::arguments().contains(QStringLiteral("--multisample")))
+        format.setSamples(4);
+    m_loadingQuickWidget->setFormat(format);
+
+    m_loadingQuickWidget->resize(100,200);
+    m_loadingQuickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+
+    m_loadingQuickWidget->setVisible(false);
+
     m_schemeComboBox = new QComboBox;
     m_schemeComboBox->addItem(tr("-Selecciona un esquema de análisis-"));
     m_schemeComboBox->addItems(schemesLabels);
@@ -171,7 +200,8 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
 
     m_analizarPushButton = new QPushButton(QIcon(":images/analisis.png"),tr("Analizar"),this);
     m_analizarPushButton->setToolTip(tr("Calcular constantes armónicas"));
-    connect(m_analizarPushButton,SIGNAL(clicked(bool)),this,SIGNAL(analizeButtonClicked()));
+    m_analizarPushButton->setEnabled(false);
+    connect(m_analizarPushButton,SIGNAL(clicked(bool)),this,SLOT(beginHarmonicAnalisis()));
 
     //m_analizandoProgressBar = new QProgressBar;
     //m_analizandoProgressBar->setTextVisible(true);
@@ -326,6 +356,8 @@ void SchemeWidget::interfazLayout()
     mainLeftLayout->addWidget(m_dataSelectionComboBox);
     mainLeftLayout->addWidget(m_customDataSelectionGroupBox);
     mainLeftLayout->addStretch();
+    mainLeftLayout->addWidget(m_loadingQuickWidget);
+    mainLeftLayout->addStretch();
     mainLeftLayout->addWidget(m_saveSelectedData);
 
     m_dataSelectionGroupBox->setLayout(mainLeftLayout);
@@ -340,4 +372,24 @@ void SchemeWidget::interfazLayout()
 
     this->setLayout(definiteLayout);
 }
+
+/*void SchemeWidget::createLoadingWidget()
+{
+    m_loadingQuickWidget = new QQuickWidget(QUrl(QStringLiteral("qrc:/analizing.qml")));
+
+    QSurfaceFormat format;
+    if (QCoreApplication::arguments().contains(QStringLiteral("--coreprofile"))) {
+        format.setVersion(4, 4);
+        format.setProfile(QSurfaceFormat::CoreProfile);
+    }
+    if (QCoreApplication::arguments().contains(QStringLiteral("--multisample")))
+        format.setSamples(4);
+    m_loadingQuickWidget->setFormat(format);
+
+    m_loadingQuickWidget->resize(100,100);
+    m_loadingQuickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView );
+
+    m_loadingQuickWidget->show();
+    m_loadingQuickWidget->raise();
+}*/
 

@@ -1,6 +1,7 @@
 #include "minsqr.h"
 #include "ludcmp.h"
 
+
 /*Matrix function(const Matrix m){
     int row = 2*m.dim1();
     int column = m.dim2();
@@ -165,6 +166,7 @@ void MinSqr::fitLU()
         for (int j = 0; j < mfit; ++j){
             temp[i][j] = afunc[j];                       //Creando la matriz diseno
         }
+
     }
     beta = transpose(temp)*beta;     // (transpuesta de A)* b
     temp = transpose(temp)*temp;     //(transpuesta de A)*A

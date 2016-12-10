@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts qml quick positioning quickwidgets
+QT       += core gui charts qml quick positioning quickwidgets concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -82,7 +82,8 @@ SOURCES += main.cpp\
     include/SelectionRangeLabel/selectionrangelabel.cpp \
     include/NivelacionAcuatica/nivelacion_acuatica_calculo.cpp \
     include/NivelacionAcuatica/Model_View_Delegate/nivelacionacuaticatablemodel.cpp \
-    include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.cpp
+    include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.cpp \
+    include/SamplingDialog/samplingdialog.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -155,7 +156,8 @@ HEADERS  += \
     include/SelectionRangeLabel/selectionrangelabel.h \
     include/NivelacionAcuatica/nivelacion_acuatica_calculo.h \
     include/NivelacionAcuatica/Model_View_Delegate/nivelacionacuaticatablemodel.h \
-    include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.h
+    include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.h \
+    include/SamplingDialog/samplingdialog.h
 
 RC_ICONS = aquarius-48.ico
 
@@ -169,4 +171,5 @@ DISTFILES += \
     images/configure.png \
     images/erase.png \
     Processing.qml \
-    analizing.qml
+    analizing.qml \
+    images/supercargando.gif

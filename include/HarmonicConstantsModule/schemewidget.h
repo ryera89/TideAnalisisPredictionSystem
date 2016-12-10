@@ -8,6 +8,8 @@
 #include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 #include <QDateTime>
 
+#include <QtQuickWidgets>
+
 class QComboBox;
 class QPushButton;
 class QPlainTextEdit;
@@ -46,6 +48,7 @@ signals:
     void saveHarmonicConstantsButtonClicked();
 public slots:
     void enableSaveHarmonicConstantButton();
+    void beginHarmonicAnalisis();
 private slots:
     void createConfigSchemeDialog();
     void selectAnalisisScheme(const QString &str);
@@ -107,6 +110,8 @@ private:
     QPushButton *m_saveHarmonicConstantsButton;
     //************************************************************************
 
+    //QML component
+    QQuickWidget *m_loadingQuickWidget;
 
     SchemeConfigDialog *m_configSchemeDialog;
 
@@ -120,6 +125,8 @@ private:
 
     void crearComponentes(const QDateTime &iniDateTime, const QDateTime &endDateTime,const QStringList &schemesLabels, const QStringList &componentsLabels);
     void interfazLayout();
+
+    //void createLoadingWidget(); //Funcion que crea el componente QML;
 
 };
 
