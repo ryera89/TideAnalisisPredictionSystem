@@ -82,7 +82,10 @@ protected slots:
     void setRenderedChartViewFlag(bool);
 
     void beginDataExtration();
+    void appendManualDataToProject();
+
     void beginDataExtrationFromFile();
+    void appendImportedData();
 
     bool writeFrequencyFile(const QString &filePath);
     bool saveAnalisisData();

@@ -54,6 +54,7 @@ public:
 
 public slots:
     void getDataPoints();
+    void getDataPointAndAppendData();
     void setTopFieldValidValue(int value);
 
     void setTopFieldValidValue(); //PAra conectar los separators editors
@@ -77,11 +78,19 @@ private slots:
     void setMinimumLastLineValue(int);
 
 signals:
-    void importButtonClicked();
+    void importButtonClicked(); //Para remplazar los datos del proyecto
+    void appendDataActionTrigered(); //Para agregar los nuevos datos a los datos del proyecto
+
 private:
     QVector<TidesMeasurement> measurements;
 
     QPushButton* m_importButton;
+
+    //Import Button Menu and Actions
+    QMenu *m_importMenu;
+    QAction *m_replaceDataAction;
+    QAction *m_appendDataAction;
+
     QPushButton* m_cancelButton;
 
     LineNumberEditor* m_importTextEdit;

@@ -16,6 +16,8 @@
 #include <QHeaderView>
 #include <QMessageBox>
 #include <QRadioButton>
+#include <QMenu>
+#include <QAction>
 
 ManualDataIntroductionWidget::ManualDataIntroductionWidget(QWidget *parent) : QDialog(parent)
 {
@@ -351,8 +353,20 @@ void ManualDataIntroductionWidget::createComponents()
     m_clearPushButton->setToolTip(tr("Limpiar tabla"));
     connect(m_clearPushButton,SIGNAL(clicked(bool)),this,SLOT(clearMeasurements()));
 
-    m_okPushButton = new QPushButton(QIcon(":images/Ok.png"),tr("Aceptar"));
-    connect(m_okPushButton,SIGNAL(clicked(bool)),this,SIGNAL(okButtonClicked()));
+    m_replaceDataAction = new QAction(QIcon(":images/replaceData.png"),tr("Remplazar Datos"));
+    connect(m_replaceDataAction,SIGNAL(triggered(bool)),this,SIGNAL(okButtonClicked()));
+
+    m_appendDataAction = new QAction(QIcon(":images/appendData.png"),tr("Agregar Datos"));
+    connect(m_appendDataAction,SIGNAL(triggered(bool)),this,SIGNAL(appendDataTrigered()));
+
+    m_importMenu = new QMenu(this);
+    m_importMenu->addAction(m_replaceDataAction);
+    m_importMenu->addAction(m_appendDataAction);
+
+    m_okPushButton = new QPushButton(QIcon(":images/importButton.png"),tr("Importar"));
+    m_okPushButton->setMenu(m_importMenu);
+
+    //connect(m_okPushButton,SIGNAL(clicked(bool)),this,SIGNAL(okButtonClicked()));
 
     m_cancelPushButton = new QPushButton(QIcon(":images/No.png"),tr("Cancelar"));
     connect(m_cancelPushButton,SIGNAL(clicked(bool)),this,SLOT(close()));

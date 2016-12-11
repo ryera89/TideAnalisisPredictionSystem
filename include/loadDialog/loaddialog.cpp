@@ -20,6 +20,8 @@
 #include <QSpinBox>
 #include <QRadioButton>
 #include <QProgressBar>
+#include <QMenu>
+#include <QAction>
 
 #include <iostream>
 using namespace std;
@@ -187,6 +189,101 @@ void LoadDialog::getDataPoints(){
 
         }
         if (desition == QMessageBox::Yes) emit importButtonClicked();
+        return;
+    }else{
+        QMessageBox::critical(this,tr("Error"),tr("Falla al cargar datos."
+                                                  " La linea final es menor que la linea inicial."));
+        return;
+    }
+}
+
+void LoadDialog::getDataPointAndAppendData()
+{
+    measurements.clear();
+
+    int unitIndex = m_measurementUnitComboBox->currentIndex();
+    //0 - m
+    //1 - dm
+    //2 - cm
+    //3 - mm
+    qreal unitScale = 1.0;
+    switch (unitIndex) {
+    case 1:
+        unitScale/=10;
+        break;
+    case 2:
+        unitScale/=100;
+        break;
+    case 3:
+        unitScale/=1000;
+        break;
+    default:
+        break;
+    }
+
+    int from = m_firstLineLineEdit->value();
+    int to = m_lastLineLineEdit->value();
+
+    m_importProgressBar->setMaximum((to - from + 1)*2);
+
+    int pro = 0;
+
+    QString dateSeparator = m_separatorDateEdit->text();
+    QString timeSeparator = m_separatorTimeEdit->text();
+    QString levelSeparator = m_separatorHeigthEdit->text();
+
+    if (from <= to){
+        QVector<QStringList> pointsOfData;
+        for (int i = from-1; i < to; i++){
+            QString str = m_importTextEdit->document()->findBlockByLineNumber(i).text();
+            QStringList dataPoint = str.split(QRegExp(tr("[\\s+%1%2%3]").arg(dateSeparator).arg(timeSeparator).arg(levelSeparator)));
+            pointsOfData.push_back(dataPoint);
+            ++pro;
+            m_importProgressBar->setValue(pro);
+        }
+
+        int dateField  = m_fieldDateEdit->value();
+        int timeField  = m_fieldTimeEdit->value();
+        int heightField  = m_fieldHeightEdit->value();
+
+        int desition = QMessageBox::Yes;
+
+        for (int i = 0; i < pointsOfData.size(); ++i){
+            if (dateField <= pointsOfData[i].size() && timeField <= pointsOfData[i].size() && heightField <= pointsOfData[i].size()){ //Chequea que el campo exista
+
+                QDate date = QDate::fromString(pointsOfData[i].at(dateField - 1),m_dateFormat);
+                QTime time = QTime::fromString(pointsOfData[i].at(timeField - 1),m_timeFormat);
+
+                QString level = pointsOfData[i].at(heightField - 1);
+                /*for (int i  = 0; i < level.size(); ++i){
+                   if (level.at(i) == ",") level.replace(Q)
+                }*/
+                level.replace(QRegExp(","),".");
+
+                bool d_ok;
+                QVariant heightVariant = level;
+                double height = heightVariant.toDouble(&d_ok);
+                height*=unitScale; //Conversion de unidades llevando a metros
+
+                ++pro; //Progress Bar
+                m_importProgressBar->setValue(pro);
+
+                if (date.isValid() && time.isValid() && d_ok){
+                    measurements.push_back(TidesMeasurement(height,date,time));
+                }else{
+                    desition = QMessageBox::question(this,tr("Advertencia"),tr("Falla al cargar datos. \n"
+                                                              " Posibles Causas: \n"
+                                                                   "1- Formato de fecha o hora no válidos. \n"
+                                                                   "2- Número de campos incorrectos. \n"
+                                                                   "3- Número de líneas incorrectos. \n"
+                                                                    "¿Desea continuar?"));
+                    if (desition == QMessageBox::No) break;
+                }
+
+            }
+
+        }
+        if (desition == QMessageBox::Yes) emit appendDataActionTrigered();
         return;
     }else{
         QMessageBox::critical(this,tr("Error"),tr("Falla al cargar datos."
@@ -455,10 +552,25 @@ void LoadDialog::settingUpEveryThing()
     m_lastPointHeigthEdit = new QLineEdit(this);
     m_lastPointHeigthEdit->setDisabled(true);
 
+
+
+    m_replaceDataAction = new QAction(QIcon(":images/replaceData.png"),tr("Remplazar Datos"));
+    m_replaceDataAction->setToolTip(tr("Remplazar datos"));
+    connect(m_replaceDataAction,SIGNAL(triggered(bool)),this,SLOT(getDataPoints()));
+
+    m_appendDataAction = new QAction(QIcon(":images/appendData.png"),tr("Agregar Datos"));
+    m_appendDataAction->setToolTip(tr("Agregar datos"));
+    connect(m_appendDataAction,SIGNAL(triggered(bool)),this,SLOT(getDataPointAndAppendData()));
+
+    m_importMenu = new QMenu(this);
+    m_importMenu->addAction(m_replaceDataAction);
+    m_importMenu->addAction(m_appendDataAction);
+
     m_importButton = new QPushButton(QIcon(":images/importButton.png"),tr("Importar"),this);
     m_importButton->setDisabled(true);
-    connect(m_importButton,SIGNAL(clicked(bool)),this,SLOT(getDataPoints()));
-    //connect(m_importButton,SIGNAL(clicked(bool)),this,SIGNAL(importButtonClicked()));
+    m_importButton->setMenu(m_importMenu);
+
+    //connect(m_importButton,SIGNAL(clicked(bool)),this,SLOT(getDataPoints()));
 
     m_cancelButton = new QPushButton(QIcon(":images/No.png"),tr("Cancelar"),this);
     connect(m_cancelButton,SIGNAL(clicked(bool)),this,SLOT(close()));

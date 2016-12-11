@@ -42,6 +42,7 @@ public:
 signals:
     void dataTrenfer(const QVector<TidesMeasurement> &data);
     void okButtonClicked();
+    void appendDataTrigered();
 
 public slots:
 
@@ -99,6 +100,10 @@ private:
     QPushButton *m_clearPushButton;
 
     QGroupBox *m_desitionButtonsGroupBox;
+
+    QMenu *m_importMenu;
+    QAction *m_replaceDataAction;
+    QAction *m_appendDataAction;
 
     QPushButton *m_okPushButton;
     QPushButton *m_cancelPushButton;

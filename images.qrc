@@ -33,5 +33,7 @@
         <file>images/load.png</file>
         <file>images/supercargando.gif</file>
         <file>images/cargando.gif</file>
+        <file>images/appendData.png</file>
+        <file>images/replaceData.png</file>
     </qresource>
 </RCC>

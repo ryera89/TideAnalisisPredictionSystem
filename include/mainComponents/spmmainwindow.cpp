@@ -99,7 +99,7 @@ void SPMmainWindow::loadDataFile()
         //connect(m_loadDialog,SIGNAL(dataGeted(QVector<QStringList>,int,int,int, const QString&, const QString&)),
                     //this,SLOT(recieveData(QVector<QStringList>,int,int,int, const QString&, const QString&)));
         connect(m_loadDialog,SIGNAL(importButtonClicked()),this,SLOT(beginDataExtrationFromFile()));
-
+        connect(m_loadDialog,SIGNAL(appendDataActionTrigered()),this,SLOT(appendImportedData()));
         //TODO: Las conexiones de los senales del dialogo para coger la localizacion Eq_Id, Lat, Long
         m_loadDialog->show();
     }
@@ -112,6 +112,7 @@ void SPMmainWindow::createManualDataIntWidget()
     m_manualDataIntroductionWidget->setProjectMetaData(m_metadataStorage);
     connect(m_manualDataIntroductionWidget,SIGNAL(okButtonClicked()),
             this,SLOT(beginDataExtration()));
+    connect(m_manualDataIntroductionWidget,SIGNAL(appendDataTrigered()),this,SLOT(appendManualDataToProject()));
     m_manualDataIntroductionWidget->show();
 }
 
@@ -662,6 +663,53 @@ void SPMmainWindow::beginDataExtration()
     m_manualDataIntroductionWidget->close();
 }
 
+void SPMmainWindow::appendManualDataToProject()
+{
+    QVector<TidesMeasurement> datos;
+
+    int size = m_manualDataIntroductionWidget->model()->measurementData().size();
+
+    qreal conversion = m_manualDataIntroductionWidget->conversionUnit();
+
+
+    for (int i = 0; i < size ; ++i){
+        if (m_manualDataIntroductionWidget->model()->measurementData().at(i).isValid()){
+
+            datos.push_back(m_manualDataIntroductionWidget->model()->measurementData().at(i));
+
+            if (conversion != 1.0){
+                qreal value = m_manualDataIntroductionWidget->model()->measurementData().at(i).seaLevel()*conversion;
+                datos[i].setSeaLevel(value);
+            }
+        }
+    }
+
+    QVector<TidesMeasurement> currentData(m_central->tableModel()->measurementData());
+
+    if (!datos.isEmpty() && !currentData.isEmpty()){
+        if (currentData.first().measurementDateTime() > datos.last().measurementDateTime()){
+            datos.append(currentData);
+            m_central->tableModel()->setMeasurements(datos);
+
+            m_manualDataIntroductionWidget->close();
+            return;
+        }
+        if (datos.first().measurementDateTime() > currentData.last().measurementDateTime()){
+            currentData.append(datos);
+
+            m_central->tableModel()->setMeasurements(currentData);
+
+            m_manualDataIntroductionWidget->close();
+            return;
+        }
+
+    }
+    //TODO: Manejar datos mesclados
+    currentData.append(datos);
+    m_central->tableModel()->setMeasurements(currentData);
+    m_manualDataIntroductionWidget->close();
+}
+
 void SPMmainWindow::beginDataExtrationFromFile()
 {
     m_metadataStorage.setProjectName(m_loadDialog->projectName());
@@ -677,6 +725,35 @@ void SPMmainWindow::beginDataExtrationFromFile()
 
     m_central->tableModel()->setMeasurements(m_loadDialog->measurementsData());
 
+    m_loadDialog->close();
+}
+
+void SPMmainWindow::appendImportedData()
+{
+    QVector<TidesMeasurement> datos(m_central->tableModel()->measurementData());
+    QVector<TidesMeasurement> newData(m_loadDialog->measurementsData());
+
+    if (!datos.isEmpty() && !newData.isEmpty()){
+        if (datos.first().measurementDateTime() > newData.last().measurementDateTime()){
+            newData.append(datos);
+            m_central->tableModel()->setMeasurements(newData);
+
+            m_loadDialog->close();
+            return;
+        }
+        if (newData.first().measurementDateTime() > datos.last().measurementDateTime()){
+            datos.append(newData);
+
+            m_central->tableModel()->setMeasurements(datos);
+
+            m_loadDialog->close();
+            return;
+        }
+
+    }
+    //TODO: Manejar datos mesclados
+    datos.append(newData);
+    m_central->tableModel()->setMeasurements(datos);
     m_loadDialog->close();
 }
 

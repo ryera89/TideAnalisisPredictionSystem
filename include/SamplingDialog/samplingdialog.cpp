@@ -75,6 +75,7 @@ SamplingDialog::SamplingDialog(const QVector<TidesMeasurement> &inputMeasurement
 
     m_statusLabel = new QLabel;
     m_statusLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+
     if (m_potentialPoints > m_allData.size()){
         updateStatusText(inputMeasurements.size(),inputMeasurements.size(),0);
     }else{
