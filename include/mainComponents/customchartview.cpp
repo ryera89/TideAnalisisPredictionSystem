@@ -63,7 +63,7 @@ void customChartView::keyPressEvent(QKeyEvent *event)
         emit deleteSelectedPointsOnGraph();
         break;
     default:
-        QGraphicsView::keyPressEvent(event);
+        QChartView::keyPressEvent(event);
         break;
     }
 
@@ -93,10 +93,11 @@ void customChartView::mouseMoveEvent(QMouseEvent *event)
 
         emit seriesPoint(m_currentMousePos);
 
-        if (rubberBand() != QChartView::NoRubberBand) emit selectionUpdated(m_pressedMousePosition,m_currentMousePos);
+       // if (rubberBand() != QChartView::NoRubberBand) emit selectionUpdated(m_pressedMousePosition,m_currentMousePos);
 
     }
-    //if (rubberBand() != QChartView::NoRubberBand) emit selectionUpdated(m_pressedMousePosition,m_currentMousePos);
+    if (rubberBand() != QChartView::NoRubberBand)
+        emit selectionUpdated(m_pressedMousePosition,m_currentMousePos);
 }
 
 void customChartView::mousePressEvent(QMouseEvent *event)
@@ -114,15 +115,19 @@ void customChartView::mousePressEvent(QMouseEvent *event)
         setRubberBand(QChartView::HorizontalRubberBand);
     }
     QChartView::mousePressEvent(event);
+
 }
 
 void customChartView::mouseReleaseEvent(QMouseEvent *event)
 {
     if (this->rubberBand() != QChartView::NoRubberBand){
-        if (this->chart()->plotArea().contains(QPoint(event->pos().x(),chart()->plotArea().y()))) {m_releasedMousePosition = event->pos();
+        if (this->chart()->plotArea().contains(QPoint(event->pos().x(),chart()->plotArea().y()))) {
+            m_releasedMousePosition = event->pos();
         }else{
-            if (event->pos().x() > chart()->plotArea().left() + chart()->plotArea().width()) m_releasedMousePosition = QPointF(chart()->plotArea().left() + chart()->plotArea().width(),event->pos().y());
-            else m_releasedMousePosition = QPointF(this->chart()->plotArea().left(),event->pos().y());
+            if (event->pos().x() > chart()->plotArea().left() + chart()->plotArea().width())
+                m_releasedMousePosition = QPointF(chart()->plotArea().left() + chart()->plotArea().width(),event->pos().y());
+            else
+                m_releasedMousePosition = QPointF(this->chart()->plotArea().left(),event->pos().y());
         }
             //m_releasedMousePosition = QPointF(this->chart()->plotArea().left() + this->chart()->plotArea().width(),event->pos().y());
 

@@ -83,7 +83,8 @@ SOURCES += main.cpp\
     include/NivelacionAcuatica/nivelacion_acuatica_calculo.cpp \
     include/NivelacionAcuatica/Model_View_Delegate/nivelacionacuaticatablemodel.cpp \
     include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.cpp \
-    include/SamplingDialog/samplingdialog.cpp
+    include/SamplingDialog/samplingdialog.cpp \
+    include/FilterFacilities/FilterFunctions/filter_facilities.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -157,7 +158,8 @@ HEADERS  += \
     include/NivelacionAcuatica/nivelacion_acuatica_calculo.h \
     include/NivelacionAcuatica/Model_View_Delegate/nivelacionacuaticatablemodel.h \
     include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.h \
-    include/SamplingDialog/samplingdialog.h
+    include/SamplingDialog/samplingdialog.h \
+    include/FilterFacilities/FilterFunctions/filter_facilities.h
 
 RC_ICONS = aquarius-48.ico
 
