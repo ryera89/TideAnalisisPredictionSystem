@@ -19,15 +19,16 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
 {
     m_central = new CentralWidget(this);
 
-    m_loadDialog = 0;
-    m_tablaHorariaWidget = 0;
-    m_manualDataIntroductionWidget = 0;
-    m_projectMetaDataDialog = 0;
-    m_schemeWidget = 0;
-    m_nonHarmonicConstantDialog = 0;
-    m_frequencyEditor = 0;
-    m_nivelacionAcuaticaWidget = 0;
-    m_samplingDialog = 0;
+    m_loadDialog = Q_NULLPTR;
+    m_tablaHorariaWidget = Q_NULLPTR;
+    m_manualDataIntroductionWidget = Q_NULLPTR;
+    m_projectMetaDataDialog = Q_NULLPTR;
+    m_schemeWidget = Q_NULLPTR;
+    m_nonHarmonicConstantDialog = Q_NULLPTR;
+    m_frequencyEditor = Q_NULLPTR;
+    m_nivelacionAcuaticaWidget = Q_NULLPTR;
+    m_samplingDialog = Q_NULLPTR;
+    m_filterDialog = Q_NULLPTR;
 
     setCentralWidget(m_central);
 
@@ -226,6 +227,20 @@ void SPMmainWindow::loadSampledData()
     m_central->tableModel()->setMeasurements(m_samplingDialog->dataSampled());
 
     m_samplingDialog->close();
+}
+
+void SPMmainWindow::createFilterDialog()
+{
+    m_filterDialog = new FiltersDialog(m_central->tableModel()->measurementData(),this);
+    connect(m_filterDialog,SIGNAL(accepted()),this,SLOT(loadFilteredData()));
+    m_filterDialog->show();
+}
+
+void SPMmainWindow::loadFilteredData()
+{
+    m_central->tableModel()->setMeasurements(m_filterDialog->filteredData());
+
+    m_filterDialog->close();
 }
 
 bool SPMmainWindow::saveFrequencyFile()
@@ -897,6 +912,9 @@ void SPMmainWindow::createActions()
     //Edit ACtion
     m_samplingDialogAction = new QAction(tr("Sampling"));
     connect(m_samplingDialogAction,SIGNAL(triggered(bool)),this,SLOT(createSamplingDilalog()));
+
+    m_filterDialogAction = new QAction(tr("Filtro"));
+    connect(m_filterDialogAction,SIGNAL(triggered(bool)),this,SLOT(createFilterDialog()));
 }
 
 void SPMmainWindow::createMenus()
@@ -919,6 +937,7 @@ void SPMmainWindow::createMenus()
 
     m_editMenu = menuBar()->addMenu(tr("Edición"));
     m_editMenu->addAction(m_samplingDialogAction);
+    m_editMenu->addAction(m_filterDialogAction);
 
     m_analisisMenu = menuBar()->addMenu(tr("Análisis"));
     m_analisisMenu->addAction(m_tablaHorariadeMareaAction);

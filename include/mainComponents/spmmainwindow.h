@@ -12,6 +12,7 @@
 #include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 #include "include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.h"
 #include "include/SamplingDialog/samplingdialog.h"
+#include "include/FilterFacilities/FilterDialog/filtersdialog.h"
 #include <QtConcurrent/QtConcurrent>
 
 using namespace QtConcurrent;
@@ -55,8 +56,12 @@ private slots:
     //void beginDataRecieve(const QVector<TidesMeasurement> &datos);
     void createHarmonicAnalisisDialog();
     void createFrequencyEditor();
+
     void createSamplingDilalog();
     void loadSampledData();
+
+    void createFilterDialog();
+    void loadFilteredData();
 
     bool saveFrequencyFile();
     void harmonicAnalisis();
@@ -112,6 +117,7 @@ private:
      FreqEditor *m_frequencyEditor;
      NivelacionAcuaticaWidget *m_nivelacionAcuaticaWidget;
      SamplingDialog *m_samplingDialog;
+     FiltersDialog *m_filterDialog;
 
      //QML component
 
@@ -152,6 +158,7 @@ private:
 
      //Edit Action
      QAction *m_samplingDialogAction;
+     QAction *m_filterDialogAction;
 
      //Analisis Actions-------------------------------------------------------------------
      QAction *m_tablaHorariadeMareaAction;
