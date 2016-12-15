@@ -13,6 +13,7 @@
 #include "include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.h"
 #include "include/SamplingDialog/samplingdialog.h"
 #include "include/FilterFacilities/FilterDialog/filtersdialog.h"
+#include "include/AverageDialog/averagedialog.h"
 #include <QtConcurrent/QtConcurrent>
 
 using namespace QtConcurrent;
@@ -62,6 +63,9 @@ private slots:
 
     void createFilterDialog();
     void loadFilteredData();
+
+    void createAverageDialog();
+    void loadAverageData();
 
     bool saveFrequencyFile();
     void harmonicAnalisis();
@@ -118,6 +122,7 @@ private:
      NivelacionAcuaticaWidget *m_nivelacionAcuaticaWidget;
      SamplingDialog *m_samplingDialog;
      FiltersDialog *m_filterDialog;
+     AverageDialog *m_averageDialog;
 
      //QML component
 
@@ -159,6 +164,7 @@ private:
      //Edit Action
      QAction *m_samplingDialogAction;
      QAction *m_filterDialogAction;
+     QAction *m_averageDialogAction;
 
      //Analisis Actions-------------------------------------------------------------------
      QAction *m_tablaHorariadeMareaAction;

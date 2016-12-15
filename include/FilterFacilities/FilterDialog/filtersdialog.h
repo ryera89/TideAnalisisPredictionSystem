@@ -27,11 +27,13 @@ public:
     QVector<TidesMeasurement> filteredData() const{return m_data;}
 
 private slots:
-     void updateInfoLabel(int matches);
-     void applyFilter();
 
+     void applyFilter();
+     void updateFoundDataForGlitchAndValueFilter(int matNumber,int pos, const TidesMeasurement &measurement);
+     void updataFoundDataForBlockFilter(int matNumber, const QVector<int> &matches);
      void setCriteria(int index);
      //void setDataForElimination(int index);
+     void deletePoints();
 
 private:
     QVector<TidesMeasurement> m_data;
@@ -78,7 +80,9 @@ private:
     QLabel *m_opInfoLabel;
 
     //void createChechBoxesResult();
-    void displayResults();
+    void displayResults(int pos, const TidesMeasurement &measurement);
+    void updateInfoLabel(int matches);
+    void updateInfoLabelOnDataElimination(int remainingDataNumber, int currentDataNumber);
 };
 
 #endif // FILTERSDIALOG_H

@@ -12,19 +12,19 @@ QVector<int> Filters::glitchFilter(qreal glitchValue, const QVector<TidesMeasure
 
        qreal delta_y = nextMeasurement.seaLevel() - currentMeasurement.seaLevel();
 
-       qreal delta_x = currentMeasurement.measurementDateTime().secsTo(nextMeasurement.measurementDateTime())/3600; //intervalo de tiempo en horas
+       qreal delta_x = currentMeasurement.measurementDateTime().secsTo(nextMeasurement.measurementDateTime()); //intervalo de tiempo en horas
+       delta_x/=3600;
 
        qreal slope = delta_y/delta_x;
 
        if (qFabs(slope) >= glitchValue){
            glichPosVector.push_back(i+1);
            ++totalGlitchFounds;
-           emit matchesFound(totalGlitchFounds);
+           emit matchesFound(totalGlitchFounds,i+2,data.at(i+1));
        }
        emit filterProgress(i);
 
    }
-   emit matchesFound(totalGlitchFounds);
    return glichPosVector;
 }
 
@@ -45,7 +45,7 @@ QVector<int> Filters::blocksFilter(int flag, const QVector<TidesMeasurement> &da
             compValue = currValue;
             if (counter.size() >= flag){
                 blocks.append(counter);
-                emit matchesFound(blocks.size());
+                emit matchesFoundForBlockFilter(blocks.size(),counter);
             }
             counter.clear();
             counter.push_back(i);
@@ -56,7 +56,7 @@ QVector<int> Filters::blocksFilter(int flag, const QVector<TidesMeasurement> &da
     }
     if (counter.size() >= flag){
         blocks.append(counter);
-        emit matchesFound(blocks.size());
+        emit matchesFoundForBlockFilter(blocks.size(),counter);
     }
     return blocks;
 }
@@ -69,7 +69,7 @@ QVector<int> Filters::valueFilter(qreal value, const QVector<TidesMeasurement> &
         for (int i = 0; i < data.size(); ++i){
             if (data.at(i).seaLevel() < value){
                 matchesPos.push_back(i);
-                emit matchesFound(matchesPos.size());
+                emit matchesFound(matchesPos.size(),i+1,data.at(i));
             }
             emit filterProgress(i);
         }
@@ -79,7 +79,7 @@ QVector<int> Filters::valueFilter(qreal value, const QVector<TidesMeasurement> &
         for (int i = 0; i < data.size(); ++i){
             if (data.at(i).seaLevel() == value){
                 matchesPos.push_back(i);
-                emit matchesFound(matchesPos.size());
+               emit matchesFound(matchesPos.size(),i+1,data.at(i));
             }
             emit filterProgress(i);
         }
@@ -89,7 +89,7 @@ QVector<int> Filters::valueFilter(qreal value, const QVector<TidesMeasurement> &
         for (int i = 0; i < data.size(); ++i){
             if (data.at(i).seaLevel() > value){
                 matchesPos.push_back(i);
-                emit matchesFound(matchesPos.size());
+               emit matchesFound(matchesPos.size(),i+1,data.at(i));
             }
             emit filterProgress(i);
         }
@@ -99,7 +99,7 @@ QVector<int> Filters::valueFilter(qreal value, const QVector<TidesMeasurement> &
         for (int i = 0; i < data.size(); ++i){
             if (data.at(i).seaLevel() <= value){
                 matchesPos.push_back(i);
-                emit matchesFound(matchesPos.size());
+                emit matchesFound(matchesPos.size(),i+1,data.at(i));
             }
             emit filterProgress(i);
         }
@@ -109,7 +109,7 @@ QVector<int> Filters::valueFilter(qreal value, const QVector<TidesMeasurement> &
         for (int i = 0; i < data.size(); ++i){
             if (data.at(i).seaLevel() >= value){
                 matchesPos.push_back(i);
-                emit matchesFound(matchesPos.size());
+                emit matchesFound(matchesPos.size(),i+1,data.at(i));
             }
             emit filterProgress(i);
         }

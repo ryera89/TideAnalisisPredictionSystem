@@ -11,7 +11,7 @@ void CrecimientoMareaParactica::calculate()
 {
     double deltaF = m_M2.phase() - m_N2.phase();
     double t = 0.0;
-    if (deltaF < 180){
+    if (deltaF <= 180){
         t = 1.837*(deltaF)/24;
     }else{
         t = -1.837*(deltaF)/24;

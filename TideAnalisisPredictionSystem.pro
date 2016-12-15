@@ -85,7 +85,8 @@ SOURCES += main.cpp\
     include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.cpp \
     include/SamplingDialog/samplingdialog.cpp \
     include/FilterFacilities/FilterFunctions/filter_facilities.cpp \
-    include/FilterFacilities/FilterDialog/filtersdialog.cpp
+    include/FilterFacilities/FilterDialog/filtersdialog.cpp \
+    include/AverageDialog/averagedialog.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -161,7 +162,8 @@ HEADERS  += \
     include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.h \
     include/SamplingDialog/samplingdialog.h \
     include/FilterFacilities/FilterFunctions/filter_facilities.h \
-    include/FilterFacilities/FilterDialog/filtersdialog.h
+    include/FilterFacilities/FilterDialog/filtersdialog.h \
+    include/AverageDialog/averagedialog.h
 
 RC_ICONS = aquarius-48.ico
 
@@ -177,3 +179,6 @@ DISTFILES += \
     Processing.qml \
     analizing.qml \
     images/supercargando.gif
+
+FORMS += \
+    include/AverageDialog/averagedialog.ui

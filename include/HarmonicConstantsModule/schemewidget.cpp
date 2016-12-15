@@ -161,14 +161,14 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
 
     m_loadingQuickWidget = new QQuickWidget(QUrl(QStringLiteral("qrc:/analizing.qml")));
 
-    QSurfaceFormat format;
+    /*QSurfaceFormat format;
     if (QCoreApplication::arguments().contains(QStringLiteral("--coreprofile"))) {
         format.setVersion(4, 4);
         format.setProfile(QSurfaceFormat::CoreProfile);
     }
     if (QCoreApplication::arguments().contains(QStringLiteral("--multisample")))
         format.setSamples(4);
-    m_loadingQuickWidget->setFormat(format);
+    m_loadingQuickWidget->setFormat(format);*/
 
     m_loadingQuickWidget->resize(100,200);
     m_loadingQuickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);

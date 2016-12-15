@@ -49,6 +49,7 @@ SamplingDialog::SamplingDialog(const QVector<TidesMeasurement> &inputMeasurement
     connect(m_fechaFinalEdit,SIGNAL(dateChanged(QDate)),this,SLOT(updatePotentialPoints()));
 
     m_intervaloEdit = new QTimeEdit(QTime(1,0));
+    m_intervaloEdit->setMinimumTime(QTime(0,1));
     m_intervaloEdit->setDisplayFormat("hh:mm");
     m_intervaloEdit->setFixedWidth(100);
     connect(m_intervaloEdit,SIGNAL(timeChanged(QTime)),this,SLOT(updatePotentialPoints()));

@@ -29,6 +29,7 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
     m_nivelacionAcuaticaWidget = Q_NULLPTR;
     m_samplingDialog = Q_NULLPTR;
     m_filterDialog = Q_NULLPTR;
+    m_averageDialog = Q_NULLPTR;
 
     setCentralWidget(m_central);
 
@@ -243,6 +244,20 @@ void SPMmainWindow::loadFilteredData()
     m_filterDialog->close();
 }
 
+void SPMmainWindow::createAverageDialog()
+{
+    m_averageDialog = new AverageDialog(m_central->tableModel()->measurementData(),this);
+    connect(m_averageDialog,SIGNAL(accepted()),this,SLOT(loadAverageData()));
+    m_averageDialog->show();
+}
+
+void SPMmainWindow::loadAverageData()
+{
+     m_central->tableModel()->setMeasurements(m_averageDialog->averagedData());
+
+     m_averageDialog->close();
+}
+
 bool SPMmainWindow::saveFrequencyFile()
 {
     if (this->writeFrequencyFile(m_frequencyFilePath)){
@@ -268,11 +283,6 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
         }
 
     }
-    //SPMmainWindow::m_selectedHarmonicConstantVector = aux;
-
-    //QVector<TidesMeasurement> datos = m_tidalTableModel->measurementData().m_measurements; //Datos de marea;
-
-    //TODO pensar ne filtrado de datos
     if (m_central->tableModel()->measurementData().isEmpty()) return;
 
     if (m_central->tableModel()->measurementData().size() < SPMmainWindow::m_selectedHarmonicConstantVector.size()){
@@ -284,6 +294,7 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
      //Para Variante 1
     //int year = m_central->tableModel()->measurementData().first().measurementDate().year();
     //QDateTime yearBegin(QDate(year,1,1),QTime(0,0),Qt::UTC);
+    //
 
     valarray<double> timeValarray(m_central->tableModel()->measurementData().size());
     valarray<double> levelValarray(m_central->tableModel()->measurementData().size());
@@ -291,7 +302,7 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
     int i = 0;
     QDateTime firstDateTime(m_central->tableModel()->measurementData().first().measurementDateTime());
     foreach (TidesMeasurement meas, m_central->tableModel()->measurementData()) {
-        //quint64 seconds = yearBegin.secsTo(QDateTime(meas.measurementDate(),meas.measurementTime(),Qt::UTC));
+        //quint64 seconds = yearBegin.secsTo(meas.measurementDateTime());
         //double t = seconds/3600.0;
 
         //timeValarray[i] = t;
@@ -915,6 +926,9 @@ void SPMmainWindow::createActions()
 
     m_filterDialogAction = new QAction(tr("Filtro"));
     connect(m_filterDialogAction,SIGNAL(triggered(bool)),this,SLOT(createFilterDialog()));
+
+    m_averageDialogAction = new QAction(tr("Promedio"));
+    connect(m_averageDialogAction,SIGNAL(triggered(bool)),this,SLOT(createAverageDialog()));
 }
 
 void SPMmainWindow::createMenus()
@@ -938,6 +952,7 @@ void SPMmainWindow::createMenus()
     m_editMenu = menuBar()->addMenu(tr("Edición"));
     m_editMenu->addAction(m_samplingDialogAction);
     m_editMenu->addAction(m_filterDialogAction);
+    m_editMenu->addAction(m_averageDialogAction);
 
     m_analisisMenu = menuBar()->addMenu(tr("Análisis"));
     m_analisisMenu->addAction(m_tablaHorariadeMareaAction);

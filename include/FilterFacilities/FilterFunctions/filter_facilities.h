@@ -15,8 +15,9 @@ public:
     QVector<int> blocksFilter(int flag, const QVector<TidesMeasurement> &data); //Retorna un vector con la posicion de los bloques
     QVector<int> valueFilter(qreal value, const QVector<TidesMeasurement> &data, Filters::ByValue criteria);
 signals:
-    void matchesFound(int matches);
+    void matchesFound(int matches, int pos, const TidesMeasurement &measuremet);
     void filterProgress(int progress);
+    void matchesFoundForBlockFilter(int matches, const QVector<int> &conter);
 
 };
 

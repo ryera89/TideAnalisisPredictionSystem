@@ -40,7 +40,12 @@ double AlturaPromedioMarea::V()
    if (relationFlag <= 7.7){
        double num2 = 2*a*qSin(qDegreesToRadians(m_K1.phase() + m_O1.phase() - m_M2.phase() - 2*v1));
 
-       double v2 = qRadiansToDegrees(qAsin(num2/b));
+       double val = num2/b;
+
+       double v2;
+
+       if (val >= -1 && val <= 1) v2 = qRadiansToDegrees(qAsin(val));
+       else return v1;
 
        double v = 0.5*(v1 + v2);
 
@@ -66,7 +71,13 @@ double AlturaPromedioMarea::W()
     if (relationFlag <= 7.7){
         double num2 = 2*a*qSin(qDegreesToRadians(m_K1.phase() + m_O1.phase() - m_M2.phase() - 2*w1));
 
-        double w2 = qRadiansToDegrees(qAsin(num2/(-b)));
+        double val = -num2/b;
+
+        double w2;
+        if (val >= -1 && val <= 1) w2 = qRadiansToDegrees(qAsin(val));
+        else return w1;
+
+
 
         double w = 0.5*(w1 + w2);
 
@@ -98,7 +109,7 @@ void AlturaPromedioMarea::calculate()
     double v = V();
     double w = W();
 
-    double aux1Semi = m_M2.amplitud()*(qCos(qDegreesToRadians(v)) - qCos(qDegreesToRadians(w)) - 2);
+    double aux1Semi = m_M2.amplitud()*(qCos(qDegreesToRadians(v)) + qCos(qDegreesToRadians(w)) - 2);
     double aux2Semi = 0.035*(v - w)*m_M4.amplitud()*qSin(qDegreesToRadians(2*m_M2.phase() - m_M4.phase()));
     double aux3Semi = 2*m_M6.amplitud()*qCos(qDegreesToRadians(3*m_M2.phase() - m_M6.phase()));
 

@@ -10,7 +10,7 @@ void CrecimientoMareaSemidiurna::calculate()
 {
     double deltaF = m_S2.phase() - m_M2.phase();
     double t = 0.0;
-    if (deltaF < 180){
+    if (deltaF <= 180){
         t = 0.984*(deltaF)/24;
     }else{
         t = -0.984*(deltaF)/24;

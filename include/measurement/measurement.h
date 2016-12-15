@@ -30,6 +30,7 @@ public:
     TidesMeasurement();
     TidesMeasurement(const qreal &seaLevel,const QDate &measurementDate,
                              const QTime &measurementTime);
+    TidesMeasurement(const qreal &seaLevel, const QDateTime &date_time);
 
     bool isValid() const;
 

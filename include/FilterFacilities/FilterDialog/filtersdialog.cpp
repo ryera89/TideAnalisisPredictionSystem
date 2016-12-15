@@ -40,6 +40,7 @@ FiltersDialog::FiltersDialog(const QVector<TidesMeasurement> &data, QWidget *par
     m_deleteDataPushButton = new QPushButton(tr("Eliminar"));
     m_deleteDataPushButton->setDisabled(true);
     m_deleteDataPushButton->setToolTip(tr("Eliminar los datos seleccionados"));
+    connect(m_deleteDataPushButton,SIGNAL(clicked(bool)),this,SLOT(deletePoints()));
 
     m_okPushButton = new QPushButton(QIcon(":images/Ok.png"),tr("Aceptar"));
     m_okPushButton->setDisabled(true);
@@ -134,11 +135,10 @@ FiltersDialog::FiltersDialog(const QVector<TidesMeasurement> &data, QWidget *par
 
     m_progressBar = new QProgressBar;
     m_progressBar->setTextVisible(true);
-    connect(&m_filter,SIGNAL(filterProgress(int)),m_progressBar,SLOT(setValue(int)));
 
-    m_opInfoLabel = new QLabel(tr("Datos de Entrada <b><font color = green>%1</b></font>.").arg(m_data.size()));
+    m_opInfoLabel = new QLabel;
     m_opInfoLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-    connect(&m_filter,SIGNAL(matchesFound(int)),this,SLOT(updateInfoLabel(int)));
+    updateInfoLabel(0);
 
     QVBoxLayout *progressInfoLayout = new QVBoxLayout;
     progressInfoLayout->addWidget(m_progressBar);
@@ -154,6 +154,11 @@ FiltersDialog::FiltersDialog(const QVector<TidesMeasurement> &data, QWidget *par
     mainLayout->addLayout(leftLayout);
     mainLayout->addLayout(buttonLayout);
 
+    //Connections with Filters Class
+    connect(&m_filter,SIGNAL(matchesFound(int,int,TidesMeasurement)),this,SLOT(updateFoundDataForGlitchAndValueFilter(int,int,TidesMeasurement)));
+    connect(&m_filter,SIGNAL(matchesFoundForBlockFilter(int,QVector<int>)),this,SLOT(updataFoundDataForBlockFilter(int,QVector<int>)));
+    connect(&m_filter,SIGNAL(filterProgress(int)),m_progressBar,SLOT(setValue(int)));
+
     setLayout(mainLayout);
 }
 
@@ -162,10 +167,20 @@ void FiltersDialog::updateInfoLabel(int matches)
     m_opInfoLabel->setText(tr("Datos de Entrada <b><font color = green>%1</b></font>. ").arg(m_data.size()) + tr("Datos de Encontrados para Eliminación <b><font color = red>%1</b></font>.").arg(matches));
 }
 
+void FiltersDialog::updateInfoLabelOnDataElimination(int remainingDataNumber, int currentDataNumber)
+{
+    m_opInfoLabel->setText(tr("Datos de Resultantes <b><font color = green>%1</b></font>. ").arg(currentDataNumber) + tr("Datos de Eliminados <b><font color = red>%1</b></font>.").arg(remainingDataNumber));
+}
+
 void FiltersDialog::applyFilter()
 {
     m_resultEdit->clear();
     m_matchedDataPos.clear();
+
+    updateInfoLabel(0);
+
+    m_deleteDataPushButton->setEnabled(false);
+    m_okPushButton->setEnabled(false);
 
     if (m_byGlitchRadioButton->isChecked()){
         m_progressBar->setMaximum(m_data.size()-2);
@@ -182,8 +197,22 @@ void FiltersDialog::applyFilter()
         int number = m_blockSpinBox->value();
         m_matchedDataPos = m_filter.blocksFilter(number,m_data);
     }
+    m_deleteDataPushButton->setEnabled(true);
+}
 
-    displayResults();
+void FiltersDialog::updateFoundDataForGlitchAndValueFilter(int matNumber, int pos, const TidesMeasurement &measurement)
+{
+
+    displayResults(pos,measurement);
+    updateInfoLabel(matNumber);
+}
+
+void FiltersDialog::updataFoundDataForBlockFilter(int matNumber, const QVector<int> &matches)
+{
+    foreach (int pos, matches) {
+        displayResults(pos,m_data.at(pos));
+    }
+    updateInfoLabel(matNumber);
 }
 
 void FiltersDialog::setCriteria(int index)
@@ -209,18 +238,35 @@ void FiltersDialog::setCriteria(int index)
     }
 }
 
-void FiltersDialog::displayResults()
+void FiltersDialog::deletePoints()
 {
-    QString text;
-    for (int i = 0; i < m_matchedDataPos.size(); ++i){
-        text = (tr("%1 ").arg(m_matchedDataPos.at(i)+1) +
-                        tr("%1 ").arg(m_data.at(m_matchedDataPos.at(i)).measurementDateTime().toString("dd/MM/yyyy hh:mm"))
-                        + tr("%1").arg(m_data.at(m_matchedDataPos.at(i)).seaLevel()) + "m");
-
-        m_resultEdit->appendPlainText(text);
+    int deleteProgress = 0;
+    m_progressBar->setMaximum(2*(m_matchedDataPos.size() - 1));
+    QVector<TidesMeasurement> aux_measurement;
+    foreach (int index, m_matchedDataPos) {
+        aux_measurement.push_back(m_data.at(index));
+        ++deleteProgress;
+        m_progressBar->setValue(deleteProgress);
     }
+    foreach (TidesMeasurement mesurement, aux_measurement) {
+        m_data.removeOne(mesurement);
+        ++deleteProgress;
+        m_progressBar->setValue(deleteProgress);
+        updateInfoLabelOnDataElimination(deleteProgress,m_data.size() - deleteProgress);
+    }
+
+    m_okPushButton->setEnabled(true);
+    m_deleteDataPushButton->setDisabled(true);
 }
 
+void FiltersDialog::displayResults(int pos, const TidesMeasurement &measurement)
+{
+    QString text((tr("%1 ").arg(pos) +
+                    tr("%1 ").arg(measurement.measurementDateTime().toString("dd/MM/yyyy hh:mm"))
+                    + tr("%1").arg(measurement.seaLevel()) + "m"));
+
+    m_resultEdit->appendPlainText(text);
+}
 
 /*void FiltersDialog::setDataForElimination(int index)
 {

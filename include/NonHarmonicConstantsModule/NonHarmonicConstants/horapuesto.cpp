@@ -7,7 +7,8 @@ HoraPuesto::HoraPuesto(const HarmonicConstant &M2, const HarmonicConstant &S2, c
     calculate(hpm);
 }
 
-void HoraPuesto::calculate(const HPM &hpm)
+void HoraPuesto::
+calculate(const HPM &hpm)
 {
     double E1 = hpm.HoraPuestoMedia();
 
@@ -26,7 +27,7 @@ void HoraPuesto::calculate(const HPM &hpm)
 
        double tanX = num/den;
 
-       double X = qRadiansToDegrees(qAtan(tanX));
+       double X = qRadiansToDegrees(qAtan(tanX))/2;
 
        E1 = (X + omega + m_M2.amplitud()/2)/15;
 
