@@ -1,7 +1,8 @@
 #include "nivelacionacuaticawidget.h"
 #include "include/NivelacionAcuatica/nivelacion_acuatica_calculo.h"
 
-NivelacionAcuaticaWidget::NivelacionAcuaticaWidget(QWidget *parent) : QWidget(parent)
+NivelacionAcuaticaWidget::NivelacionAcuaticaWidget(const QVector<TidesMeasurement> &data, QWidget *parent) : QWidget(parent),
+    m_mainFormData(data)
 {
     createComponents();
     m_provDataLoadFlag = false;
@@ -18,6 +19,10 @@ NivelacionAcuaticaWidget::NivelacionAcuaticaWidget(QWidget *parent) : QWidget(pa
     connect(m_puestoProvManualButton,SIGNAL(clicked(bool)),this,SLOT(createProvManualDataIntro()));
     connect(m_puestoPerm1ManualButton,SIGNAL(clicked(bool)),this,SLOT(createPerm1ManualDataIntro()));
     connect(m_puestoPerm2ManualButton,SIGNAL(clicked(bool)),this,SLOT(createPerm2ManualDataIntro()));
+
+    connect(m_puestoProvGetButton,SIGNAL(clicked(bool)),this,SLOT(importProvDataFromMain()));
+    connect(m_puestoPerm1GetButton,SIGNAL(clicked(bool)),this,SLOT(importPerm1DataFromMain()));
+    connect(m_puestoPerm2GetButton,SIGNAL(clicked(bool)),this,SLOT(importPerm2DataFromMain()));
 
     connect(m_metodoComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(setMetodoDeNivelacion(int)));
 
@@ -78,6 +83,33 @@ void NivelacionAcuaticaWidget::createPerm2ManualDataIntro()
     createManualDataIntroWidget();
 }
 
+void NivelacionAcuaticaWidget::importProvDataFromMain()
+{
+    m_provDataLoadFlag = true;
+    m_perm1DataLoadFlag = false;
+    m_perm2DataLoadFlag = false;
+
+    importDataFromMainForm();
+}
+
+void NivelacionAcuaticaWidget::importPerm1DataFromMain()
+{
+    m_provDataLoadFlag = false;
+    m_perm1DataLoadFlag = true;
+    m_perm2DataLoadFlag = false;
+
+    importDataFromMainForm();
+}
+
+void NivelacionAcuaticaWidget::importPerm2DataFromMain()
+{
+    m_provDataLoadFlag = false;
+    m_perm1DataLoadFlag = false;
+    m_perm2DataLoadFlag = true;
+
+    importDataFromMainForm();
+}
+
 void NivelacionAcuaticaWidget::beginDataExtrationFromFile()
 {
     if (m_provDataLoadFlag){
@@ -98,6 +130,39 @@ void NivelacionAcuaticaWidget::beginDataExtrationFromFile()
 
     if (m_perm2DataLoadFlag){
         m_dataTableModel->setPuestoPermanente2DataSet(m_loadDialog->measurementsData());
+        m_puestoPerm2Serie->replace(m_dataTableModel->puestoPerm2DataForGraph());
+        setPuestoPerm2Axis();
+        m_loadDialog->close();
+        return;
+    }
+}
+
+void NivelacionAcuaticaWidget::appendDataFromFile()
+{
+    if (m_provDataLoadFlag){
+        QVector<TidesMeasurement> measurement = m_dataTableModel->puestoProvData();
+        measurement.append(m_loadDialog->measurementsData());
+        m_dataTableModel->setPuestoProvisionalDataSet(measurement);
+        m_puestoProvSerie->replace(m_dataTableModel->puestoProvDataForGraph());
+        setPuestoProvAxis();
+        m_loadDialog->close();
+        return;
+    }
+
+    if (m_perm1DataLoadFlag){
+        QVector<TidesMeasurement> measurement = m_dataTableModel->puestoPerm1Data();
+        measurement.append(m_loadDialog->measurementsData());
+        m_dataTableModel->setPuestoPermanente1DataSet(measurement);
+        m_puestoPerm1Serie->replace(m_dataTableModel->puestoPerm1DataForGraph());
+        setPuestoPerm1Axis();
+        m_loadDialog->close();
+        return;
+    }
+
+    if (m_perm2DataLoadFlag){
+        QVector<TidesMeasurement> measurement = m_dataTableModel->puestoPerm2Data();
+        measurement.append(m_loadDialog->measurementsData());
+        m_dataTableModel->setPuestoPermanente2DataSet(measurement);
         m_puestoPerm2Serie->replace(m_dataTableModel->puestoPerm2DataForGraph());
         setPuestoPerm2Axis();
         m_loadDialog->close();
@@ -164,6 +229,83 @@ void NivelacionAcuaticaWidget::beginDataExtration()
 
 }
 
+void NivelacionAcuaticaWidget::appendDataFromManual()
+{
+    QVector<TidesMeasurement> datos;
+
+    int size = m_manualDataIntroWidget->model()->measurementData().size();
+
+    qreal conversion = m_manualDataIntroWidget->conversionUnit();
+
+
+    for (int i = 0; i < size ; ++i){
+        if (m_manualDataIntroWidget->model()->measurementData().at(i).isValid()){
+
+            datos.push_back(m_manualDataIntroWidget->model()->measurementData().at(i));
+
+            if (conversion != 1.0){
+                qreal value = m_manualDataIntroWidget->model()->measurementData().at(i).seaLevel()*conversion;
+                datos[i].setSeaLevel(value);
+            }
+        }
+    }
+
+    if (m_provDataLoadFlag){
+        QVector<TidesMeasurement> measurement = m_dataTableModel->puestoProvData();
+        measurement.append(datos);
+        m_dataTableModel->setPuestoProvisionalDataSet(measurement);
+        m_puestoProvSerie->replace(m_dataTableModel->puestoProvDataForGraph());
+        setPuestoProvAxis();
+        m_manualDataIntroWidget->close();
+        return;
+    }
+
+    if (m_perm1DataLoadFlag){
+        QVector<TidesMeasurement> measurement = m_dataTableModel->puestoPerm1Data();
+        measurement.append(datos);
+        m_dataTableModel->setPuestoPermanente1DataSet(measurement);
+        m_puestoPerm1Serie->replace(m_dataTableModel->puestoPerm1DataForGraph());
+        setPuestoPerm1Axis();
+        m_manualDataIntroWidget->close();
+        return;
+    }
+
+    if (m_perm2DataLoadFlag){
+        QVector<TidesMeasurement> measurement = m_dataTableModel->puestoPerm2Data();
+        measurement.append(datos);
+        m_dataTableModel->setPuestoPermanente2DataSet(measurement);
+        m_puestoPerm1Serie->replace(m_dataTableModel->puestoPerm2DataForGraph());
+        setPuestoPerm2Axis();
+        m_manualDataIntroWidget->close();
+        return;
+    }
+
+}
+
+void NivelacionAcuaticaWidget::importDataFromMainForm()
+{
+    if (m_provDataLoadFlag){
+        m_dataTableModel->setPuestoProvisionalDataSet(m_mainFormData);
+        m_puestoProvSerie->replace(m_dataTableModel->puestoProvDataForGraph());
+        setPuestoProvAxis();
+        return;
+    }
+
+    if (m_perm1DataLoadFlag){
+        m_dataTableModel->setPuestoPermanente1DataSet(m_mainFormData);
+        m_puestoPerm1Serie->replace(m_dataTableModel->puestoPerm1DataForGraph());
+        setPuestoPerm1Axis();
+        return;
+    }
+
+    if (m_perm2DataLoadFlag){
+        m_dataTableModel->setPuestoPermanente2DataSet(m_mainFormData);
+        m_puestoPerm1Serie->replace(m_dataTableModel->puestoPerm2DataForGraph());
+        setPuestoPerm2Axis();
+        return;
+    }
+}
+
 void NivelacionAcuaticaWidget::setMetodoDeNivelacion(int index)
 {
     switch (index) {
@@ -201,6 +343,7 @@ void NivelacionAcuaticaWidget::calculate()
                 okToCalculate = false;
                 QMessageBox::information(this,tr("Info"), tr("Los mediciones del Puesto Provicional y del"
                                                              "Puesto Permanente no son simultaneas"));
+                break;
             }
         }
         if (okToCalculate){ //calculate
@@ -220,6 +363,7 @@ void NivelacionAcuaticaWidget::calculate()
                 QMessageBox::information(this,tr("Info"), tr("Los mediciones del Puesto Provicional y la/s del"
                                                              "Puesto Permanente #1 y Puesto Permanente #2 no son"
                                                              " simultaneas"));
+                break;
             }
         }
 
@@ -623,6 +767,7 @@ void NivelacionAcuaticaWidget::createLoadDialog()
         //connect(m_loadDialog,SIGNAL(dataGeted(QVector<QStringList>,int,int,int, const QString&, const QString&)),
                     //this,SLOT(recieveData(QVector<QStringList>,int,int,int, const QString&, const QString&)));
         connect(m_loadDialog,SIGNAL(importButtonClicked()),this,SLOT(beginDataExtrationFromFile()));
+        connect(m_loadDialog,SIGNAL(appendDataActionTrigered()),this,SLOT(appendDataFromFile()));
 
         //TODO: Las conexiones de los senales del dialogo para coger la localizacion Eq_Id, Lat, Long
         m_loadDialog->show();
@@ -635,6 +780,7 @@ void NivelacionAcuaticaWidget::createManualDataIntroWidget()
     //m_manualDataIntroWidget->setProjectMetaData(m_metadataStorage);
     connect(m_manualDataIntroWidget,SIGNAL(okButtonClicked()),
             this,SLOT(beginDataExtration()));
+    connect(m_manualDataIntroWidget,SIGNAL(appendDataTrigered()),this,SLOT(appendDataFromManual()));
     m_manualDataIntroWidget->show();
 }
 

@@ -20,7 +20,7 @@ class NivelacionAcuaticaWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit NivelacionAcuaticaWidget(QWidget *parent = 0);
+    explicit NivelacionAcuaticaWidget(const QVector<TidesMeasurement> &data, QWidget *parent = 0);
 
 signals:
 
@@ -33,12 +33,19 @@ private slots:
     void createProvManualDataIntro();
     void createPerm1ManualDataIntro();
     void createPerm2ManualDataIntro();
+
+    void importProvDataFromMain();
+    void importPerm1DataFromMain();
+    void importPerm2DataFromMain();
     //void loadProvDataFromMainProject();
     //void loadProvDataFromMainProject();
     //void loadProvDataFromMainProject();
 
     void beginDataExtrationFromFile();
+    void appendDataFromFile();
     void beginDataExtration();
+    void appendDataFromManual();
+    void importDataFromMainForm();
 
     void setMetodoDeNivelacion(int index);
 
@@ -148,6 +155,8 @@ private:
 
     //PushButtons
     QPushButton *m_calcNMMButton;
+
+    QVector<TidesMeasurement> m_mainFormData;
 
     bool m_provDataLoadFlag;
     bool m_perm1DataLoadFlag;

@@ -103,6 +103,8 @@ private:
     void deletePoints();
     void updateDisplayRangeLabel();
 
+    QPointF seekMaxAndMinViewYSerieValue(const QDateTime &beg, const QDateTime &end);
+
 };
 
 #endif // CENTRALWIDGET_H

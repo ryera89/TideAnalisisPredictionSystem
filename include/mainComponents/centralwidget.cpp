@@ -171,6 +171,9 @@ void CentralWidget::setSeriesData()
 
     m_yAxis->setRange(m_minSerieYValue,m_maxSerieYValue);
     m_yAxis->applyNiceNumbers();
+
+    m_minSerieYValue = m_yAxis->min();
+    m_maxSerieYValue = m_yAxis->max();
     //m_tideChartView->chart()->addSeries(m_series);
     //m_tideChartView->chart()->createDefaultAxes();
 
@@ -558,6 +561,23 @@ void CentralWidget::updateDisplayRangeLabel()
     }else{
         m_selectionPointRange->setText(tr("<b>[Sin Selección]</b>"));
     }
+}
+
+QPointF CentralWidget::seekMaxAndMinViewYSerieValue(const QDateTime &beg, const QDateTime &end)
+{
+
+    qreal max = -10000000;
+    qreal min = 10000000;
+
+    foreach (TidesMeasurement measurement, m_tidalTableModel->measurementData()){
+        if (measurement.measurementDateTime() >= beg && measurement.measurementDateTime() <= end){
+            qreal aux = measurement.seaLevel();
+            if (aux > max) max = aux;
+            if (aux < min) min = aux;
+        }
+        if (measurement.measurementDateTime() > end) break;
+    }
+    return QPointF(min,max);
 }
 
 void CentralWidget::createComponents()

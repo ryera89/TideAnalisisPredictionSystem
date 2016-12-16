@@ -149,7 +149,7 @@ void SPMmainWindow::createNonHarmonicDialog()
 
 void SPMmainWindow::createNivelacionAcuaticaWidget()
 {
-    m_nivelacionAcuaticaWidget = new NivelacionAcuaticaWidget;
+    m_nivelacionAcuaticaWidget = new NivelacionAcuaticaWidget(m_central->tableModel()->measurementData());
     m_nivelacionAcuaticaWidget->show();
 }
 
