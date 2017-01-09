@@ -14,6 +14,8 @@ public:
     void setName(const QString &name){m_name = name;}
     void setFrequency(const double &frequency){m_frequency = frequency;}
     void setComponentValues(const double &C,const double &S);
+    void setAmplitud(const double &amp){m_amplitud = amp;}
+    void setPhase(const double &fase){m_phase = fase;}
 
     QString description()const {return m_description;}
     QString name()const {return m_name;}

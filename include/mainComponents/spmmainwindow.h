@@ -15,6 +15,7 @@
 #include "include/FilterFacilities/FilterDialog/filtersdialog.h"
 #include "include/AverageDialog/averagedialog.h"
 #include <QtConcurrent/QtConcurrent>
+#include "include/AlcanceLimite/alcancelimitewindow.h"
 
 using namespace QtConcurrent;
 
@@ -43,6 +44,8 @@ public:
 signals:
     void harmonicAnalisisFinished();
 private slots:
+    void newProject();
+
     void loadDataFile();
     void createManualDataIntWidget();
     void crearTablaHoraria();
@@ -66,6 +69,8 @@ private slots:
 
     void createAverageDialog();
     void loadAverageData();
+
+    void createAlcanceLimiteWindow(); //Inrterfaz para el calculo del alcance limite
 
     bool saveFrequencyFile();
     void harmonicAnalisis();
@@ -123,6 +128,7 @@ private:
      SamplingDialog *m_samplingDialog;
      FiltersDialog *m_filterDialog;
      AverageDialog *m_averageDialog;
+     AlcanceLimiteWindow *m_alcanceLimiteWindow;
 
      //QML component
 
@@ -174,6 +180,7 @@ private:
      //Tools Actions------------------------------------------------------------------------
      QAction *m_freqEditorAction;
      QAction *m_nivelacionAcuaticaAction;
+     QAction *m_alcanceLimiteAction;
 
      //View Actions-----------------------------------------------------------------------
 

@@ -9,6 +9,7 @@
 #include <QDateTime>
 
 #include <QtQuickWidgets>
+#include <QPropertyAnimation>
 
 class QComboBox;
 class QPushButton;
@@ -114,6 +115,8 @@ private:
     QQuickWidget *m_loadingQuickWidget;
 
     SchemeConfigDialog *m_configSchemeDialog;
+
+    QPropertyAnimation *m_animation;
 
     //QPushButton *m_createSchemePushButton;
     //QPushButton *m_modifySchemePushButton;

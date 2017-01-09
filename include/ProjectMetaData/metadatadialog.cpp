@@ -20,6 +20,7 @@ MetaDataDialog::MetaDataDialog(const ProjectMetaData &data,QWidget *parent, Qt::
     m_metadata->setLongitud(data.longitud());
     m_metadata->setEquipmentID(data.equipmentID());
 
+    this->setModal(true);
     this->setWindowIcon(QIcon(":images/project-info.png"));
     this->setAttribute(Qt::WA_DeleteOnClose);
 }

@@ -46,6 +46,17 @@ void SchemeWidget::setHarmonicConstantModelData(const QVector<HarmonicConstant> 
 void SchemeWidget::showHarmonicConstantTable()
 {
     m_harmonicConstantTableView->show();
+
+    int width = m_harmonicConstantTableView->geometry().width();
+    int heigth = m_harmonicConstantTableView->geometry().height();
+
+    int x = m_harmonicConstantTableView->geometry().left();
+    int y = m_harmonicConstantTableView->geometry().top();
+
+    m_animation->setStartValue(QRect(x,y,0,0));
+    m_animation->setEndValue(QRect(x,y,width,heigth));
+    m_animation->setDuration(1000);
+    m_animation->start();
 }
 
 bool SchemeWidget::isLuDecompositionAnalisis()
@@ -70,6 +81,7 @@ void SchemeWidget::enableSaveHarmonicConstantButton()
 void SchemeWidget::beginHarmonicAnalisis()
 {
     m_loadingQuickWidget->setVisible(true);
+    m_harmonicConstantTableView->setVisible(false);
 
     emit analizeButtonClicked();
 }
@@ -271,7 +283,7 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
     connect(m_saveSelectedData,SIGNAL(clicked(bool)),this,SIGNAL(saveDataButtonClicked()));
 
     //********************************************************************
-
+    m_animation = new QPropertyAnimation(m_harmonicConstantTableView,"geometry",this);
 }
 
 void SchemeWidget::interfazLayout()

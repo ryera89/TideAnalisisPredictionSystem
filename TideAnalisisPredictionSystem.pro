@@ -86,7 +86,8 @@ SOURCES += main.cpp\
     include/SamplingDialog/samplingdialog.cpp \
     include/FilterFacilities/FilterFunctions/filter_facilities.cpp \
     include/FilterFacilities/FilterDialog/filtersdialog.cpp \
-    include/AverageDialog/averagedialog.cpp
+    include/AverageDialog/averagedialog.cpp \
+    include/AlcanceLimite/alcancelimitewindow.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -163,7 +164,8 @@ HEADERS  += \
     include/SamplingDialog/samplingdialog.h \
     include/FilterFacilities/FilterFunctions/filter_facilities.h \
     include/FilterFacilities/FilterDialog/filtersdialog.h \
-    include/AverageDialog/averagedialog.h
+    include/AverageDialog/averagedialog.h \
+    include/AlcanceLimite/alcancelimitewindow.h
 
 RC_ICONS = aquarius-48.ico
 
@@ -181,4 +183,5 @@ DISTFILES += \
     images/supercargando.gif
 
 FORMS += \
-    include/AverageDialog/averagedialog.ui
+    include/AverageDialog/averagedialog.ui \
+    include/AlcanceLimite/alcancelimitewindow.ui

@@ -30,6 +30,7 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
     m_samplingDialog = Q_NULLPTR;
     m_filterDialog = Q_NULLPTR;
     m_averageDialog = Q_NULLPTR;
+    m_alcanceLimiteWindow = Q_NULLPTR;
 
     setCentralWidget(m_central);
 
@@ -90,6 +91,19 @@ QVector<double> SPMmainWindow::funcion(const double &t)
 QSize SPMmainWindow::sizeHint() const
 {
     return this->maximumSize();
+}
+
+void SPMmainWindow::newProject()
+{
+    m_metadataStorage = ProjectMetaData();
+    QVector<TidesMeasurement> newData;
+    newData.resize(100);
+    m_central->tableModel()->setMeasurements(newData);
+    m_selectedHarmonicConstantVector.clear();
+
+    m_projectMetaDataDialog = new MetaDataDialog(m_metadataStorage,this);
+    m_projectMetaDataDialog->show();
+    connect(m_projectMetaDataDialog,SIGNAL(okButtonClicked(bool)),this,SLOT(updateMetaData()));
 }
 
 void SPMmainWindow::loadDataFile()
@@ -256,6 +270,13 @@ void SPMmainWindow::loadAverageData()
      m_central->tableModel()->setMeasurements(m_averageDialog->averagedData());
 
      m_averageDialog->close();
+}
+
+void SPMmainWindow::createAlcanceLimiteWindow()
+{
+    m_alcanceLimiteWindow = new AlcanceLimiteWindow(this);
+
+    m_alcanceLimiteWindow->show();
 }
 
 bool SPMmainWindow::saveFrequencyFile()
@@ -795,7 +816,7 @@ void SPMmainWindow::createActions()
     m_newProjectAction = new QAction(QIcon(":/images/project-new.png"),tr("&Nuevo"),this);
     m_newProjectAction->setShortcut(QKeySequence::New);
     m_newProjectAction->setToolTip(tr("Crear nuevo proyecto"));
-    //NOTE connect
+    connect(m_newProjectAction,SIGNAL(triggered(bool)),this,SLOT(newProject()));
 
     m_loadProjectAction = new QAction(QIcon(":/images/project-open.png"),tr("&Abrir"),this);
     m_loadProjectAction->setShortcut(QKeySequence::Open);
@@ -836,9 +857,13 @@ void SPMmainWindow::createActions()
     m_freqEditorAction = new QAction(tr("Editor de Componentes"),this);
     //TODO icon
     connect(m_freqEditorAction,SIGNAL(triggered(bool)),this,SLOT(createFrequencyEditor()));
+
     m_nivelacionAcuaticaAction = new QAction(QIcon(":images/nivelacion_acuatica.png"),tr("Nivelación Acuática"));
     connect(m_nivelacionAcuaticaAction,SIGNAL(triggered(bool)),this,SLOT(createNivelacionAcuaticaWidget()));
 
+    m_alcanceLimiteAction = new QAction(tr("Alcance Límite"),this);
+    //TODO: icon
+    connect(m_alcanceLimiteAction,&QAction::triggered,this,&SPMmainWindow::createAlcanceLimiteWindow);
 
     //ChartActions--------------------------------------------------------------
     m_themeLightAction = new QAction(tr("Claro"),this);
@@ -963,6 +988,7 @@ void SPMmainWindow::createMenus()
 
     m_toolMenu = menuBar()->addMenu(tr("Herramientas"));
     m_toolMenu->addAction(m_nivelacionAcuaticaAction);
+    m_toolMenu->addAction(m_alcanceLimiteAction);
     m_toolMenu->addAction(m_freqEditorAction);
 
     m_chartMenu = menuBar()->addMenu(tr("Gráfico"));
