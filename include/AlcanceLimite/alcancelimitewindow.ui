@@ -46,7 +46,7 @@
     </property>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QGroupBox" name="groupBox_2">
+      <widget class="QGroupBox" name="puestoAGroupBox">
        <property name="font">
         <font>
          <weight>75</weight>
@@ -363,6 +363,9 @@ al NMT:</string>
              <property name="maximum">
               <double>1000.000000000000000</double>
              </property>
+             <property name="singleStep">
+              <double>0.100000000000000</double>
+             </property>
             </widget>
            </item>
            <item row="1" column="2">
@@ -398,6 +401,9 @@ al NMT:</string>
              </property>
              <property name="maximum">
               <double>1000.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.100000000000000</double>
              </property>
             </widget>
            </item>
@@ -435,6 +441,9 @@ al NMT:</string>
              <property name="maximum">
               <double>1000.000000000000000</double>
              </property>
+             <property name="singleStep">
+              <double>0.100000000000000</double>
+             </property>
             </widget>
            </item>
            <item row="3" column="2">
@@ -470,6 +479,9 @@ al NMT:</string>
              </property>
              <property name="maximum">
               <double>1000.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.100000000000000</double>
              </property>
             </widget>
            </item>
@@ -530,7 +542,7 @@ al NMT:</string>
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox_3">
+      <widget class="QGroupBox" name="puestoBGroupBox">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -846,6 +858,9 @@ al NMT:</string>
              <property name="maximum">
               <double>1000.000000000000000</double>
              </property>
+             <property name="singleStep">
+              <double>0.100000000000000</double>
+             </property>
             </widget>
            </item>
            <item row="1" column="2">
@@ -881,6 +896,9 @@ al NMT:</string>
              </property>
              <property name="maximum">
               <double>1000.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.100000000000000</double>
              </property>
             </widget>
            </item>
@@ -918,6 +936,9 @@ al NMT:</string>
              <property name="maximum">
               <double>1000.000000000000000</double>
              </property>
+             <property name="singleStep">
+              <double>0.100000000000000</double>
+             </property>
             </widget>
            </item>
            <item row="3" column="2">
@@ -953,6 +974,9 @@ al NMT:</string>
              </property>
              <property name="maximum">
               <double>1000.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.100000000000000</double>
              </property>
             </widget>
            </item>
@@ -1029,7 +1053,7 @@ al NMT:</string>
       </spacer>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox_5">
+      <widget class="QGroupBox" name="otrosParametrosGroupBox">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -1195,7 +1219,7 @@ según el almanaque naútico.</string>
              <number>3</number>
             </property>
             <property name="maximum">
-             <double>1000.000000000000000</double>
+             <double>999999.998999999952503</double>
             </property>
            </widget>
           </item>
