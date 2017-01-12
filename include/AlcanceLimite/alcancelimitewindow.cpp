@@ -197,12 +197,22 @@ void AlcanceLimiteWindow::computeDistanceFromCoordinates()
     ui->distanciaSpinBox->setValue(distance);
 }
 
+void AlcanceLimiteWindow::findAngle(double &angle)
+{
+    if (angle > 360.0){
+        angle -= qFloor(angle/360.0)*360.0;
+    }
+    if (angle < 0.0){
+        angle += qCeil(qAbs(angle/360.0))*360.0;
+    }
+}
+
 double AlcanceLimiteWindow::computeMeanAmpPhase(const HarmonicConstant &hc_A, const HarmonicConstant &hc_B)
 {
    double HiA_square = pow(hc_A.amplitud(),2);
    double HiB_square = pow(hc_B.amplitud(),2);
 
-   double rem = 2*hc_A.amplitud()*hc_B.amplitud()*(hc_B.phase() - hc_A.phase());
+   double rem = 2.0*hc_A.amplitud()*hc_B.amplitud()*(hc_B.phase() - hc_A.phase());
 
    double val = qAbs(HiA_square + HiB_square - rem);
 
@@ -294,46 +304,26 @@ void AlcanceLimiteWindow::determineH0S0P0_FullMoon()
     m_p0_FullMoon = 334.329556 + 0.1114040803*Dh;
 
     //H0
-    if (m_h0_FullMoon > 360.0){
-        m_h0_FullMoon -= qFloor(m_h0_FullMoon/360.0)*360.0;
-    }
-    if (m_h0_FullMoon < 0.0){
-        m_h0_FullMoon += qFloor(qAbs(m_h0_FullMoon/360.0))*360.0;
-    }
+    findAngle(m_h0_FullMoon);
 
     //S0
-    if (m_s0_FullMoon > 360.0){
-        m_s0_FullMoon -= qFloor(m_s0_FullMoon/360.0)*360.0;
-    }
-    if (m_s0_FullMoon < 0.0){
-        m_s0_FullMoon += qFloor(qAbs(m_s0_FullMoon/360.0))*360.0;
-    }
+    findAngle(m_s0_FullMoon);
 
     //P0
-    if (m_p0_FullMoon > 360.0){
-        m_p0_FullMoon -= qFloor(m_p0_FullMoon/360.0)*360.0;
-    }
-    if (m_p0_FullMoon < 0.0){
-        m_p0_FullMoon += qFloor(qAbs(m_p0_FullMoon/360.0))*360.0;
-    }
+    findAngle(m_p0_FullMoon);
+
 }
 
 void AlcanceLimiteWindow::determineN_FullMoon()
 {
-    QDate epoch_date(1,1,1900);
+    QDate epoch_date(1900,1,1);
     QDate fullMoonDate(ui->lunaLLenaDateEdit->date());
 
     quint64 julianDaysNumber = fullMoonDate.toJulianDay() - epoch_date.toJulianDay();
 
     m_N_FullMoon = 259.183275 - 0.0529539222*julianDaysNumber;
 
-    if (m_N_FullMoon > 360.0){
-        m_N_FullMoon -= qFloor(m_N_FullMoon/360.0)*360.0;
-    }
-    if (m_N_FullMoon < 0.0){
-        m_N_FullMoon += qFloor(qAbs(m_N_FullMoon/360.0))*360.0;
-    }
-
+    findAngle(m_N_FullMoon);
 }
 
 void AlcanceLimiteWindow::determineNodalFactor_FullMoon()
@@ -377,26 +367,11 @@ void AlcanceLimiteWindow::determineVoplusU_FullMoon()
 
     m_V0_plus_u_O1_FullMoon = m_h0_FullMoon - 2*m_s0_FullMoon + 2*m_ep_FullMoon - m_v_FullMoon + 270.0;
 
-    if (m_V0_plus_u_M2_FullMoon > 360.0){
-        m_V0_plus_u_M2_FullMoon -= qFloor(m_V0_plus_u_M2_FullMoon/360.0)*360.0;
-    }
-    if (m_V0_plus_u_M2_FullMoon < 0.0){
-        m_V0_plus_u_M2_FullMoon += qFloor(qAbs(m_V0_plus_u_M2_FullMoon/360.0))*360.0;
-    }
 
-    if (m_V0_plus_u_K1_FullMoon > 360.0){
-        m_V0_plus_u_K1_FullMoon -= qFloor(m_V0_plus_u_K1_FullMoon/360.0)*360.0;
-    }
-    if (m_V0_plus_u_K1_FullMoon < 0.0){
-        m_V0_plus_u_K1_FullMoon += qFloor(qAbs(m_V0_plus_u_K1_FullMoon/360.0))*360.0;
-    }
+    findAngle(m_V0_plus_u_M2_FullMoon);
+    findAngle(m_V0_plus_u_K1_FullMoon);
+    findAngle(m_V0_plus_u_O1_FullMoon);
 
-    if (m_V0_plus_u_O1_FullMoon > 360.0){
-        m_V0_plus_u_O1_FullMoon -= qFloor(m_V0_plus_u_O1_FullMoon/360.0)*360.0;
-    }
-    if (m_V0_plus_u_O1_FullMoon < 0.0){
-        m_V0_plus_u_O1_FullMoon += qFloor(qAbs(m_V0_plus_u_O1_FullMoon/360.0))*360.0;
-    }
 }
 
 void AlcanceLimiteWindow::determineLValues_AB_FullMoon()
@@ -427,38 +402,15 @@ void AlcanceLimiteWindow::determineLValues_BA_FullMoon()
 
 void AlcanceLimiteWindow::determineHmaxAndHmin_AB_FullMoon()
 {
-    double XM2 = m_V0_plus_u_M2_FullMoon + m_nM2_AB;
-    double XS2 = m_V0_plus_u_S2_FullMoon + m_nS2_AB;
-    double XK1 = m_V0_plus_u_K1_FullMoon + m_nK1_AB;
-    double XO1 = m_V0_plus_u_O1_FullMoon + m_nO1_AB;
+    double XM2 = m_V0_plus_u_M2_FullMoon - m_nM2_AB;
+    double XS2 = m_V0_plus_u_S2_FullMoon - m_nS2_AB;
+    double XK1 = m_V0_plus_u_K1_FullMoon - m_nK1_AB;
+    double XO1 = m_V0_plus_u_O1_FullMoon - m_nO1_AB;
 
-    if (XM2 > 360.0){
-        XM2 -= qFloor(XM2/360.0)*360.0;
-    }
-    if (XM2 < 0.0){
-        XM2 += qFloor(qAbs(XM2/360.0))*360.0;
-    }
-
-    if (XS2 > 360.0){
-        XS2 -= qFloor(XS2/360.0)*360.0;
-    }
-    if (XS2 < 0.0){
-        XS2 += qFloor(qAbs(XS2/360.0))*360.0;
-    }
-
-    if (XK1 > 360.0){
-        XK1 -= qFloor(XK1/360.0)*360.0;
-    }
-    if (XK1 < 0.0){
-        XK1 += qFloor(qAbs(XK1/360.0))*360.0;
-    }
-
-    if (XO1 > 360.0){
-        XO1 -= qFloor(XO1/360.0)*360.0;
-    }
-    if (XO1 < 0.0){
-        XO1 += qFloor(qAbs(XO1/360.0))*360.0;
-    }
+    findAngle(XM2);
+    findAngle(XS2);
+    findAngle(XK1);
+    findAngle(XO1);
 
     m_hmin_AB_FullMoon = m_LM2_AB_FullMoon*qCos(qDegreesToRadians(XM2)) + m_LS2_AB_FullMoon*qCos(qDegreesToRadians(XS2))
             + m_LK1_AB_FullMoon*qCos(qDegreesToRadians(XK1)) + m_LO1_AB_FullMoon*qCos(qDegreesToRadians(XO1));
@@ -468,38 +420,15 @@ void AlcanceLimiteWindow::determineHmaxAndHmin_AB_FullMoon()
     double T = 1.0/60.0;
 
     while (T <= 26.0){
-        XM2 = m_M2_A.frequency()*T + m_V0_plus_u_M2_FullMoon + m_nM2_AB;
-        XS2 = m_S2_A.frequency()*T + m_V0_plus_u_S2_FullMoon + m_nS2_AB;
-        XK1 = m_K1_A.frequency()*T + m_V0_plus_u_K1_FullMoon + m_nK1_AB;
-        XO1 = m_O1_A.frequency()*T + m_V0_plus_u_O1_FullMoon + m_nO1_AB;
+        XM2 = m_M2_A.frequency()*T + m_V0_plus_u_M2_FullMoon - m_nM2_AB;
+        XS2 = m_S2_A.frequency()*T + m_V0_plus_u_S2_FullMoon - m_nS2_AB;
+        XK1 = m_K1_A.frequency()*T + m_V0_plus_u_K1_FullMoon - m_nK1_AB;
+        XO1 = m_O1_A.frequency()*T + m_V0_plus_u_O1_FullMoon - m_nO1_AB;
 
-        if (XM2 > 360.0){
-            XM2 -= qFloor(XM2/360.0)*360.0;
-        }
-        if (XM2 < 0.0){
-            XM2 += qFloor(qAbs(XM2/360.0))*360.0;
-        }
-
-        if (XS2 > 360.0){
-            XS2 -= qFloor(XS2/360.0)*360.0;
-        }
-        if (XS2 < 0.0){
-            XS2 += qFloor(qAbs(XS2/360.0))*360.0;
-        }
-
-        if (XK1 > 360.0){
-            XK1 -= qFloor(XK1/360.0)*360.0;
-        }
-        if (XK1 < 0.0){
-            XK1 += qFloor(qAbs(XK1/360.0))*360.0;
-        }
-
-        if (XO1 > 360.0){
-            XO1 -= qFloor(XO1/360.0)*360.0;
-        }
-        if (XO1 < 0.0){
-            XO1 += qFloor(qAbs(XO1/360.0))*360.0;
-        }
+        findAngle(XM2);
+        findAngle(XS2);
+        findAngle(XK1);
+        findAngle(XO1);
 
         double delta_h = m_LM2_AB_FullMoon*qCos(qDegreesToRadians(XM2)) + m_LS2_AB_FullMoon*qCos(qDegreesToRadians(XS2))
                 + m_LK1_AB_FullMoon*qCos(qDegreesToRadians(XK1)) + m_LO1_AB_FullMoon*qCos(qDegreesToRadians(XO1));
@@ -513,38 +442,15 @@ void AlcanceLimiteWindow::determineHmaxAndHmin_AB_FullMoon()
 
 void AlcanceLimiteWindow::determineHmaxAndHmin_BA_FullMoon()
 {
-    double XM2 = m_V0_plus_u_M2_FullMoon + m_nM2_BA;
-    double XS2 = m_V0_plus_u_S2_FullMoon + m_nS2_BA;
-    double XK1 = m_V0_plus_u_K1_FullMoon + m_nK1_BA;
-    double XO1 = m_V0_plus_u_O1_FullMoon + m_nO1_BA;
+    double XM2 = m_V0_plus_u_M2_FullMoon - m_nM2_BA;
+    double XS2 = m_V0_plus_u_S2_FullMoon - m_nS2_BA;
+    double XK1 = m_V0_plus_u_K1_FullMoon - m_nK1_BA;
+    double XO1 = m_V0_plus_u_O1_FullMoon - m_nO1_BA;
 
-    if (XM2 > 360.0){
-        XM2 -= qFloor(XM2/360.0)*360.0;
-    }
-    if (XM2 < 0.0){
-        XM2 += qFloor(qAbs(XM2/360.0))*360.0;
-    }
-
-    if (XS2 > 360.0){
-        XS2 -= qFloor(XS2/360.0)*360.0;
-    }
-    if (XS2 < 0.0){
-        XS2 += qFloor(qAbs(XS2/360.0))*360.0;
-    }
-
-    if (XK1 > 360.0){
-        XK1 -= qFloor(XK1/360.0)*360.0;
-    }
-    if (XK1 < 0.0){
-        XK1 += qFloor(qAbs(XK1/360.0))*360.0;
-    }
-
-    if (XO1 > 360.0){
-        XO1 -= qFloor(XO1/360.0)*360.0;
-    }
-    if (XO1 < 0.0){
-        XO1 += qFloor(qAbs(XO1/360.0))*360.0;
-    }
+    findAngle(XM2);
+    findAngle(XS2);
+    findAngle(XK1);
+    findAngle(XO1);
 
     m_hmin_BA_FullMoon = m_LM2_BA_FullMoon*qCos(qDegreesToRadians(XM2)) + m_LS2_BA_FullMoon*qCos(qDegreesToRadians(XS2))
             + m_LK1_BA_FullMoon*qCos(qDegreesToRadians(XK1)) + m_LO1_BA_FullMoon*qCos(qDegreesToRadians(XO1));
@@ -554,38 +460,15 @@ void AlcanceLimiteWindow::determineHmaxAndHmin_BA_FullMoon()
     double T = 1.0/60.0;
 
     while (T <= 26.0){
-        XM2 = m_M2_B.frequency()*T + m_V0_plus_u_M2_FullMoon + m_nM2_BA;
-        XS2 = m_S2_B.frequency()*T + m_V0_plus_u_S2_FullMoon + m_nS2_BA;
-        XK1 = m_K1_B.frequency()*T + m_V0_plus_u_K1_FullMoon + m_nK1_BA;
-        XO1 = m_O1_B.frequency()*T + m_V0_plus_u_O1_FullMoon + m_nO1_BA;
+        XM2 = m_M2_B.frequency()*T + m_V0_plus_u_M2_FullMoon - m_nM2_BA;
+        XS2 = m_S2_B.frequency()*T + m_V0_plus_u_S2_FullMoon - m_nS2_BA;
+        XK1 = m_K1_B.frequency()*T + m_V0_plus_u_K1_FullMoon - m_nK1_BA;
+        XO1 = m_O1_B.frequency()*T + m_V0_plus_u_O1_FullMoon - m_nO1_BA;
 
-        if (XM2 > 360.0){
-            XM2 -= qFloor(XM2/360.0)*360.0;
-        }
-        if (XM2 < 0.0){
-            XM2 += qFloor(qAbs(XM2/360.0))*360.0;
-        }
-
-        if (XS2 > 360.0){
-            XS2 -= qFloor(XS2/360.0)*360.0;
-        }
-        if (XS2 < 0.0){
-            XS2 += qFloor(qAbs(XS2/360.0))*360.0;
-        }
-
-        if (XK1 > 360.0){
-            XK1 -= qFloor(XK1/360.0)*360.0;
-        }
-        if (XK1 < 0.0){
-            XK1 += qFloor(qAbs(XK1/360.0))*360.0;
-        }
-
-        if (XO1 > 360.0){
-            XO1 -= qFloor(XO1/360.0)*360.0;
-        }
-        if (XO1 < 0.0){
-            XO1 += qFloor(qAbs(XO1/360.0))*360.0;
-        }
+        findAngle(XM2);
+        findAngle(XS2);
+        findAngle(XK1);
+        findAngle(XO1);
 
         double delta_h = m_LM2_BA_FullMoon*qCos(qDegreesToRadians(XM2)) + m_LS2_BA_FullMoon*qCos(qDegreesToRadians(XS2))
                 + m_LK1_BA_FullMoon*qCos(qDegreesToRadians(XK1)) + m_LO1_BA_FullMoon*qCos(qDegreesToRadians(XO1));
@@ -613,9 +496,9 @@ void AlcanceLimiteWindow::calcularAlcance_A_FullMoon()
     double aux_h_extr_min = m_hmin_AB_FullMoon + delta_L;
 
     if (qAbs(aux_h_extr_max) >= qAbs(aux_h_extr_min)){
-        m_alcance_A_FullMoon = (m_prof_prec*m_distance_AB)/aux_h_extr_max;
+        m_alcance_A_FullMoon = (m_prof_prec*m_distance_AB)/qAbs(aux_h_extr_max);
     }else{
-        m_alcance_A_FullMoon = (m_prof_prec*m_distance_AB)/aux_h_extr_min;
+        m_alcance_A_FullMoon = (m_prof_prec*m_distance_AB)/qAbs(aux_h_extr_min);
     }
 }
 
@@ -635,9 +518,9 @@ void AlcanceLimiteWindow::calcularAlcance_B_FullMoon()
     double aux_h_extr_min = m_hmin_BA_FullMoon + delta_L;
 
     if (qAbs(aux_h_extr_max) >= qAbs(aux_h_extr_min)){
-        m_alcance_B_FullMoon = (m_prof_prec*m_distance_AB)/aux_h_extr_max;
+        m_alcance_B_FullMoon = (m_prof_prec*m_distance_AB)/qAbs(aux_h_extr_max);
     }else{
-        m_alcance_B_FullMoon = (m_prof_prec*m_distance_AB)/aux_h_extr_min;
+        m_alcance_B_FullMoon = (m_prof_prec*m_distance_AB)/qAbs(aux_h_extr_min);
     }
 }
 
@@ -657,45 +540,25 @@ void AlcanceLimiteWindow::determineH0S0P0_MayorMoonDec()
     m_p0_MayorMoonDec = 334.329556 + 0.1114040803*Dh;
 
     //H0
-    if (m_h0_MayorMoonDec > 360.0){
-        m_h0_MayorMoonDec -= qFloor(m_h0_MayorMoonDec/360.0)*360.0;
-    }
-    if (m_h0_MayorMoonDec < 0.0){
-        m_h0_MayorMoonDec += qFloor(qAbs(m_h0_MayorMoonDec/360.0))*360.0;
-    }
+    findAngle(m_h0_MayorMoonDec);
 
     //S0
-    if (m_s0_MayorMoonDec > 360.0){
-        m_s0_MayorMoonDec -= qFloor(m_s0_MayorMoonDec/360.0)*360.0;
-    }
-    if (m_s0_MayorMoonDec < 0.0){
-        m_s0_MayorMoonDec += qFloor(qAbs(m_s0_MayorMoonDec/360.0))*360.0;
-    }
+    findAngle(m_s0_MayorMoonDec);
 
     //P0
-    if (m_p0_MayorMoonDec > 360.0){
-        m_p0_MayorMoonDec -= qFloor(m_p0_MayorMoonDec/360.0)*360.0;
-    }
-    if (m_p0_MayorMoonDec < 0.0){
-        m_p0_MayorMoonDec += qFloor(qAbs(m_p0_MayorMoonDec/360.0))*360.0;
-    }
+    findAngle(m_p0_MayorMoonDec);
 }
 
 void AlcanceLimiteWindow::determineN_MayorMoonDec()
 {
-    QDate epoch_date(1,1,1900);
+    QDate epoch_date(1900,1,1);
     QDate MayorMoonDecDate(ui->mayorDeclinacionDateEdit->date());
 
     quint64 julianDaysNumber = MayorMoonDecDate.toJulianDay() - epoch_date.toJulianDay();
 
     m_N_MayorMoonDec = 259.183275 - 0.0529539222*julianDaysNumber;
 
-    if (m_N_MayorMoonDec > 360.0){
-        m_N_MayorMoonDec -= qFloor(m_N_MayorMoonDec/360.0)*360.0;
-    }
-    if (m_N_MayorMoonDec < 0.0){
-        m_N_MayorMoonDec += qFloor(qAbs(m_N_MayorMoonDec/360.0))*360.0;
-    }
+   findAngle(m_N_MayorMoonDec);
 }
 
 void AlcanceLimiteWindow::determineNodalFactor_MayorMoonDec()
@@ -737,26 +600,9 @@ void AlcanceLimiteWindow::determineVoplusU_MayorMoonDec()
 
     m_V0_plus_u_O1_MayorMoonDec = m_h0_MayorMoonDec - 2*m_s0_MayorMoonDec + 2*m_ep_MayorMoonDec - m_v_MayorMoonDec + 270.0;
 
-    if (m_V0_plus_u_M2_MayorMoonDec > 360.0){
-        m_V0_plus_u_M2_MayorMoonDec -= qFloor(m_V0_plus_u_M2_MayorMoonDec/360.0)*360.0;
-    }
-    if (m_V0_plus_u_M2_MayorMoonDec < 0.0){
-        m_V0_plus_u_M2_MayorMoonDec += qFloor(qAbs(m_V0_plus_u_M2_MayorMoonDec/360.0))*360.0;
-    }
-
-    if (m_V0_plus_u_K1_MayorMoonDec > 360.0){
-        m_V0_plus_u_K1_MayorMoonDec -= qFloor(m_V0_plus_u_K1_MayorMoonDec/360.0)*360.0;
-    }
-    if (m_V0_plus_u_K1_MayorMoonDec < 0.0){
-        m_V0_plus_u_K1_MayorMoonDec += qFloor(qAbs(m_V0_plus_u_K1_MayorMoonDec/360.0))*360.0;
-    }
-
-    if (m_V0_plus_u_O1_MayorMoonDec > 360.0){
-        m_V0_plus_u_O1_MayorMoonDec -= qFloor(m_V0_plus_u_O1_MayorMoonDec/360.0)*360.0;
-    }
-    if (m_V0_plus_u_O1_MayorMoonDec < 0.0){
-        m_V0_plus_u_O1_MayorMoonDec += qFloor(qAbs(m_V0_plus_u_O1_MayorMoonDec/360.0))*360.0;
-    }
+    findAngle(m_V0_plus_u_M2_MayorMoonDec);
+    findAngle(m_V0_plus_u_K1_MayorMoonDec);
+    findAngle(m_V0_plus_u_O1_MayorMoonDec);
 }
 
 void AlcanceLimiteWindow::determineLValues_AB_MayorMoonDec()
@@ -787,38 +633,15 @@ void AlcanceLimiteWindow::determineLValues_BA_MayorMoonDec()
 
 void AlcanceLimiteWindow::determineHmaxAndHmin_AB_MayorMoonDec()
 {
-    double XM2 = m_V0_plus_u_M2_MayorMoonDec + m_nM2_AB;
-    double XS2 = m_V0_plus_u_S2_MayorMoonDec + m_nS2_AB;
-    double XK1 = m_V0_plus_u_K1_MayorMoonDec + m_nK1_AB;
-    double XO1 = m_V0_plus_u_O1_MayorMoonDec + m_nO1_AB;
+    double XM2 = m_V0_plus_u_M2_MayorMoonDec - m_nM2_AB;
+    double XS2 = m_V0_plus_u_S2_MayorMoonDec - m_nS2_AB;
+    double XK1 = m_V0_plus_u_K1_MayorMoonDec - m_nK1_AB;
+    double XO1 = m_V0_plus_u_O1_MayorMoonDec - m_nO1_AB;
 
-    if (XM2 > 360.0){
-        XM2 -= qFloor(XM2/360.0)*360.0;
-    }
-    if (XM2 < 0.0){
-        XM2 += qFloor(qAbs(XM2/360.0))*360.0;
-    }
-
-    if (XS2 > 360.0){
-        XS2 -= qFloor(XS2/360.0)*360.0;
-    }
-    if (XS2 < 0.0){
-        XS2 += qFloor(qAbs(XS2/360.0))*360.0;
-    }
-
-    if (XK1 > 360.0){
-        XK1 -= qFloor(XK1/360.0)*360.0;
-    }
-    if (XK1 < 0.0){
-        XK1 += qFloor(qAbs(XK1/360.0))*360.0;
-    }
-
-    if (XO1 > 360.0){
-        XO1 -= qFloor(XO1/360.0)*360.0;
-    }
-    if (XO1 < 0.0){
-        XO1 += qFloor(qAbs(XO1/360.0))*360.0;
-    }
+    findAngle(XM2);
+    findAngle(XS2);
+    findAngle(XK1);
+    findAngle(XO1);
 
     m_hmin_AB_MayorMoonDec = m_LM2_AB_MayorMoonDec*qCos(qDegreesToRadians(XM2)) + m_LS2_AB_MayorMoonDec*qCos(qDegreesToRadians(XS2))
             + m_LK1_AB_MayorMoonDec*qCos(qDegreesToRadians(XK1)) + m_LO1_AB_MayorMoonDec*qCos(qDegreesToRadians(XO1));
@@ -828,38 +651,15 @@ void AlcanceLimiteWindow::determineHmaxAndHmin_AB_MayorMoonDec()
     double T = 1.0/60.0;
 
     while (T <= 26.0){
-        XM2 = m_M2_A.frequency()*T + m_V0_plus_u_M2_MayorMoonDec + m_nM2_AB;
-        XS2 = m_S2_A.frequency()*T + m_V0_plus_u_S2_MayorMoonDec+ m_nS2_AB;
-        XK1 = m_K1_A.frequency()*T + m_V0_plus_u_K1_MayorMoonDec + m_nK1_AB;
-        XO1 = m_O1_A.frequency()*T + m_V0_plus_u_O1_MayorMoonDec + m_nO1_AB;
+        XM2 = m_M2_A.frequency()*T + m_V0_plus_u_M2_MayorMoonDec - m_nM2_AB;
+        XS2 = m_S2_A.frequency()*T + m_V0_plus_u_S2_MayorMoonDec - m_nS2_AB;
+        XK1 = m_K1_A.frequency()*T + m_V0_plus_u_K1_MayorMoonDec - m_nK1_AB;
+        XO1 = m_O1_A.frequency()*T + m_V0_plus_u_O1_MayorMoonDec - m_nO1_AB;
 
-        if (XM2 > 360.0){
-            XM2 -= qFloor(XM2/360.0)*360.0;
-        }
-        if (XM2 < 0.0){
-            XM2 += qFloor(qAbs(XM2/360.0))*360.0;
-        }
-
-        if (XS2 > 360.0){
-            XS2 -= qFloor(XS2/360.0)*360.0;
-        }
-        if (XS2 < 0.0){
-            XS2 += qFloor(qAbs(XS2/360.0))*360.0;
-        }
-
-        if (XK1 > 360.0){
-            XK1 -= qFloor(XK1/360.0)*360.0;
-        }
-        if (XK1 < 0.0){
-            XK1 += qFloor(qAbs(XK1/360.0))*360.0;
-        }
-
-        if (XO1 > 360.0){
-            XO1 -= qFloor(XO1/360.0)*360.0;
-        }
-        if (XO1 < 0.0){
-            XO1 += qFloor(qAbs(XO1/360.0))*360.0;
-        }
+        findAngle(XM2);
+        findAngle(XS2);
+        findAngle(XK1);
+        findAngle(XO1);
 
         double delta_h =m_LM2_AB_MayorMoonDec*qCos(qDegreesToRadians(XM2)) + m_LS2_AB_MayorMoonDec*qCos(qDegreesToRadians(XS2))
                 + m_LK1_AB_MayorMoonDec*qCos(qDegreesToRadians(XK1)) + m_LO1_AB_MayorMoonDec*qCos(qDegreesToRadians(XO1));
@@ -874,38 +674,15 @@ void AlcanceLimiteWindow::determineHmaxAndHmin_AB_MayorMoonDec()
 
 void AlcanceLimiteWindow::determineHmaxAndHmin_BA_MayorMoonDec()
 {
-    double XM2 = m_V0_plus_u_M2_MayorMoonDec + m_nM2_BA;
-    double XS2 = m_V0_plus_u_S2_MayorMoonDec + m_nS2_BA;
-    double XK1 = m_V0_plus_u_K1_MayorMoonDec + m_nK1_BA;
-    double XO1 = m_V0_plus_u_O1_MayorMoonDec + m_nO1_BA;
+    double XM2 = m_V0_plus_u_M2_MayorMoonDec - m_nM2_BA;
+    double XS2 = m_V0_plus_u_S2_MayorMoonDec - m_nS2_BA;
+    double XK1 = m_V0_plus_u_K1_MayorMoonDec - m_nK1_BA;
+    double XO1 = m_V0_plus_u_O1_MayorMoonDec - m_nO1_BA;
 
-    if (XM2 > 360.0){
-        XM2 -= qFloor(XM2/360.0)*360.0;
-    }
-    if (XM2 < 0.0){
-        XM2 += qFloor(qAbs(XM2/360.0))*360.0;
-    }
-
-    if (XS2 > 360.0){
-        XS2 -= qFloor(XS2/360.0)*360.0;
-    }
-    if (XS2 < 0.0){
-        XS2 += qFloor(qAbs(XS2/360.0))*360.0;
-    }
-
-    if (XK1 > 360.0){
-        XK1 -= qFloor(XK1/360.0)*360.0;
-    }
-    if (XK1 < 0.0){
-        XK1 += qFloor(qAbs(XK1/360.0))*360.0;
-    }
-
-    if (XO1 > 360.0){
-        XO1 -= qFloor(XO1/360.0)*360.0;
-    }
-    if (XO1 < 0.0){
-        XO1 += qFloor(qAbs(XO1/360.0))*360.0;
-    }
+    findAngle(XM2);
+    findAngle(XS2);
+    findAngle(XK1);
+    findAngle(XO1);
 
     m_hmin_BA_MayorMoonDec = m_LM2_BA_MayorMoonDec*qCos(qDegreesToRadians(XM2)) + m_LS2_BA_MayorMoonDec*qCos(qDegreesToRadians(XS2))
             + m_LK1_BA_MayorMoonDec*qCos(qDegreesToRadians(XK1)) + m_LO1_BA_MayorMoonDec*qCos(qDegreesToRadians(XO1));
@@ -914,38 +691,15 @@ void AlcanceLimiteWindow::determineHmaxAndHmin_BA_MayorMoonDec()
     double T = 1.0/60.0;
 
     while (T <= 26.0){
-        XM2 = m_M2_B.frequency()*T + m_V0_plus_u_M2_MayorMoonDec + m_nM2_BA;
-        XS2 = m_S2_B.frequency()*T + m_V0_plus_u_S2_MayorMoonDec+ m_nS2_BA;
-        XK1 = m_K1_B.frequency()*T + m_V0_plus_u_K1_MayorMoonDec + m_nK1_BA;
-        XO1 = m_O1_B.frequency()*T + m_V0_plus_u_O1_MayorMoonDec + m_nO1_BA;
+        XM2 = m_M2_B.frequency()*T + m_V0_plus_u_M2_MayorMoonDec - m_nM2_BA;
+        XS2 = m_S2_B.frequency()*T + m_V0_plus_u_S2_MayorMoonDec - m_nS2_BA;
+        XK1 = m_K1_B.frequency()*T + m_V0_plus_u_K1_MayorMoonDec - m_nK1_BA;
+        XO1 = m_O1_B.frequency()*T + m_V0_plus_u_O1_MayorMoonDec - m_nO1_BA;
 
-        if (XM2 > 360.0){
-            XM2 -= qFloor(XM2/360.0)*360.0;
-        }
-        if (XM2 < 0.0){
-            XM2 += qFloor(qAbs(XM2/360.0))*360.0;
-        }
-
-        if (XS2 > 360.0){
-            XS2 -= qFloor(XS2/360.0)*360.0;
-        }
-        if (XS2 < 0.0){
-            XS2 += qFloor(qAbs(XS2/360.0))*360.0;
-        }
-
-        if (XK1 > 360.0){
-            XK1 -= qFloor(XK1/360.0)*360.0;
-        }
-        if (XK1 < 0.0){
-            XK1 += qFloor(qAbs(XK1/360.0))*360.0;
-        }
-
-        if (XO1 > 360.0){
-            XO1 -= qFloor(XO1/360.0)*360.0;
-        }
-        if (XO1 < 0.0){
-            XO1 += qFloor(qAbs(XO1/360.0))*360.0;
-        }
+        findAngle(XM2);
+        findAngle(XS2);
+        findAngle(XK1);
+        findAngle(XO1);
 
         double delta_h = m_LM2_BA_MayorMoonDec*qCos(qDegreesToRadians(XM2)) + m_LS2_BA_MayorMoonDec*qCos(qDegreesToRadians(XS2))
                 + m_LK1_BA_MayorMoonDec*qCos(qDegreesToRadians(XK1)) + m_LO1_BA_MayorMoonDec*qCos(qDegreesToRadians(XO1));
@@ -973,9 +727,9 @@ void AlcanceLimiteWindow::calcularAlcance_A_MayorMoonDec()
     double aux_h_extr_min = m_hmin_AB_MayorMoonDec + delta_L;
 
     if (qAbs(aux_h_extr_max) >= qAbs(aux_h_extr_min)){
-        m_alcance_A_MayorMoonDec = (m_prof_prec*m_distance_AB)/aux_h_extr_max;
+        m_alcance_A_MayorMoonDec = (m_prof_prec*m_distance_AB)/qAbs(aux_h_extr_max);
     }else{
-        m_alcance_A_MayorMoonDec = (m_prof_prec*m_distance_AB)/aux_h_extr_min;
+        m_alcance_A_MayorMoonDec = (m_prof_prec*m_distance_AB)/qAbs(aux_h_extr_min);
     }
 }
 
@@ -995,9 +749,9 @@ void AlcanceLimiteWindow::calcularAlcance_B_MayorMoonDec()
     double aux_h_extr_min = m_hmin_BA_MayorMoonDec + delta_L;
 
     if (qAbs(aux_h_extr_max) >= qAbs(aux_h_extr_min)){
-        m_alcance_B_MayorMoonDec = (m_prof_prec*m_distance_AB)/aux_h_extr_max;
+        m_alcance_B_MayorMoonDec = (m_prof_prec*m_distance_AB)/qAbs(aux_h_extr_max);
     }else{
-        m_alcance_B_MayorMoonDec = (m_prof_prec*m_distance_AB)/aux_h_extr_min;
+        m_alcance_B_MayorMoonDec = (m_prof_prec*m_distance_AB)/qAbs(aux_h_extr_min);
     }
 }
 

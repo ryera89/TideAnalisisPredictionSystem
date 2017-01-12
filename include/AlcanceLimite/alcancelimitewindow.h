@@ -192,5 +192,7 @@ private:
 
      void computeDistanceFromCoordinates();
 
+     void findAngle(double &angle);
+
 };
 #endif // ALCANCELIMITEWINDOW_H
