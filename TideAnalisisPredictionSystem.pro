@@ -88,7 +88,8 @@ SOURCES += main.cpp\
     include/FilterFacilities/FilterDialog/filtersdialog.cpp \
     include/AverageDialog/averagedialog.cpp \
     include/AlcanceLimite/alcancelimitewindow.cpp \
-    include/HarmonicConstantsModule/HarmonicConstantClass/doodsonnumbers.cpp
+    include/HarmonicConstantsModule/HarmonicConstantClass/doodsonnumbers.cpp \
+    include/HarmonicConstantsModule/HarmonicConstantClass/astronomicalmeanlongitudes.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -167,7 +168,8 @@ HEADERS  += \
     include/FilterFacilities/FilterDialog/filtersdialog.h \
     include/AverageDialog/averagedialog.h \
     include/AlcanceLimite/alcancelimitewindow.h \
-    include/HarmonicConstantsModule/HarmonicConstantClass/doodsonnumbers.h
+    include/HarmonicConstantsModule/HarmonicConstantClass/doodsonnumbers.h \
+    include/HarmonicConstantsModule/HarmonicConstantClass/astronomicalmeanlongitudes.h
 
 RC_ICONS = aquarius-48.ico
 
