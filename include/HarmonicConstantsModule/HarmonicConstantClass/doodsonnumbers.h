@@ -34,5 +34,13 @@ private:
     int m_d6;
     int m_extended;
 };
+inline bool operator ==(const DoodsonNumbers &doodson1, const DoodsonNumbers &doodson2){
+    return (doodson1.D1() == doodson2.D1() && doodson1.D2() == doodson2.D2() && doodson1.D3() == doodson2.D3()
+            && doodson1.D4() == doodson2.D4() && doodson1.D5() == doodson2.D5() && doodson1.D6() == doodson2.D6()
+            && doodson1.Extended() == doodson2.Extended());
+}
+inline bool operator !=(const DoodsonNumbers &doodson1, const DoodsonNumbers &doodson2){
+    return !(doodson1 == doodson2);
+}
 
 #endif // DOODSONNUMBERS_H

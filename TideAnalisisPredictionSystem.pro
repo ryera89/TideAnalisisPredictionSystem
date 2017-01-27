@@ -169,7 +169,8 @@ HEADERS  += \
     include/AverageDialog/averagedialog.h \
     include/AlcanceLimite/alcancelimitewindow.h \
     include/HarmonicConstantsModule/HarmonicConstantClass/doodsonnumbers.h \
-    include/HarmonicConstantsModule/HarmonicConstantClass/astronomicalmeanlongitudes.h
+    include/HarmonicConstantsModule/HarmonicConstantClass/astronomicalmeanlongitudes.h \
+    include/HarmonicConstantsModule/HarmonicConstantClass/nodalfactorformulas.h
 
 RC_ICONS = aquarius-48.ico
 

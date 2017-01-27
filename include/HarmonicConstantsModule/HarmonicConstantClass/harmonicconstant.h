@@ -2,13 +2,14 @@
 #define HARMONICCONSTANT_H
 
 #include <QString>
+#include "doodsonnumbers.h"
 
 class HarmonicConstant
 {
 public:
     HarmonicConstant();
-    HarmonicConstant(const QString &name, const double &frequency, const QString &description);
-    HarmonicConstant(const QString &name, const double &frequency, const QString &description, const double &C, const double &S);
+    HarmonicConstant(const QString &name, const double &frequency, const QString &description, const DoodsonNumbers &doodsonNumber);
+    HarmonicConstant(const QString &name, const double &frequency, const QString &description, const double &C, const double &S, const DoodsonNumbers &doodsonNumber);
 
     void setDescription(const QString &description){m_description = description;}
     void setName(const QString &name){m_name = name;}
@@ -34,6 +35,8 @@ private:
     double m_S;   //componente que se multiplica con los senos
     double m_amplitud;
     double m_phase;
+
+    DoodsonNumbers m_doodsonNumber;
 
 };
 
