@@ -25,7 +25,7 @@ class FreqEditor;
 class NonHarmonicCalcDialog;
 
 
-//NOTE: el analisis armonico se hace con la horas respecto al inicio del year
+//El analisis armonico se hace con la horas respecto al inicio del year
 
 class SPMmainWindow : public QMainWindow
 {
@@ -59,7 +59,7 @@ private slots:
 
     //void beginDataRecieve(const QVector<TidesMeasurement> &datos);
     void createHarmonicAnalisisDialog();
-    void createFrequencyEditor();
+    //void createFrequencyEditor();
 
     void createSamplingDilalog();
     void loadSampledData();
@@ -72,7 +72,7 @@ private slots:
 
     void createAlcanceLimiteWindow(); //Inrterfaz para el calculo del alcance limite
 
-    bool saveFrequencyFile();
+    //bool saveFrequencyFile();
     void harmonicAnalisis();
     void harmonicAnalisisWithAllData();
     void harmonicAnalisisWithCustomData();
@@ -101,7 +101,7 @@ protected slots:
     void beginDataExtrationFromFile();
     void appendImportedData();
 
-    bool writeFrequencyFile(const QString &filePath);
+    //bool writeFrequencyFile(const QString &filePath);
     bool saveAnalisisData();
 
     //void gettingData(const QVector<QStringList> &data, int dateField, int timeField, int heightField);
@@ -123,7 +123,7 @@ private:
      MetaDataDialog *m_projectMetaDataDialog;
      SchemeWidget *m_schemeWidget;
      NonHarmonicCalcDialog *m_nonHarmonicConstantDialog;
-     FreqEditor *m_frequencyEditor;
+     //FreqEditor *m_frequencyEditor;
      NivelacionAcuaticaWidget *m_nivelacionAcuaticaWidget;
      SamplingDialog *m_samplingDialog;
      FiltersDialog *m_filterDialog;
@@ -178,7 +178,7 @@ private:
      QAction *m_nonHarmonicAnalisisAction;
 
      //Tools Actions------------------------------------------------------------------------
-     QAction *m_freqEditorAction;
+     //QAction *m_freqEditorAction;
      QAction *m_nivelacionAcuaticaAction;
      QAction *m_alcanceLimiteAction;
 
@@ -227,10 +227,11 @@ private:
 
 
      bool createHarmonicAnalisisDialogFromConfigFile();
-     bool loadHarmonicConstantsFromFile();
+     //bool loadHarmonicConstantsFromFile();
      //static void setSelectectedHarmonicConstants();
      bool saveAnalisisDataToFile(const QString &filePath);
      void saveHarmonicConstants(const QString &filePath);
+     void harmonicConstantSet();
 
 };
 

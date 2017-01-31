@@ -52,9 +52,6 @@ SOURCES += main.cpp\
     include/HarmonicConstantsModule/tidalschemeselectionwidget.cpp \
     mainwindow.cpp \
     include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.cpp \
-    include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytablemodel.cpp \
-    include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytabledelegate.cpp \
-    include/HarmonicConstantsModule/FrequencyEditor/freqeditor.cpp \
     include/EditionComponents/myheader.cpp \
     include/HarmonicConstantsModule/Model_View/harmonicconstantfulltablemodel.cpp \
     include/maths/minimoscuadradosbookcopy.cpp \
@@ -131,9 +128,6 @@ HEADERS  += \
     include/HarmonicConstantsModule/tidalschemeselectionwidget.h \
     mainwindow.h \
     include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h \
-    include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytablemodel.h \
-    include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytabledelegate.h \
-    include/HarmonicConstantsModule/FrequencyEditor/freqeditor.h \
     include/EditionComponents/myheader.h \
     include/HarmonicConstantsModule/Model_View/harmonicconstantfulltablemodel.h \
     include/maths/minimoscuadradosbookcopy.h \

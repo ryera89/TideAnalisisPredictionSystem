@@ -40,7 +40,7 @@ void TidalData::findMeasurementDates()
     }
 }
 
-//NOTE: para data ordenada cronologicamnete
+//Para data ordenada cronologicamnete
 //WARNING: puede exitir un Bug en el break;
 void TidalData::settingUpData()
 {
