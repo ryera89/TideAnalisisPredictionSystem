@@ -19,6 +19,8 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
 {
     m_central = new CentralWidget(this);
 
+    m_metadataStorage.setTimeZoneOffSet(-5); //Zona Horaria de Cuba UTC-05:00
+
     m_loadDialog = Q_NULLPTR;
     m_tablaHorariaWidget = Q_NULLPTR;
     m_manualDataIntroductionWidget = Q_NULLPTR;
@@ -181,6 +183,9 @@ void SPMmainWindow::updateMetaData()
     m_metadataStorage.setLongitud(m_projectMetaDataDialog->longitud());
     m_metadataStorage.setEquipmentID(m_projectMetaDataDialog->equipmentId());
 
+    m_metadataStorage.setTimeZoneOffSet(m_projectMetaDataDialog->timeZoneOffset());
+    m_metadataStorage.setDayLightTimeSaving(m_projectMetaDataDialog->isDaylightTimeSaving());
+
     m_projectMetaDataDialog->close();
 }
 
@@ -326,7 +331,6 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
      //Para Variante 1
     //int year = m_central->tableModel()->measurementData().first().measurementDate().year();
     //QDateTime yearBegin(QDate(year,1,1),QTime(0,0),Qt::UTC);
-    //
 
     valarray<double> timeValarray(m_central->tableModel()->measurementData().size());
     valarray<double> levelValarray(m_central->tableModel()->measurementData().size());
@@ -509,10 +513,7 @@ void SPMmainWindow::harmonicAnalisis()
         qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     }
 
-    QDateTime begin =  m_central->tableModel()->measurementData().first().measurementDateTime();
-    QDateTime end =  m_central->tableModel()->measurementData().last().measurementDateTime();
-
-    applyCorrectionsToHarmonicConstants(begin,end,QTimeZone::StandardTime, SPMmainWindow::m_selectedHarmonicConstantVector);
+    applyCorrectionsToHarmonicConstants();
 
     m_schemeWidget->setHarmonicConstantModelData(SPMmainWindow::m_selectedHarmonicConstantVector);
 
@@ -721,6 +722,9 @@ void SPMmainWindow::beginDataExtration()
     m_metadataStorage.setLongitud(m_manualDataIntroductionWidget->longitud());
     m_metadataStorage.setEquipmentID(m_manualDataIntroductionWidget->equipmentID());
 
+    m_metadataStorage.setTimeZoneOffSet(m_manualDataIntroductionWidget->timeZoneOffset());
+    m_metadataStorage.setDayLightTimeSaving(m_manualDataIntroductionWidget->isDaylightTimeSaving());
+
     m_central->tableModel()->setMeasurements(datos);
 
     m_manualDataIntroductionWidget->close();
@@ -728,6 +732,21 @@ void SPMmainWindow::beginDataExtration()
 
 void SPMmainWindow::appendManualDataToProject()
 {
+    m_metadataStorage.setProjectName(m_manualDataIntroductionWidget->projectName());
+    m_metadataStorage.setStationName(m_manualDataIntroductionWidget->stationName());
+    m_metadataStorage.setLocalizationName(m_manualDataIntroductionWidget->localizationName());
+    m_metadataStorage.setCeroPuesto(m_manualDataIntroductionWidget->ceroPuesto());
+    m_metadataStorage.setCeroUnits(m_manualDataIntroductionWidget->ceroUnit());
+    m_metadataStorage.setNivelReferencia(m_manualDataIntroductionWidget->nivelReferencia());
+    m_metadataStorage.setReferenceUnits(m_manualDataIntroductionWidget->referenceUnit());
+    m_metadataStorage.setLatitud(m_manualDataIntroductionWidget->latitud());
+    m_metadataStorage.setLongitud(m_manualDataIntroductionWidget->longitud());
+    m_metadataStorage.setEquipmentID(m_manualDataIntroductionWidget->equipmentID());
+
+    m_metadataStorage.setTimeZoneOffSet(m_manualDataIntroductionWidget->timeZoneOffset());
+    m_metadataStorage.setDayLightTimeSaving(m_manualDataIntroductionWidget->isDaylightTimeSaving());
+
+
     QVector<TidesMeasurement> datos;
 
     int size = m_manualDataIntroductionWidget->model()->measurementData().size();
@@ -786,6 +805,9 @@ void SPMmainWindow::beginDataExtrationFromFile()
     m_metadataStorage.setLongitud(m_loadDialog->longitud());
     m_metadataStorage.setEquipmentID(m_loadDialog->equipmentID());
 
+    m_metadataStorage.setTimeZoneOffSet(m_loadDialog->timeZoneOffset());
+    m_metadataStorage.setDayLightTimeSaving(m_loadDialog->isDaylightTimeSaving());
+
     m_central->tableModel()->setMeasurements(m_loadDialog->measurementsData());
 
     m_loadDialog->close();
@@ -793,6 +815,20 @@ void SPMmainWindow::beginDataExtrationFromFile()
 
 void SPMmainWindow::appendImportedData()
 {
+    m_metadataStorage.setProjectName(m_loadDialog->projectName());
+    m_metadataStorage.setStationName(m_loadDialog->stationName());
+    m_metadataStorage.setLocalizationName(m_loadDialog->localizationName());
+    m_metadataStorage.setCeroPuesto(m_loadDialog->ceroPuesto());
+    m_metadataStorage.setCeroUnits(m_loadDialog->ceroUnit());
+    m_metadataStorage.setNivelReferencia(m_loadDialog->nivelReferencia());
+    m_metadataStorage.setReferenceUnits(m_loadDialog->referenceUnit());
+    m_metadataStorage.setLatitud(m_loadDialog->latitud());
+    m_metadataStorage.setLongitud(m_loadDialog->longitud());
+    m_metadataStorage.setEquipmentID(m_loadDialog->equipmentID());
+
+    m_metadataStorage.setTimeZoneOffSet(m_loadDialog->timeZoneOffset());
+    m_metadataStorage.setDayLightTimeSaving(m_loadDialog->isDaylightTimeSaving());
+
     QVector<TidesMeasurement> datos(m_central->tableModel()->measurementData());
     QVector<TidesMeasurement> newData(m_loadDialog->measurementsData());
 
@@ -1509,33 +1545,76 @@ void SPMmainWindow::harmonicConstantSet()
 
 }
 
-void SPMmainWindow::applyCorrectionsToHarmonicConstants(QDateTime begin, QDateTime end,QTimeZone::TimeType timeType,QVector<HarmonicConstant> &hcVector)
+void SPMmainWindow::applyCorrectionsToHarmonicConstants()
 {
-    if (timeType == QTimeZone::DaylightTime){
+    QDateTime begin =  m_central->tableModel()->measurementData().first().measurementDateTime();
+    QDateTime end =  m_central->tableModel()->measurementData().last().measurementDateTime();
+
+    double longitud = m_metadataStorage.longitud();
+    int timeOffSet = m_metadataStorage.timeZoneOffset();
+    bool daylightsaving = m_metadataStorage.isDaylightTimeSaving();
+
+    for (int i = 0; i < m_selectedHarmonicConstantVector.size();++i){
+        findHarmonicConstantCorrectedPhase(begin,end,daylightsaving,m_selectedHarmonicConstantVector[i]);
+        findHarmonicConstantPhase(timeOffSet,longitud,m_selectedHarmonicConstantVector[i]);
+        findHarmonicConstantAmplitud(begin,end,daylightsaving,m_selectedHarmonicConstantVector[i]);
+    }
+}
+
+void SPMmainWindow::findHarmonicConstantCorrectedPhase(QDateTime begin, QDateTime end, bool DaylightTimeSaving, HarmonicConstant &hc)
+{
+    if (DaylightTimeSaving){
+    begin = begin.addSecs(-3600);
+    end = end.addSecs(-3600);
+    }
+
+    QDateTime midd = determineDataSerieMidPoint(begin,end);
+
+    AstronomicalMeanLongitudes middPoint(midd);
+    AstronomicalMeanLongitudes ceroPoint(begin);
+
+    double aux = V0_u(hc,ceroPoint,middPoint);
+
+    double k = hc.uncorrectedPhase() + aux;
+    determineAngleModulus(k);
+
+    hc.setCorrectedPhase(k);
+}
+
+void SPMmainWindow::findHarmonicConstantPhase(int timeOffset, double longitud, HarmonicConstant &hc)
+{
+    double cphase = hc.correctedPhase();
+
+    //Aqui la ecuacion es k = k' + a*S/15 - p*L
+    //L: longitud
+    //a: velocidad angular en grados/horas de la componente
+    //S: longitud del uso horario timeOffset = S/15
+    //En nuestro sistema West - y East + por lo que la ecuacion cambia de signo
+    timeOffset*=-1;
+    longitud*=-1.0;
+
+    double k = cphase + hc.frequency()*timeOffset - hc.doodsonNumbers().D1()*longitud;
+    determineAngleModulus(k);
+
+    hc.setPhase(k);
+
+}
+
+void SPMmainWindow::findHarmonicConstantAmplitud(QDateTime begin, QDateTime end, bool DaylightTimeSaving, HarmonicConstant &hc)
+{
+    if (DaylightTimeSaving){
     begin = begin.addSecs(-3600);
     end = end.addSecs(-3600);
     }
     QDateTime midd = determineDataSerieMidPoint(begin,end);
 
     AstronomicalMeanLongitudes middPoint(midd);
-    AstronomicalMeanLongitudes ceroPoint(begin);
 
-    std::cout << begin.toString("dd/MM/yyyy hh:mm").toStdString() << " " << midd.toString("dd/MM/yyyy hh:mm").toStdString()
-              << " " << end.toString("dd/MM/yyyy hh:mm").toStdString() << std::endl;
-    for (int i = 0; i < hcVector.size(); ++i){
-        double aux = V0_u(hcVector[i],ceroPoint,middPoint);
-        double f = NodalAmplitudeFactor(hcVector[i],middPoint);
+    double f = NodalAmplitudeFactor(hc,middPoint);
 
-        std::cout << hcVector[i].name().toStdString() << " " << "f = " << f << " V0 + u = " << aux << std::endl;
+    double H = hc.amplitud()/f;
 
-        double H = hcVector[i].amplitud()/f;
-
-        double k = hcVector[i].phase() + aux;
-        determineAngleModulus(k);
-
-        hcVector[i].setAmplitud(H);
-        hcVector[i].setPhase(k);
-    }
+    hc.setAmplitud(H);
 }
 
 

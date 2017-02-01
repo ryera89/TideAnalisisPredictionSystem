@@ -25,6 +25,9 @@ public:
     MeasurementUnitEditWidget::Units nivelReferenciaUnit() const;
     QString equipmentId() const;
 
+    int timeZoneOffset() const;
+    bool isDaylightTimeSaving() const;
+
 signals:
     void okButtonClicked(bool);
 

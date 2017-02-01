@@ -50,6 +50,9 @@ public:
     double longitud() const{return m_metaDataWidget->longitud();}
     QString equipmentID() const{return m_metaDataWidget->equipmentID();}
 
+    int timeZoneOffset() const{return m_metaDataWidget->timeZoneOffset();}
+    bool isDaylightTimeSaving() const{return m_metaDataWidget->isDaylightTimeSaving();}
+
     void setProjectMetaData(const ProjectMetaData &metadata);
 
 public slots:

@@ -20,6 +20,9 @@ MetaDataDialog::MetaDataDialog(const ProjectMetaData &data,QWidget *parent, Qt::
     m_metadata->setLongitud(data.longitud());
     m_metadata->setEquipmentID(data.equipmentID());
 
+    m_metadata->setTimeZoneOffset(data.timeZoneOffset());
+    m_metadata->setDaylightTimeSaving(data.isDaylightTimeSaving());
+
     this->setModal(true);
     this->setWindowIcon(QIcon(":images/project-info.png"));
     this->setAttribute(Qt::WA_DeleteOnClose);
@@ -73,6 +76,16 @@ MeasurementUnitEditWidget::Units MetaDataDialog::nivelReferenciaUnit() const
 QString MetaDataDialog::equipmentId() const
 {
     return m_metadata->equipmentID();
+}
+
+int MetaDataDialog::timeZoneOffset() const
+{
+    return m_metadata->timeZoneOffset();
+}
+
+bool MetaDataDialog::isDaylightTimeSaving() const
+{
+    return m_metadata->isDaylightTimeSaving();
 }
 
 void MetaDataDialog::createComponets()

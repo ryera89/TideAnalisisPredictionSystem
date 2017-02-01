@@ -14,12 +14,15 @@ public:
     ~TimeZoneSelection(){}
 
 
-    int hourOffset() const {return m_hourOffset;}
+    int timeZoneOffset() const {return m_hourOffset;}
     bool isDaylightTimeSaving() const {return m_DTS;}
+
+    void setTimeZone(int index);
+    void setTimeLightSaving(bool timeLightSaving);
 
 private slots:
     void setTimeZoneOffSet(int index);
-    void setDaylightTimeSaving(bool status);
+    void setDaylightTimeSaving(int status);
 
 private:
     QComboBox *m_timeZoneComboBox;

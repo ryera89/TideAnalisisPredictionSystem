@@ -233,8 +233,10 @@ private:
      void saveHarmonicConstants(const QString &filePath);
      void harmonicConstantSet();
 
-     void applyCorrectionsToHarmonicConstants(QDateTime begin,QDateTime end,QTimeZone::TimeType timeType,QVector<HarmonicConstant> &hcVector);
-
+     void applyCorrectionsToHarmonicConstants();
+     void findHarmonicConstantCorrectedPhase(QDateTime begin,QDateTime end,bool DaylightTimeSaving,HarmonicConstant &hc);
+     void findHarmonicConstantPhase(int timeOffset, double longitud, HarmonicConstant &hc);
+     void findHarmonicConstantAmplitud(QDateTime begin, QDateTime end, bool DaylightTimeSaving,HarmonicConstant &hc);
 };
 
 #endif // SPMMAINWINDOW_H

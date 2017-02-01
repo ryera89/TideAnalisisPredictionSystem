@@ -60,6 +60,16 @@ QString metaDataWidget::equipmentID() const
     return m_equipmentIdLineEdit->text();
 }
 
+int metaDataWidget::timeZoneOffset() const
+{
+    return m_timeZone->timeZoneOffset();
+}
+
+bool metaDataWidget::isDaylightTimeSaving() const
+{
+    return m_timeZone->isDaylightTimeSaving();
+}
+
 void metaDataWidget::setProjectName(const QString &str)
 {
     m_projectNameLineEdit->setText(str);
@@ -99,6 +109,95 @@ void metaDataWidget::setLongitud(double longitud)
 void metaDataWidget::setEquipmentID(const QString &str)
 {
     m_equipmentIdLineEdit->setText(str);
+}
+
+void metaDataWidget::setTimeZoneOffset(int timeOffset)
+{
+    switch (timeOffset) {
+    case -12:
+        m_timeZone->setTimeZone(0);
+        break;
+    case -11:
+        m_timeZone->setTimeZone(1);
+        break;
+    case -10:
+        m_timeZone->setTimeZone(2);
+        break;
+    case -9:
+        m_timeZone->setTimeZone(3);
+        break;
+    case -8:
+        m_timeZone->setTimeZone(4);
+        break;
+    case -7:
+        m_timeZone->setTimeZone(5);
+        break;
+    case -6:
+        m_timeZone->setTimeZone(6);
+        break;
+    case -5:
+        m_timeZone->setTimeZone(7);
+        break;
+    case -4:
+        m_timeZone->setTimeZone(8);
+        break;
+    case -3:
+        m_timeZone->setTimeZone(9);
+        break;
+    case -2:
+        m_timeZone->setTimeZone(10);
+        break;
+    case -1:
+        m_timeZone->setTimeZone(11);
+        break;
+    case 0:
+        m_timeZone->setTimeZone(12);
+        break;
+    case 1:
+        m_timeZone->setTimeZone(13);
+        break;
+    case 2:
+        m_timeZone->setTimeZone(14);
+        break;
+    case 3:
+        m_timeZone->setTimeZone(15);
+        break;
+    case 4:
+        m_timeZone->setTimeZone(16);
+        break;
+    case 5:
+        m_timeZone->setTimeZone(17);
+        break;
+    case 6:
+        m_timeZone->setTimeZone(18);
+        break;
+    case 7:
+        m_timeZone->setTimeZone(19);
+        break;
+    case 8:
+        m_timeZone->setTimeZone(20);
+        break;
+    case 9:
+        m_timeZone->setTimeZone(21);
+        break;
+    case 10:
+        m_timeZone->setTimeZone(22);
+        break;
+    case 11:
+        m_timeZone->setTimeZone(23);
+        break;
+    case 12:
+        m_timeZone->setTimeZone(24);
+        break;
+    default:
+        m_timeZone->setTimeZone(7);
+        break;
+    }
+}
+
+void metaDataWidget::setDaylightTimeSaving(bool daylightTimeSaving)
+{
+    m_timeZone->setTimeLightSaving(daylightTimeSaving);
 }
 
 void metaDataWidget::createComponents()

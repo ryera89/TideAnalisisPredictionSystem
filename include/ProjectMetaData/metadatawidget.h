@@ -27,6 +27,8 @@ public:
     double latitud() const;
     double longitud() const;
     QString equipmentID() const;
+    int timeZoneOffset() const;
+    bool isDaylightTimeSaving() const;
 
     void setProjectName(const QString &str);
     void setStationName(const QString &str);
@@ -36,6 +38,9 @@ public:
     void setLatitud(double);
     void setLongitud(double);
     void setEquipmentID(const QString &str);
+
+    void setTimeZoneOffset(int timeOffset);
+    void setDaylightTimeSaving(bool daylightTimeSaving);
 
 signals:
 

@@ -1,14 +1,18 @@
 #include "timezoneselection.h"
 #include <QHBoxLayout>
 #include <QtMath>
+
+#include <iostream>
 TimeZoneSelection::TimeZoneSelection(QWidget *parent):QFrame(parent)
 {
     m_timeZoneComboBox = new QComboBox;
     m_DTSCheckBox = new QCheckBox(tr("Horario de Verano"));
 
+    m_DTS = false;
+
     connect(m_timeZoneComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(setTimeZoneOffSet(int)));
 
-    connect(m_DTSCheckBox,SIGNAL(stateChanged(int)),this,SLOT(setDaylightTimeSaving(bool)));
+    connect(m_DTSCheckBox,SIGNAL(stateChanged(int)),this,SLOT(setDaylightTimeSaving(int)));
 
     QStringList strList;
     for (int i=-12; i <=12; ++i){
@@ -36,6 +40,16 @@ TimeZoneSelection::TimeZoneSelection(QWidget *parent):QFrame(parent)
 
     this->setLayout(lay);
     this->layout()->setMargin(0);
+}
+
+void TimeZoneSelection::setTimeZone(int index)
+{
+    m_timeZoneComboBox->setCurrentIndex(index);
+}
+
+void TimeZoneSelection::setTimeLightSaving(bool timeLightSaving)
+{
+    m_DTSCheckBox->setChecked(timeLightSaving);
 }
 
 void TimeZoneSelection::setTimeZoneOffSet(int index)
@@ -119,9 +133,14 @@ void TimeZoneSelection::setTimeZoneOffSet(int index)
     default:
         break;
     }
+
+    std::cout << "Offset " << m_hourOffset << std::endl;
 }
 
-void TimeZoneSelection::setDaylightTimeSaving(bool status)
+void TimeZoneSelection::setDaylightTimeSaving(int status)
 {
     m_DTS = status;
+
+    std::cout << status << std::endl;
+    std::cout << m_DTS << std::endl;
 }

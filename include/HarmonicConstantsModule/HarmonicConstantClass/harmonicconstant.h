@@ -43,6 +43,7 @@ public:
     void setComponentValues(const double &C,const double &S);
     void setAmplitud(const double &amp){m_amplitud = amp;}
     void setPhase(const double &fase){m_phase = fase;}
+    void setCorrectedPhase(const double &cphase){m_correctedPhase = cphase;}
     void setOrigin(Origin orig){m_origin = orig;}
 
     //QString description()const {return m_description;}
@@ -52,6 +53,8 @@ public:
     double senComponent()const{return m_S;}
     double amplitud()const{return m_amplitud;}
     double phase()const {return m_phase;}
+    double correctedPhase() const{return m_correctedPhase;}
+    double uncorrectedPhase() const{return m_uncorrectedPhase;}
 
     Origin origin() const{return m_origin;}
 
@@ -66,8 +69,11 @@ private:
 
     double m_C;   //componente que se multiplica con los cosenos
     double m_S;   //componente que se multiplica con los senos
+
     double m_amplitud;
+    double m_uncorrectedPhase;
     double m_phase;
+    double m_correctedPhase;
 
     DoodsonNumbers m_doodsonNumber;
     Origin m_origin;

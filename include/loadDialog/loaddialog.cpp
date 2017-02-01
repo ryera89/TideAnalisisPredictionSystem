@@ -80,6 +80,9 @@ void LoadDialog::setProjectMetaData(const ProjectMetaData &metadata)
     m_metaDataWidget->setLatitud(metadata.latitud());
     m_metaDataWidget->setLongitud(metadata.longitud());
     m_metaDataWidget->setEquipmentID(metadata.equipmentID());
+
+    m_metaDataWidget->setTimeZoneOffset(metadata.timeZoneOffset());
+    m_metaDataWidget->setDaylightTimeSaving(metadata.isDaylightTimeSaving());
 }
 
 /*QString LoadDialog::loacationName() const
