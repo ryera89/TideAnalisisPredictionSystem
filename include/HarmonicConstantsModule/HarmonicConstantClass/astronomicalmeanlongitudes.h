@@ -79,7 +79,7 @@ private:
 
     void determineSolarAngle();
 
-    void determineAngleModulus(double &angle);
 };
+void determineAngleModulus(double &angle);
 
 #endif // ASTRONOMICALMEANLONGITUDES_H

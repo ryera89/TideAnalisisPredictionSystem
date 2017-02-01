@@ -127,6 +127,9 @@ void metaDataWidget::createComponents()
 
     m_equipmentIdLabel = new QLabel(tr("Equipo ID:"),this);
     m_equipmentIdLineEdit = new QLineEdit(this);
+
+    m_timeZoneLabel = new QLabel(tr("Zona Horaria:"));
+    m_timeZone = new TimeZoneSelection;
 }
 
 void metaDataWidget::interfazLayout()
@@ -149,6 +152,7 @@ void metaDataWidget::interfazLayout()
     mainLayout->addRow(m_projectNameLabel,m_projectNameLineEdit);
     mainLayout->addRow(m_stationNameLabel,m_stationNameLineEdit);
     mainLayout->addRow(m_localizationNameLabel,m_localizationNameLineEdit);
+    mainLayout->addRow(m_timeZoneLabel,m_timeZone);
     mainLayout->addRow(m_ceroPuestoLabel,m_ceroPuestoEdit);
     mainLayout->addRow(m_nivelReferenciaLabel,m_nivelReferenciaEdit);
     mainLayout->addRow(m_equipmentIdLabel,m_equipmentIdLineEdit); 

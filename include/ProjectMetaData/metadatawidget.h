@@ -6,6 +6,8 @@
 #include <QWidget>
 #include "include/CoordinatesEditionWidget/mycoordinateseditorwidget.h"
 #include "include/MeasurementUnitEditWidget/measurementuniteditwidget.h"
+#include "timezoneselection.h"
+
 class QLineEdit;
 class QLabel;
 
@@ -49,6 +51,9 @@ private:
     QLabel *m_ceroPuestoLabel;
     QLabel *m_nivelReferenciaLabel;
 
+    QLabel *m_timeZoneLabel;
+
+
     QLineEdit *m_projectNameLineEdit;
     QLineEdit *m_stationNameLineEdit;
     QLineEdit *m_localizationNameLineEdit;
@@ -60,6 +65,8 @@ private:
 
     MeasurementUnitEditWidget::Units ceroDisplayUnits;
     MeasurementUnitEditWidget::Units referenciaDisplayUnits;
+
+    TimeZoneSelection *m_timeZone;
 
     void createComponents();
     void interfazLayout();

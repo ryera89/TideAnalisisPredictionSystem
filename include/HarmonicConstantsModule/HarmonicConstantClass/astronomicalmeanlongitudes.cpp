@@ -339,7 +339,7 @@ void AstronomicalMeanLongitudes::determineSolarAngle()
     if (hour == 0 && minutes == 0) m_solarAngle = 180.0;
 }
 
-void AstronomicalMeanLongitudes::determineAngleModulus(double &angle)
+void determineAngleModulus(double &angle)
 {
     if (angle >= 0.0 && angle <=360.0){ return;
     }else{

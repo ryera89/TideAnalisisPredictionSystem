@@ -1,6 +1,6 @@
 #include "freqeditor.h"
-#include "include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytablemodel.h"
-#include "include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytabledelegate.h"
+//#include "include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytablemodel.h"
+//#include "include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytabledelegate.h"
 #include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 #include "include/EditionComponents/editiontable.h"
 #include "include/model_view/tidaltabledelegate.h"

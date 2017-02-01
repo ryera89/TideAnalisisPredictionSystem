@@ -233,6 +233,8 @@ private:
      void saveHarmonicConstants(const QString &filePath);
      void harmonicConstantSet();
 
+     void applyCorrectionsToHarmonicConstants(QDateTime begin,QDateTime end,QTimeZone::TimeType timeType,QVector<HarmonicConstant> &hcVector);
+
 };
 
 #endif // SPMMAINWINDOW_H

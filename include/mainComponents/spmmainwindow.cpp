@@ -11,7 +11,7 @@
 #include "include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytablemodel.h"
 #include <QtMath>
 #include <iostream>
-
+#include "include/HarmonicConstantsModule/HarmonicConstantClass/nodalfactorformulas.h"
 
 QVector<HarmonicConstant> SPMmainWindow::m_selectedHarmonicConstantVector = QVector<HarmonicConstant>();
 
@@ -508,6 +508,11 @@ void SPMmainWindow::harmonicAnalisis()
     while(future.isRunning()){
         qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     }
+
+    QDateTime begin =  m_central->tableModel()->measurementData().first().measurementDateTime();
+    QDateTime end =  m_central->tableModel()->measurementData().last().measurementDateTime();
+
+    applyCorrectionsToHarmonicConstants(begin,end,QTimeZone::StandardTime, SPMmainWindow::m_selectedHarmonicConstantVector);
 
     m_schemeWidget->setHarmonicConstantModelData(SPMmainWindow::m_selectedHarmonicConstantVector);
 
@@ -1375,7 +1380,7 @@ void SPMmainWindow::harmonicConstantSet()
      HarmonicConstant m_SIGMA1("SIGMA1",12.9271398,DoodsonNumbers(1,-4,3,0,0,0,1),HarmonicConstant::LUNAR_DIURNAL_1);
 
      //LUNAR_DIURNAL_2
-     HarmonicConstant m_J1("O1",15.5854433,DoodsonNumbers(1,1,1,-1,0,0,-1),HarmonicConstant::LUNAR_DIURNAL_2);
+     HarmonicConstant m_J1("J1",15.5854433,DoodsonNumbers(1,1,1,-1,0,0,-1),HarmonicConstant::LUNAR_DIURNAL_2);
      HarmonicConstant m_CHI1("CHI1",14.5695476,DoodsonNumbers(1,-1,3,-1,0,0,-1),HarmonicConstant::LUNAR_DIURNAL_2);
      HarmonicConstant m_THETA1("THETA1",15.5125897,DoodsonNumbers(1,1,-1,1,0,0,-1),HarmonicConstant::LUNAR_DIURNAL_2);
      HarmonicConstant m_MP1("MP1",14.0251729,DoodsonNumbers(1,-2,3,0,0,0,-1),HarmonicConstant::LUNAR_DIURNAL_2);
@@ -1502,6 +1507,35 @@ void SPMmainWindow::harmonicConstantSet()
                                  m_2MK3 << m_SK3 << m_SO3 << m_M4 << m_MS4 << m_MN4 << m_MK4 << m_S4 << m_M6 << m_2MS6 << m_2MN6 <<
                                  m_2SM6 << m_MSN6 << m_S6 << m_M8 << m_3MS8 << m_2MS8 << m_2MSN8 << m_S8;
 
+}
+
+void SPMmainWindow::applyCorrectionsToHarmonicConstants(QDateTime begin, QDateTime end,QTimeZone::TimeType timeType,QVector<HarmonicConstant> &hcVector)
+{
+    if (timeType == QTimeZone::DaylightTime){
+    begin = begin.addSecs(-3600);
+    end = end.addSecs(-3600);
+    }
+    QDateTime midd = determineDataSerieMidPoint(begin,end);
+
+    AstronomicalMeanLongitudes middPoint(midd);
+    AstronomicalMeanLongitudes ceroPoint(begin);
+
+    std::cout << begin.toString("dd/MM/yyyy hh:mm").toStdString() << " " << midd.toString("dd/MM/yyyy hh:mm").toStdString()
+              << " " << end.toString("dd/MM/yyyy hh:mm").toStdString() << std::endl;
+    for (int i = 0; i < hcVector.size(); ++i){
+        double aux = V0_u(hcVector[i],ceroPoint,middPoint);
+        double f = NodalAmplitudeFactor(hcVector[i],middPoint);
+
+        std::cout << hcVector[i].name().toStdString() << " " << "f = " << f << " V0 + u = " << aux << std::endl;
+
+        double H = hcVector[i].amplitud()/f;
+
+        double k = hcVector[i].phase() + aux;
+        determineAngleModulus(k);
+
+        hcVector[i].setAmplitud(H);
+        hcVector[i].setPhase(k);
+    }
 }
 
 
