@@ -38,6 +38,7 @@ public:
 
     //Esta es la funcion que hay que pasarle al metodo de minsqr
     static QVector<double> funcion(const double &t);
+    static QVector<double> funcionModificada(const double &t, const QDateTime &datetime, const  QDateTime &beginDate);
 
     QSize sizeHint() const;
 
@@ -234,6 +235,7 @@ private:
      void harmonicConstantSet();
 
      void applyCorrectionsToHarmonicConstants();
+     void determineHarmonicContantPhase();
      void findHarmonicConstantCorrectedPhase(QDateTime begin,QDateTime end,bool DaylightTimeSaving,HarmonicConstant &hc);
      void findHarmonicConstantPhase(int timeOffset, double longitud, HarmonicConstant &hc);
      void findHarmonicConstantAmplitud(QDateTime begin, QDateTime end, bool DaylightTimeSaving,HarmonicConstant &hc);

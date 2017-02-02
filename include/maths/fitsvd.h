@@ -53,7 +53,7 @@ struct Fitsvd {
 			}
 		}
 
-	}
+    }
 
     Fitsvd(Matrix &xx, valarray<double> &yy, valarray<double> &ssig,
     QVector<double> funks(const valarray<double> &), const double TOL=1.e-12)

@@ -36,7 +36,8 @@ public:
     QMap<QString,bool> selectedSchemeComponentStatus() const;
     void setHarmonicConstantModelData(const QVector<HarmonicConstant> &datos);
     void showHarmonicConstantTable();
-    bool isLuDecompositionAnalisis();
+    int harmonicAnalisisTypeMethod();
+    int equationSystemSolutionMethod();
 
     QDateTime initialDateTime() const{return m_initialDateTime;}
     QDateTime endDateTime() const{return m_endDateTime;}
@@ -85,9 +86,12 @@ private:
     QTableView *m_harmonicConstantTableView;
     HarmonicConstantFullTableModel *m_harmonicConstantTableModel;
 
-    QGroupBox *m_radiosButtonGroupBox;
-    QRadioButton *m_luRadioButton;
-    QRadioButton *m_svdRadioButton;
+    QGroupBox *m_analisisTypeGroupBox;
+    QGroupBox *m_fitMethodGroupBox;
+    QComboBox *m_HarmonicAnalisisMethodComboBox;
+    QComboBox *m_SystemSolutionMethodComboBox;
+    //QRadioButton *m_luRadioButton;
+    //QRadioButton *m_svdRadioButton;
 
     //*********************Data time filter***********************************
     QComboBox *m_dataSelectionComboBox;
@@ -108,11 +112,15 @@ private:
     quint64 m_timeInterval;
 
     QPushButton *m_saveSelectedData;
-    QPushButton *m_saveHarmonicConstantsButton;
+    //QPushButton *m_saveHarmonicConstantsButton;
     //************************************************************************
 
+    //Loading Label
+    QLabel *m_loadingLabel;
+    QMovie *m_loadingMovie;
+
     //QML component
-    QQuickWidget *m_loadingQuickWidget;
+    //QQuickWidget *m_loadingQuickWidget;
 
     SchemeConfigDialog *m_configSchemeDialog;
 

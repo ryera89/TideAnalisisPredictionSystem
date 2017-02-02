@@ -88,7 +88,8 @@ SOURCES += main.cpp\
     include/HarmonicConstantsModule/HarmonicConstantClass/doodsonnumbers.cpp \
     include/HarmonicConstantsModule/HarmonicConstantClass/astronomicalmeanlongitudes.cpp \
     include/HarmonicConstantsModule/HarmonicConstantClass/nodalfactorformulas.cpp \
-    include/ProjectMetaData/timezoneselection.cpp
+    include/ProjectMetaData/timezoneselection.cpp \
+    include/maths/customminsqr.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -167,7 +168,8 @@ HEADERS  += \
     include/HarmonicConstantsModule/HarmonicConstantClass/doodsonnumbers.h \
     include/HarmonicConstantsModule/HarmonicConstantClass/astronomicalmeanlongitudes.h \
     include/HarmonicConstantsModule/HarmonicConstantClass/nodalfactorformulas.h \
-    include/ProjectMetaData/timezoneselection.h
+    include/ProjectMetaData/timezoneselection.h \
+    include/maths/customminsqr.h
 
 RC_ICONS = aquarius-48.ico
 

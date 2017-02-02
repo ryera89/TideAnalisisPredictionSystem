@@ -12,6 +12,7 @@
 #include <QtMath>
 #include <iostream>
 #include "include/HarmonicConstantsModule/HarmonicConstantClass/nodalfactorformulas.h"
+#include "include/maths/customminsqr.h"
 
 QVector<HarmonicConstant> SPMmainWindow::m_selectedHarmonicConstantVector = QVector<HarmonicConstant>();
 
@@ -86,6 +87,42 @@ QVector<double> SPMmainWindow::funcion(const double &t)
     }
     foreach (HarmonicConstant harmonic, m_selectedHarmonicConstantVector) {
         double val = qSin(qDegreesToRadians(harmonic.frequency()*t));
+        resp.append(val);
+    }
+    return resp;
+}
+
+QVector<double> SPMmainWindow::funcionModificada(const double &t, const QDateTime &datetime, const QDateTime &beginDate)
+{
+    QVector<double> resp(1,1.0);
+
+    AstronomicalMeanLongitudes beginAstroLong(beginDate);
+
+    AstronomicalMeanLongitudes astroLong(datetime);
+
+    foreach (HarmonicConstant harmonic, SPMmainWindow::m_selectedHarmonicConstantVector) {
+        double V_u = V0_u(harmonic,beginAstroLong,astroLong);
+        double f = NodalAmplitudeFactor(harmonic,astroLong);
+
+        V_u = qDegreesToRadians(V_u);
+
+        double aux = qCos(V_u)*qCos(qDegreesToRadians(harmonic.frequency()*t));
+        double aux1 = qSin(V_u)*qSin(qDegreesToRadians(harmonic.frequency()*t));
+
+        double val = f*(aux-aux1);
+        resp.append(val);
+    }
+    foreach (HarmonicConstant harmonic, m_selectedHarmonicConstantVector) {
+
+        double V_u = V0_u(harmonic,beginAstroLong,astroLong);
+        double f = NodalAmplitudeFactor(harmonic,astroLong);
+
+        V_u = qDegreesToRadians(V_u);
+
+        double aux = qSin(V_u)*qCos(qDegreesToRadians(harmonic.frequency()*t));
+        double aux1 = qCos(V_u)*qSin(qDegreesToRadians(harmonic.frequency()*t));
+
+        double val = f*(aux+aux1);
         resp.append(val);
     }
     return resp;
@@ -336,6 +373,7 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
     valarray<double> levelValarray(m_central->tableModel()->measurementData().size());
 
     int i = 0;
+    QVector<QDateTime> dateTimeVector; //Date Vector para la forma de analisis modificado
     QDateTime firstDateTime(m_central->tableModel()->measurementData().first().measurementDateTime());
     foreach (TidesMeasurement meas, m_central->tableModel()->measurementData()) {
         //quint64 seconds = yearBegin.secsTo(meas.measurementDateTime());
@@ -346,6 +384,9 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
         //++i;
 
         //VAriante 2
+
+        dateTimeVector.push_back(meas.measurementDateTime());
+
         quint64 seconds = firstDateTime.secsTo(meas.measurementDateTime());
         qreal timeInHours = seconds/3600.0 + 1; //+1 porque las mediciones empiezan a partir de 1;
 
@@ -357,35 +398,48 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
 
     valarray<double> var(1.0,m_central->tableModel()->measurementData().size());
 
-    if (m_schemeWidget->isLuDecompositionAnalisis()){
-        MinSqr minimosCuadrados(timeValarray,levelValarray,var,SPMmainWindow::funcion);
-        minimosCuadrados.fitLU();
+    if (m_schemeWidget->harmonicAnalisisTypeMethod() == 0){
+        if (m_schemeWidget->equationSystemSolutionMethod() == 0){
+            MinSqr minimosCuadrados(timeValarray,levelValarray,var,SPMmainWindow::funcion);
+            minimosCuadrados.fitLU();
 
-        for (int k = 0; k < SPMmainWindow::m_selectedHarmonicConstantVector.size(); ++k){
-            SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(minimosCuadrados.parametros()[k+1],minimosCuadrados.parametros()[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
-        }
+            for (int k = 0; k < SPMmainWindow::m_selectedHarmonicConstantVector.size(); ++k){
+                SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(minimosCuadrados.parametros()[k+1],minimosCuadrados.parametros()[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
+            }
 
-        /*for (uint k = 0; k < minimosCuadrados.parametros().size(); ++k){
+            /*for (uint k = 0; k < minimosCuadrados.parametros().size(); ++k){
             std::cout << minimosCuadrados.parametros()[k] << std::endl;
-        }
+        }*/
 
-        std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() << std::endl;
-         std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;*/
-    }else{
+            std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() << std::endl;
+            std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;
+        }else{
 
-        Fitsvd test(timeValarray,levelValarray,var,SPMmainWindow::funcion);
-        test.fit();
+            Fitsvd test(timeValarray,levelValarray,var,SPMmainWindow::funcion);
+            test.fit();
 
-        for (int k = 0; k < SPMmainWindow::m_selectedHarmonicConstantVector.size(); ++k){
-            SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(test.a[k+1],test.a[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
-        }
-
-        /*for (uint k = 0; k < test.a.size(); ++k){
-            std::cout << test.a[k] << std::endl;
-        }
+            for (int k = 0; k < SPMmainWindow::m_selectedHarmonicConstantVector.size(); ++k){
+                SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(test.a[k+1],test.a[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
+            }
 
         std::cout << "Chi cuadrado=" << test.chisq << std::endl;
-        std::cout << "Nivel Medio=" << test.a[0] << std::endl;*/
+        std::cout << "Nivel Medio=" << test.a[0] << std::endl;
+        }
+         applyCorrectionsToHarmonicConstants();
+    }else{
+        if (m_schemeWidget->equationSystemSolutionMethod() == 0){
+            CustomMinSqr minimosCuadrados(timeValarray,levelValarray,var,dateTimeVector,SPMmainWindow::funcionModificada);
+            minimosCuadrados.fitGJ();
+
+            for (int k = 0; k < SPMmainWindow::m_selectedHarmonicConstantVector.size(); ++k){
+                SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(minimosCuadrados.parametros()[k+1],minimosCuadrados.parametros()[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
+            }
+            std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() << std::endl;
+            std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;
+        }else{
+            //TODO: ME quede por aqui ANALISIS 2 con SVD
+        }
+        determineHarmonicContantPhase();
     }
 
 
@@ -466,7 +520,8 @@ void SPMmainWindow::harmonicAnalisisWithCustomData()
 
     valarray<double> var(1.0,timeValarray.size());
 
-    if (m_schemeWidget->isLuDecompositionAnalisis()){
+    //TODO: Quitar esto de Aqui Porque ahora no es necesario
+    /*if (m_schemeWidget->isLuDecompositionAnalisis()){
         MinSqr minimosCuadrados(timeValarray,levelValarray,var,SPMmainWindow::funcion);
         minimosCuadrados.fitLU();
 
@@ -476,12 +531,9 @@ void SPMmainWindow::harmonicAnalisisWithCustomData()
             SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(minimosCuadrados.parametros()[k+1],minimosCuadrados.parametros()[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
         }
 
-        /*for (uint k = 0; k < minimosCuadrados.parametros().size(); ++k){
-            std::cout << minimosCuadrados.parametros()[k] << std::endl;
-        }
 
          std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() << std::endl;
-         std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;*/
+         std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;
     }else{
 
         Fitsvd test(timeValarray,levelValarray,var,SPMmainWindow::funcion);
@@ -491,13 +543,11 @@ void SPMmainWindow::harmonicAnalisisWithCustomData()
             SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(test.a[k+1],test.a[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
         }
 
-       /* for (uint k = 0; k < test.a.size(); ++k){
-            std::cout << test.a[k] << std::endl;
-        }
+
 
         std::cout << "Chi cuadrado=" << test.chisq << std::endl;
-        std::cout << "Nivel Medio=" << test.a[0] << std::endl;*/
-    }
+        std::cout << "Nivel Medio=" << test.a[0] << std::endl;
+    }*/
 }
 void SPMmainWindow::harmonicAnalisis()
 {
@@ -513,7 +563,6 @@ void SPMmainWindow::harmonicAnalisis()
         qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
     }
 
-    applyCorrectionsToHarmonicConstants();
 
     m_schemeWidget->setHarmonicConstantModelData(SPMmainWindow::m_selectedHarmonicConstantVector);
 
@@ -1561,6 +1610,17 @@ void SPMmainWindow::applyCorrectionsToHarmonicConstants()
     }
 }
 
+void SPMmainWindow::determineHarmonicContantPhase()
+{
+    double longitud = m_metadataStorage.longitud();
+    int timeOffSet = m_metadataStorage.timeZoneOffset();
+
+    for (int i = 0; i < m_selectedHarmonicConstantVector.size();++i){
+        findHarmonicConstantPhase(timeOffSet,longitud,m_selectedHarmonicConstantVector[i]);
+    }
+
+}
+
 void SPMmainWindow::findHarmonicConstantCorrectedPhase(QDateTime begin, QDateTime end, bool DaylightTimeSaving, HarmonicConstant &hc)
 {
     if (DaylightTimeSaving){
@@ -1575,7 +1635,7 @@ void SPMmainWindow::findHarmonicConstantCorrectedPhase(QDateTime begin, QDateTim
 
     double aux = V0_u(hc,ceroPoint,middPoint);
 
-    double k = hc.uncorrectedPhase() + aux;
+    double k = hc.correctedPhase() + aux;
     determineAngleModulus(k);
 
     hc.setCorrectedPhase(k);

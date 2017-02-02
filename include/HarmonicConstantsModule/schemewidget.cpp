@@ -59,9 +59,14 @@ void SchemeWidget::showHarmonicConstantTable()
     m_animation->start();
 }
 
-bool SchemeWidget::isLuDecompositionAnalisis()
+int SchemeWidget::harmonicAnalisisTypeMethod()
 {
-    return m_luRadioButton->isChecked();
+    return m_HarmonicAnalisisMethodComboBox->currentIndex();
+}
+
+int SchemeWidget::equationSystemSolutionMethod()
+{
+    return m_SystemSolutionMethodComboBox->currentIndex();
 }
 
 int SchemeWidget::currentSelectionComboBoxIndex() const
@@ -72,16 +77,20 @@ int SchemeWidget::currentSelectionComboBoxIndex() const
 void SchemeWidget::enableSaveHarmonicConstantButton()
 {
 
+    m_loadingMovie->stop();
+    m_loadingLabel->setVisible(false);
     showHarmonicConstantTable();
 
-    m_loadingQuickWidget->setVisible(false);
+    //m_loadingQuickWidget->setVisible(false);
 
-    m_saveHarmonicConstantsButton->setEnabled(true);
+    //m_saveHarmonicConstantsButton->setEnabled(true);
 }
 void SchemeWidget::beginHarmonicAnalisis()
 {
-    m_loadingQuickWidget->setVisible(true);
-    m_harmonicConstantTableView->setVisible(false);
+    m_loadingLabel->setVisible(true);
+    m_loadingMovie->start();
+    //m_loadingQuickWidget->setVisible(true);
+    //m_harmonicConstantTableView->setVisible(false);
 
     emit analizeButtonClicked();
 }
@@ -171,7 +180,7 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
 {
      //TODO:connections
 
-    m_loadingQuickWidget = new QQuickWidget(QUrl(QStringLiteral("qrc:/analizing.qml")));
+    //m_loadingQuickWidget = new QQuickWidget(QUrl(QStringLiteral("qrc:/analizing.qml")));
 
     /*QSurfaceFormat format;
     if (QCoreApplication::arguments().contains(QStringLiteral("--coreprofile"))) {
@@ -182,10 +191,10 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
         format.setSamples(4);
     m_loadingQuickWidget->setFormat(format);*/
 
-    m_loadingQuickWidget->resize(100,200);
-    m_loadingQuickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
+    //m_loadingQuickWidget->resize(100,200);
+    //m_loadingQuickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
 
-    m_loadingQuickWidget->setVisible(false);
+    //m_loadingQuickWidget->setVisible(false);
 
     m_schemeComboBox = new QComboBox;
     m_schemeComboBox->addItem(tr("-Selecciona un esquema de análisis-"));
@@ -211,6 +220,8 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
     connect(m_configEsquemaToolButton,SIGNAL(clicked(bool)),this,SLOT(createConfigSchemeDialog()));
 
     m_analizarPushButton = new QPushButton(QIcon(":images/analisis.png"),tr("Analizar"),this);
+    m_analizarPushButton->setMinimumWidth(100);
+    m_analizarPushButton->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     m_analizarPushButton->setToolTip(tr("Calcular constantes armónicas"));
     m_analizarPushButton->setEnabled(false);
     connect(m_analizarPushButton,SIGNAL(clicked(bool)),this,SLOT(beginHarmonicAnalisis()));
@@ -218,10 +229,10 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
     //m_analizandoProgressBar = new QProgressBar;
     //m_analizandoProgressBar->setTextVisible(true);
 
-    m_saveHarmonicConstantsButton = new QPushButton(QIcon(":images/save.png"),tr("Guardar C.Armonicas"));
-    m_saveHarmonicConstantsButton->setToolTip(tr("Guardar Constantes Armónicas"));
-    m_saveHarmonicConstantsButton->setEnabled(false);
-    connect(m_saveHarmonicConstantsButton,SIGNAL(clicked(bool)),this,SIGNAL(saveHarmonicConstantsButtonClicked()));
+    //m_saveHarmonicConstantsButton = new QPushButton(QIcon(":images/save.png"),tr("Guardar C.Armonicas"));
+    //m_saveHarmonicConstantsButton->setToolTip(tr("Guardar Constantes Armónicas"));
+    //m_saveHarmonicConstantsButton->setEnabled(false);
+    //connect(m_saveHarmonicConstantsButton,SIGNAL(clicked(bool)),this,SIGNAL(saveHarmonicConstantsButtonClicked()));
 
     m_harmonicConstantTableView = new QTableView(this);
 
@@ -236,11 +247,19 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
 
     m_harmonicConstantTableView->hide();
 
-    m_radiosButtonGroupBox = new QGroupBox(this);
-    m_luRadioButton = new QRadioButton(tr("Descomposicion LU"),this);
-    m_luRadioButton->setChecked(true);
-    m_svdRadioButton = new QRadioButton(tr("SVD"),this);
+    m_analisisTypeGroupBox = new QGroupBox(tr("Análisis Armónico"));
+    m_fitMethodGroupBox = new QGroupBox(tr("Método de Ajuste"));
+    //m_luRadioButton = new QRadioButton(tr("Descomposicion LU"),this);
+    //m_luRadioButton->setChecked(true);
+    //m_svdRadioButton = new QRadioButton(tr("SVD"),this);
 
+    m_HarmonicAnalisisMethodComboBox = new QComboBox;
+    m_HarmonicAnalisisMethodComboBox->addItem(tr("Factores Nodales Fijos"));
+    m_HarmonicAnalisisMethodComboBox->addItem(tr("Factores Nodales Variables"));
+
+    m_SystemSolutionMethodComboBox = new QComboBox;
+    m_SystemSolutionMethodComboBox->addItem(tr("DCMP LU"));
+    m_SystemSolutionMethodComboBox->addItem(tr("SVD"));
     //*********************Data time filter*******************************
     m_dataSelectionGroupBox = new QGroupBox(tr("Seleccion de Datos"),this);
     m_dataSelectionComboBox = new QComboBox(this);
@@ -284,6 +303,11 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
 
     //********************************************************************
     m_animation = new QPropertyAnimation(m_harmonicConstantTableView,"geometry",this);
+
+    //Loading label
+    m_loadingLabel = new QLabel;
+    m_loadingMovie = new QMovie(":images/carga7.gif");
+    m_loadingLabel->setMovie(m_loadingMovie);
 }
 
 void SchemeWidget::interfazLayout()
@@ -303,19 +327,29 @@ void SchemeWidget::interfazLayout()
 
     QHBoxLayout *bottomLayout = new QHBoxLayout;
     bottomLayout->addWidget(m_analizarPushButton);
-    bottomLayout->addStretch();
-    bottomLayout->addWidget(m_saveHarmonicConstantsButton);
+    bottomLayout->addWidget(m_loadingLabel);
+    bottomLayout->setAlignment(m_analizarPushButton,Qt::AlignLeft);
+    //bottomLayout->addStretch();
+    //bottomLayout->addWidget(m_saveHarmonicConstantsButton);
 
-    QHBoxLayout *radioLayout = new QHBoxLayout;
-    radioLayout->addWidget(m_luRadioButton);
-    radioLayout->addWidget(m_svdRadioButton);
-    m_radiosButtonGroupBox->setLayout(radioLayout);
+    QHBoxLayout *analisisLayout = new QHBoxLayout;
+    analisisLayout->addWidget(m_HarmonicAnalisisMethodComboBox);
+    m_analisisTypeGroupBox->setLayout(analisisLayout);
+
+    QHBoxLayout *fitMethodLayout = new QHBoxLayout;
+    fitMethodLayout->addWidget(m_SystemSolutionMethodComboBox);
+    m_fitMethodGroupBox->setLayout(fitMethodLayout);
+    //m_radiosButtonGroupBox->setLayout(radioLayout);
+
+    QHBoxLayout *calcTypeMethod = new QHBoxLayout;
+    calcTypeMethod->addWidget(m_analisisTypeGroupBox);
+    calcTypeMethod->addWidget(m_fitMethodGroupBox);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(upLayout);
     mainLayout->addWidget(m_componentGroupBox);
     mainLayout->addWidget(m_descriptionGroupBox);
-    mainLayout->addWidget(m_radiosButtonGroupBox);
+    mainLayout->addLayout(calcTypeMethod);
     mainLayout->addLayout(bottomLayout);
 
     QGroupBox *analisisGroupBox = new QGroupBox(tr("Analisis"));
@@ -368,7 +402,7 @@ void SchemeWidget::interfazLayout()
     mainLeftLayout->addWidget(m_dataSelectionComboBox);
     mainLeftLayout->addWidget(m_customDataSelectionGroupBox);
     mainLeftLayout->addStretch();
-    mainLeftLayout->addWidget(m_loadingQuickWidget);
+    //mainLeftLayout->addWidget(m_loadingQuickWidget);
     mainLeftLayout->addStretch();
     mainLeftLayout->addWidget(m_saveSelectedData);
 

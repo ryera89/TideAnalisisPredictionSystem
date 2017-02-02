@@ -134,13 +134,13 @@ void TimeZoneSelection::setTimeZoneOffSet(int index)
         break;
     }
 
-    std::cout << "Offset " << m_hourOffset << std::endl;
+    //std::cout << "Offset " << m_hourOffset << std::endl;
 }
 
 void TimeZoneSelection::setDaylightTimeSaving(int status)
 {
     m_DTS = status;
 
-    std::cout << status << std::endl;
-    std::cout << m_DTS << std::endl;
+    //std::cout << status << std::endl;
+    //std::cout << m_DTS << std::endl;
 }

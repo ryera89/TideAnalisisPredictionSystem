@@ -35,5 +35,12 @@
         <file>images/cargando.gif</file>
         <file>images/appendData.png</file>
         <file>images/replaceData.png</file>
+        <file>images/carga1.gif</file>
+        <file>images/carga2.gif</file>
+        <file>images/carga3.gif</file>
+        <file>images/carga4.gif</file>
+        <file>images/carga5.gif</file>
+        <file>images/carga6.gif</file>
+        <file>images/carga7.gif</file>
     </qresource>
 </RCC>
