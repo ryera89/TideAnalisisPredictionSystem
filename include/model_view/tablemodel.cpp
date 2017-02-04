@@ -59,12 +59,10 @@ bool TableModel::setData(const QModelIndex &index, const QVariant &value, int ro
     if (index.isValid() && role == Qt::EditRole){
         switch (index.column()) {
         case 0:
-            //TODO: Quizas inicializar comprovaciones de fechas
             measurements[index.row()].setMeasurementDate(value.toDate());
             emit dataChanged(index,index);
             return true;
         case 1:
-            //TODO: Quizas inicializar comprobaciones de tiempo
             measurements[index.row()].setMeasurementTime(value.toTime());
             emit dataChanged(index,index);
             return true;

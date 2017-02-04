@@ -6,7 +6,6 @@
 #include <QSpinBox>
 #include <QSlider>
 #include <iostream>
-//TODO: Revisar todo el codigo pues hay que modificarlo.
 CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
 {
     m_currentXZoomLevel = 1;
@@ -16,7 +15,7 @@ CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
 
 /*void CentralWidget::loadDataChart()
 {
-   // m_tideChart->removeAllSeries(); //NOTE: Para ver luego
+   //m_tideChart->removeAllSeries();
 
     m_series->clear();
 
@@ -43,7 +42,7 @@ CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
 
 /*void CentralWidget::loadData(const QString &filePath)
 {
-    //TODO: Poner esto en un dialogo de tal forma que se haga solo.
+
 
     //QFile file(filePath);
     //if (file.open(QIODevice::ReadOnly)){
@@ -52,7 +51,7 @@ CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
         //file.close();
     //}
     //--------------------------------------------------------------------
-    QVector<TidesMeasurement> measurement = readTidesDataFromCVSFile(filePath); //NOTE: probando remover despues
+    QVector<TidesMeasurement> measurement = readTidesDataFromCVSFile(filePath);
     loadDataInTable(measurement);
     loadDataChart();
 }
@@ -61,8 +60,7 @@ void CentralWidget::loadDataInTable(const QVector<TidesMeasurement> &measurement
 {
     m_dataTable->setData(measurements);
 }*/
-//TODO: connectar este slot al dialogo.
-//TODO: fecha y hora formatos
+
 /*void CentralWidget::recieveData(const QVector<QStringList> &data, int dateField, int timeField, int heightField, const QString &dateFormat, const QString &timeFormat) //SLOT para conectar con el dialogo de importar datos y asi cargar los datos al modulo principal.
 {
     QVector<TidesMeasurement> measurements;
@@ -73,8 +71,6 @@ void CentralWidget::loadDataInTable(const QVector<TidesMeasurement> &measurement
 
             QDate date = QDate::fromString(data[i].at(dateField - 1),dateFormat);
             QTime time = QTime::fromString(data[i].at(timeField - 1), timeFormat);
-
-            //TODO: Crear un chequeo para comprobar si se estan cargando bien los datos.
 
             bool d_ok;
             QVariant heightVariant = data[i].at(heightField - 1);
@@ -115,7 +111,6 @@ void CentralWidget::updateSerieData(int row)
 void CentralWidget::setSeriesData()
 {
     settingZoomPosibleValues();
-    //NOTE: Si luego hay problemas es por haber comentariado esto
     //m_series->clear();
     m_selectionSeries->clear();
     m_mapForValuesInMainAndSelectionSeries.clear();
@@ -277,7 +272,6 @@ void CentralWidget::getAndDisplayCursorPosInSeries(QPointF point)
 
 void CentralWidget::getAndDisplayClickedPosInSeries(QPointF point)
 {
-    //TODO VER COMO MEJORAMOS EL ALGORITMO
     QVector<QPointF> selectedPoints;
     m_mapForValuesInMainAndSelectionSeries.clear();
 
@@ -582,14 +576,8 @@ QPointF CentralWidget::seekMaxAndMinViewYSerieValue(const QDateTime &beg, const 
 
 void CentralWidget::createComponents()
 {
-    //QVector<TidesMeasurement> measurement = readTidesDataFromCVSFile("files/prueba7.csv"); //NOTE: probando remover despues
-    //m_dataTable = new TidesDataTable(this);
-
-    //m_tidalTableModel = new ReadOnlyTableModel;
 
     settingUpTable();
-
-    //TODO: BUSCAR COMO ORDENAR ESTO
 
     m_tideChart = new SPMChart;
     m_tideChart->setTheme(QChart::ChartThemeDark);
@@ -736,10 +724,6 @@ void CentralWidget::setInterfazLayout()
     QHBoxLayout *mainLayout = new QHBoxLayout;
 
     mainLayout->addWidget(m_tidalTableView);
-    //QVBoxLayout *rigthLayout = new QVBoxLayout; //NOTE: Probando el edit
-    //m_edit = new QPlainTextEdit(this);                                //NOTE: creando el edit
-    //rigthLayout->addWidget(m_tideChartView);
-    //rigthLayout->addWidget(m_edit);
     mainLayout->addLayout(rigthLayout);
 
     this->setLayout(mainLayout);

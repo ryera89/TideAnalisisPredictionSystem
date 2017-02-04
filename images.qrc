@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>analizing.qml</file>
         <file>images/arrow_left.png</file>
         <file>images/arrow_right.png</file>
         <file>images/No.png</file>
@@ -42,5 +41,10 @@
         <file>images/carga5.gif</file>
         <file>images/carga6.gif</file>
         <file>images/carga7.gif</file>
+        <file>images/configure1.png</file>
+        <file>images/configure2.png</file>
+        <file>images/manualData.png</file>
+        <file>images/writeToFile1.png</file>
+        <file>images/writeToFile2.png</file>
     </qresource>
 </RCC>

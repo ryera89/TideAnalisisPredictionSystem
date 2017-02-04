@@ -90,7 +90,7 @@ void TablaHorariaWidget::showInterval()
             m_tablaHoraria->setRowHidden(row,true);
         }
     }
-    //NOTE: aqui va la parte de la actualización de los datos
+    //Actualización de los datos solo se calculan valores para los datos mostrados en la tabla
     setSumAndMeanOfNotHiddenRows();
 }
 
@@ -166,9 +166,9 @@ void TablaHorariaWidget::createComponents()
 
     QHBoxLayout *upLayout = new QHBoxLayout;
     upLayout->addWidget(m_showDataGroupBox);
-    upLayout->addSpacing(40); //NOTE Quitar estos despues quizas
+    upLayout->addSpacing(40);
     upLayout->addWidget(m_intervalGroupBox);
-    upLayout->addSpacing(40); //NOTE Quitar esto despues quizas
+    upLayout->addSpacing(40);
     upLayout->addWidget(m_extremesGroupBox);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;

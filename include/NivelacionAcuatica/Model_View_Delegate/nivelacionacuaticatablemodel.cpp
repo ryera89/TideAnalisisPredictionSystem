@@ -187,7 +187,6 @@ void NivelacionAcuaticaTableModel::setMetodoDeNivelacion(NivelacionAcuaticaTable
     if (m_metodo != metodo){
         m_metodo = metodo;
 
-        //NOTE si la tabla no se me actualiza automatica ver este codigo
         if (m_metodo == UnPuestoPermanente){
             m_colCount = 5;
             m_headers[3] = "Nivel [m]\n"

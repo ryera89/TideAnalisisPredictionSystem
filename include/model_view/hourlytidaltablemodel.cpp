@@ -7,6 +7,7 @@ int HourlyTidalTableModel::rowCount(const QModelIndex &/*parent*/) const
 
 int HourlyTidalTableModel::columnCount(const QModelIndex &parent) const
 {
+    Q_UNUSED(parent)
     return m_data->maxMeasurementNumberPerDay + 6;
 }
 
@@ -23,7 +24,6 @@ int HourlyTidalTableModel::columnCount(const QModelIndex &parent) const
                   index.row() < m_data->m_measurementDates.size()+2)){
               return m_data->m_measurementDates[index.row() - 2];
           }
-          //NOTE: Aqui va lo de las dos ultimas filas
 
           if (index.column() == 1 && index.row() == 0) return "HORA";
           if (index.row() == 1 && index.column() > 0 &&

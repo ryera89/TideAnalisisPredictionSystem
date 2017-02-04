@@ -13,8 +13,10 @@
 #include <iostream>
 #include "include/HarmonicConstantsModule/HarmonicConstantClass/nodalfactorformulas.h"
 #include "include/maths/customminsqr.h"
+#include "include/maths/customfitsvd.h"
 
 QVector<HarmonicConstant> SPMmainWindow::m_selectedHarmonicConstantVector = QVector<HarmonicConstant>();
+bool SPMmainWindow::m_daylightTimeSaving = false;
 
 SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -96,9 +98,17 @@ QVector<double> SPMmainWindow::funcionModificada(const double &t, const QDateTim
 {
     QVector<double> resp(1,1.0);
 
-    AstronomicalMeanLongitudes beginAstroLong(beginDate);
+    QDateTime dt(datetime);
+    QDateTime bdt(beginDate);
 
-    AstronomicalMeanLongitudes astroLong(datetime);
+    if (SPMmainWindow::m_daylightTimeSaving){
+        dt = dt.addSecs(-3600);
+        bdt = bdt.addSecs(-3600);
+    }
+
+    AstronomicalMeanLongitudes beginAstroLong(bdt);
+
+    AstronomicalMeanLongitudes astroLong(dt);
 
     foreach (HarmonicConstant harmonic, SPMmainWindow::m_selectedHarmonicConstantVector) {
         double V_u = V0_u(harmonic,beginAstroLong,astroLong);
@@ -156,7 +166,6 @@ void SPMmainWindow::loadDataFile()
                     //this,SLOT(recieveData(QVector<QStringList>,int,int,int, const QString&, const QString&)));
         connect(m_loadDialog,SIGNAL(importButtonClicked()),this,SLOT(beginDataExtrationFromFile()));
         connect(m_loadDialog,SIGNAL(appendDataActionTrigered()),this,SLOT(appendImportedData()));
-        //TODO: Las conexiones de los senales del dialogo para coger la localizacion Eq_Id, Lat, Long
         m_loadDialog->show();
     }
 
@@ -228,8 +237,6 @@ void SPMmainWindow::updateMetaData()
 
 void SPMmainWindow::createHarmonicAnalisisDialog()
 {
-
-    //TODO: me quede arreglando
     if (!createHarmonicAnalisisDialogFromConfigFile()){
         QStringList schemes;
         schemes << "default";
@@ -252,18 +259,18 @@ void SPMmainWindow::createHarmonicAnalisisDialog()
         QMap<QString,QString> descriptionMap;
         descriptionMap[schemes.at(0)] = "Esquema por defecto";
 
-        QDateTime iniDateTime;
+        /*QDateTime iniDateTime;
         QDateTime endDateTime;
 
         if (!m_central->tableModel()->measurementData().isEmpty()){
             iniDateTime = QDateTime(m_central->tableModel()->measurementData().first().measurementDate(),m_central->tableModel()->measurementData().first().measurementTime(),Qt::UTC);
             endDateTime = QDateTime(m_central->tableModel()->measurementData().last().measurementDate(),m_central->tableModel()->measurementData().last().measurementTime(),Qt::UTC);
-        }
+        }*/
 
-        m_schemeWidget = new  SchemeWidget(iniDateTime, endDateTime, schemes,componets,schemesComponents,descriptionMap,this);
+        m_schemeWidget = new  SchemeWidget(schemes,componets,schemesComponents,descriptionMap,this);
     }
     connect(m_schemeWidget,SIGNAL(analizeButtonClicked()),this,SLOT(harmonicAnalisis()));
-    connect(m_schemeWidget,SIGNAL(saveDataButtonClicked()),this,SLOT(saveAnalisisData()));
+    //connect(m_schemeWidget,SIGNAL(saveDataButtonClicked()),this,SLOT(saveAnalisisData()));
     connect(m_schemeWidget,SIGNAL(saveHarmonicConstantsButtonClicked()),this,SLOT(saveHarmonicConstantToFile()));
     connect(this,SIGNAL(harmonicAnalisisFinished()),m_schemeWidget,SLOT(enableSaveHarmonicConstantButton()));
     m_schemeWidget->show();
@@ -338,7 +345,6 @@ void SPMmainWindow::createAlcanceLimiteWindow()
         m_harmonicConstantVector = m_frequencyEditor->harmonicConstantsModel()->allData();
         m_frequencyEditor->close();
         QApplication::setOverrideCursor(Qt::WaitCursor);
-        //TODO think about an splash screen
         syncData(m_harmonicConstantVector);
         QApplication::restoreOverrideCursor();
         return true;
@@ -437,7 +443,15 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
             std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() << std::endl;
             std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;
         }else{
-            //TODO: ME quede por aqui ANALISIS 2 con SVD
+            Customfitsvd test(timeValarray,levelValarray,var,dateTimeVector,SPMmainWindow::funcionModificada);
+            test.fit();
+
+            for (int k = 0; k < SPMmainWindow::m_selectedHarmonicConstantVector.size(); ++k){
+                SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(test.a[k+1],test.a[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
+            }
+
+        std::cout << "Chi cuadrado=" << test.chisq << std::endl;
+        std::cout << "Nivel Medio=" << test.a[0] << std::endl;
         }
         determineHarmonicContantPhase();
     }
@@ -449,7 +463,7 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
 
 }
 
-void SPMmainWindow::harmonicAnalisisWithCustomData()
+/*void SPMmainWindow::harmonicAnalisisWithCustomData()
 {
     QDateTime initialDateTime = m_schemeWidget->initialDateTime();
     QDateTime endDateTime = m_schemeWidget->endDateTime();
@@ -520,8 +534,7 @@ void SPMmainWindow::harmonicAnalisisWithCustomData()
 
     valarray<double> var(1.0,timeValarray.size());
 
-    //TODO: Quitar esto de Aqui Porque ahora no es necesario
-    /*if (m_schemeWidget->isLuDecompositionAnalisis()){
+    if (m_schemeWidget->isLuDecompositionAnalisis()){
         MinSqr minimosCuadrados(timeValarray,levelValarray,var,SPMmainWindow::funcion);
         minimosCuadrados.fitLU();
 
@@ -547,17 +560,15 @@ void SPMmainWindow::harmonicAnalisisWithCustomData()
 
         std::cout << "Chi cuadrado=" << test.chisq << std::endl;
         std::cout << "Nivel Medio=" << test.a[0] << std::endl;
-    }*/
-}
+    }
+}*/
 void SPMmainWindow::harmonicAnalisis()
 {
     QFuture<void> future;
 
-    if (m_schemeWidget->currentSelectionComboBoxIndex()){
-        future = QtConcurrent::run(this,harmonicAnalisisWithCustomData);
-    }else{
-        future = QtConcurrent::run(this,harmonicAnalisisWithAllData);
-    }
+    m_daylightTimeSaving = m_metadataStorage.isDaylightTimeSaving();
+
+    future = QtConcurrent::run(this,harmonicAnalisisWithAllData);
 
     while(future.isRunning()){
         qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
@@ -610,14 +621,14 @@ void SPMmainWindow::saveHarmonicConstantToFile()
     return true;
 }*/
 
-bool SPMmainWindow::saveAnalisisData()
+/*bool SPMmainWindow::saveAnalisisData()
 {
     QString filePath = QFileDialog::getSaveFileName(this,tr("Guardar Datos"),"","*.txt");
     QFileInfo fileInfo(filePath);
     if (fileInfo.suffix().isEmpty()) filePath.append(".txt");
 
     return saveAnalisisDataToFile(filePath);
-}
+}*/
 
 /*void SPMmainWindow::recieveData(const QVector<QStringList> &data, int dateField, int timeField, int heightField, const QString &dateFormat, const QString &timeFormat)
 {
@@ -629,8 +640,6 @@ bool SPMmainWindow::saveAnalisisData()
 
             QDate date = QDate::fromString(data[i].at(dateField - 1),dateFormat);
             QTime time = QTime::fromString(data[i].at(timeField - 1), timeFormat);
-
-            //TODO: Crear un chequeo para comprobar si se estan cargando bien los datos.
 
             bool d_ok;
             QVariant heightVariant = data[i].at(heightField - 1);
@@ -835,7 +844,6 @@ void SPMmainWindow::appendManualDataToProject()
         }
 
     }
-    //TODO: Manejar datos mesclados
     currentData.append(datos);
     m_central->tableModel()->setMeasurements(currentData);
     m_manualDataIntroductionWidget->close();
@@ -899,7 +907,6 @@ void SPMmainWindow::appendImportedData()
         }
 
     }
-    //TODO: Manejar datos mesclados
     datos.append(newData);
     m_central->tableModel()->setMeasurements(datos);
     m_loadDialog->close();
@@ -922,17 +929,17 @@ void SPMmainWindow::createActions()
     m_loadProjectAction = new QAction(QIcon(":/images/project-open.png"),tr("&Abrir"),this);
     m_loadProjectAction->setShortcut(QKeySequence::Open);
     m_loadProjectAction->setToolTip(tr("Cargar proyecto"));
-    //NOTE connect
+    //TODO connect
 
     m_saveProjectAction = new QAction(QIcon(":/images/save.png"),tr("&Guardar"),this);
     m_saveProjectAction->setShortcut(QKeySequence::Save);
     m_saveProjectAction->setToolTip(tr("Guardar proyecto"));
-    //NOTE connect
+    //TODO connect
 
     m_saveAsProjectAction = new QAction(QIcon(":/images/saveAs.png"),tr("Guardar &Como..."),this);
     m_saveAsProjectAction->setShortcut(QKeySequence::SaveAs);
     m_saveAsProjectAction->setToolTip(tr("Guardar proyecto como..."));
-    //NOTE connect
+    //TODO connect
 
     m_projectMetaDataAction = new QAction(QIcon(":/images/project-info.png"),tr("&Información"),this);
     m_projectMetaDataAction->setToolTip(tr("Información del Proyecto"));
@@ -956,7 +963,6 @@ void SPMmainWindow::createActions()
     connect(m_nonHarmonicAnalisisAction,SIGNAL(triggered(bool)),this,SLOT(createNonHarmonicDialog()));
 
     //m_freqEditorAction = new QAction(tr("Editor de Componentes"),this);
-    //TODO icon
     //connect(m_freqEditorAction,SIGNAL(triggered(bool)),this,SLOT(createFrequencyEditor()));
 
     m_nivelacionAcuaticaAction = new QAction(QIcon(":images/nivelacion_acuatica.png"),tr("Nivelación Acuática"));
@@ -1038,7 +1044,7 @@ void SPMmainWindow::createActions()
     //view Actions--------------------------------------------------
 
     //Data Actions---------------------------------------------------------------------
-    m_manualDataIntroductionAction = new QAction(QIcon(":/images/table_pencil.png"),tr("Introducción Manual"),this);
+    m_manualDataIntroductionAction = new QAction(QIcon(":/images/manualData.png"),tr("Introducción Manual"),this);
     connect(m_manualDataIntroductionAction,SIGNAL(triggered(bool)),
             this,SLOT(createManualDataIntWidget()));
 
@@ -1248,15 +1254,15 @@ bool SPMmainWindow::createHarmonicAnalisisDialogFromConfigFile()
 
         }
 
-        QDateTime iniDateTime;
+        /*QDateTime iniDateTime;
         QDateTime endDateTime;
 
         if (!m_central->tableModel()->measurementData().isEmpty()){
             iniDateTime = QDateTime(m_central->tableModel()->measurementData().first().measurementDate(),m_central->tableModel()->measurementData().first().measurementTime(),Qt::UTC);
             endDateTime = QDateTime(m_central->tableModel()->measurementData().last().measurementDate(),m_central->tableModel()->measurementData().last().measurementTime(),Qt::UTC);
-        }
+        }*/
 
-        m_schemeWidget  = new SchemeWidget(iniDateTime, endDateTime, schemes,components,scheme_componentSatus,schemeDescription,this);
+        m_schemeWidget  = new SchemeWidget(schemes,components,scheme_componentSatus,schemeDescription,this);
         return true;
     }else{
         QMessageBox::information(this,tr("Error leyendo archivo"),tr("Error leyendo el archivo de configuracion %1").arg(file.fileName()));
@@ -1313,7 +1319,7 @@ bool SPMmainWindow::createHarmonicAnalisisDialogFromConfigFile()
     return false;
 }*/
 
-bool SPMmainWindow::saveAnalisisDataToFile(const QString &filePath)
+/*bool SPMmainWindow::saveAnalisisDataToFile(const QString &filePath)
 {
     QFile file(filePath);
 
@@ -1355,7 +1361,7 @@ bool SPMmainWindow::saveAnalisisDataToFile(const QString &filePath)
         return false;
     }
     return true;
-}
+}*/
 
 void SPMmainWindow::saveHarmonicConstants(const QString &filePath)
 {
@@ -1376,6 +1382,8 @@ void SPMmainWindow::saveHarmonicConstants(const QString &filePath)
         out << "ESTACION: " << m_metadataStorage.stationName() << endl;
         out << "SITUACION: " << m_metadataStorage.localizationName() << endl;
 
+        out.setRealNumberNotation(QTextStream::FixedNotation);
+        out.setRealNumberPrecision(3);
         if (latitud < 0.0)  out << "LATITUD: " << qFabs(latitud) << "S" << endl;
         if (latitud > 0.0)  out << "LATITUD: " << latitud << "N" << endl;
         if (latitud == 0.0) out << "LATITUD: " << "0.000" << endl;
@@ -1386,14 +1394,11 @@ void SPMmainWindow::saveHarmonicConstants(const QString &filePath)
 
         out << endl;
 
-        /*out << "TIPO DE MAREA: " << m_tipoMareaLineEdit->text() <<endl;
-        out << "RELACION DE AMPLITUD: " << m_ampRelationLineEdit->text() << endl;
-        out << "RELACION SEMIDIURNA: " << m_semidiurnalRelationLineEdit->text() << endl;*/
-
         QString constituente("CONSTITUENTE");
         QString v_ang("V. ANGULAR[grad/seg]");
         QString amp("AMPLITUD[m]");
         QString fase("FASE[grad]");
+        //QString faseC("FASE.C[grad]");
 
 
         out << constituente << "  " << v_ang << "  " << amp << "  " << fase << endl;
@@ -1411,6 +1416,7 @@ void SPMmainWindow::saveHarmonicConstants(const QString &filePath)
 
             out.setFieldWidth(v_ang.length());
             out.setFieldAlignment(QTextStream::AlignCenter);
+            out.setRealNumberPrecision(7);
             out << hc.frequency();
 
             out.setFieldWidth(0);
@@ -1419,6 +1425,7 @@ void SPMmainWindow::saveHarmonicConstants(const QString &filePath)
 
             out.setFieldWidth(amp.length());
             out.setFieldAlignment(QTextStream::AlignCenter);
+            out.setRealNumberPrecision(6);
             out << hc.amplitud();
 
             out.setFieldWidth(0);
@@ -1427,7 +1434,16 @@ void SPMmainWindow::saveHarmonicConstants(const QString &filePath)
 
             out.setFieldWidth(fase.length());
             out.setFieldAlignment(QTextStream::AlignCenter);
+            out.setRealNumberPrecision(3);
             out << hc.phase();
+
+            /*out.setFieldWidth(0);
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << "  ";
+
+            out.setFieldWidth(faseC.length());
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << hc.correctedPhase();*/
 
             out.setFieldWidth(0);
             out.setFieldAlignment(QTextStream::AlignCenter);
@@ -1445,7 +1461,7 @@ void SPMmainWindow::saveHarmonicConstants(const QString &filePath)
 void SPMmainWindow::harmonicConstantSet()
 {
 
-    //TODO: Revisar bien todas las constantes
+     //TODO: Revisar bien todas las constantes
      //LUNAR_LONGPERIOD_1
      HarmonicConstant m_Mm("Mm",0.5443747,DoodsonNumbers(0,1,0,-1,0,0,0),HarmonicConstant::LUNAR_LONGPERIOD_1);
      HarmonicConstant m_Msf("Msf",1.0158958,DoodsonNumbers(0,2,-2,0,0,0,0),HarmonicConstant::LUNAR_LONGPERIOD_1);

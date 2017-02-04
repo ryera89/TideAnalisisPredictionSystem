@@ -16,12 +16,12 @@
 #include "include/HarmonicConstantsModule/Model_View/harmonicconstantfulltablemodel.h"
 #include "include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytabledelegate.h"
 
-SchemeWidget::SchemeWidget(const QDateTime &iniDateTime, const QDateTime &endDateTime, const QStringList &schemesLabels, const QStringList &componentsLabels, const QMap<QString,QMap<QString,bool>> &schemes_componentMap,const QMap<QString,QString> &schemeDescription, QWidget *parent):
+SchemeWidget::SchemeWidget(const QStringList &schemesLabels, const QStringList &componentsLabels, const QMap<QString,QMap<QString,bool>> &schemes_componentMap, const QMap<QString,QString> &schemeDescription, QWidget *parent):
     QDialog(parent),m_schemesLabels(schemesLabels), m_componentsLabels(componentsLabels),m_schemes_componentMap(schemes_componentMap), m_schemeDescriptionMap(schemeDescription)
 {
     m_configSchemeDialog = 0;
 
-    crearComponentes(iniDateTime,endDateTime,schemesLabels,componentsLabels);
+    crearComponentes(schemesLabels,componentsLabels);
     interfazLayout();
 
     setWindowIcon(QIcon(":images/harmonic-analisis.png"));
@@ -45,7 +45,7 @@ void SchemeWidget::setHarmonicConstantModelData(const QVector<HarmonicConstant> 
 
 void SchemeWidget::showHarmonicConstantTable()
 {
-    m_harmonicConstantTableView->show();
+    m_tableFrame->show();
 
     int width = m_harmonicConstantTableView->geometry().width();
     int heigth = m_harmonicConstantTableView->geometry().height();
@@ -69,10 +69,10 @@ int SchemeWidget::equationSystemSolutionMethod()
     return m_SystemSolutionMethodComboBox->currentIndex();
 }
 
-int SchemeWidget::currentSelectionComboBoxIndex() const
+/*int SchemeWidget::currentSelectionComboBoxIndex() const
 {
     return m_dataSelectionComboBox->currentIndex();
-}
+}*/
 
 void SchemeWidget::enableSaveHarmonicConstantButton()
 {
@@ -81,9 +81,7 @@ void SchemeWidget::enableSaveHarmonicConstantButton()
     m_loadingLabel->setVisible(false);
     showHarmonicConstantTable();
 
-    //m_loadingQuickWidget->setVisible(false);
-
-    //m_saveHarmonicConstantsButton->setEnabled(true);
+    m_saveHarmonicConstantsButton->setEnabled(true);
 }
 void SchemeWidget::beginHarmonicAnalisis()
 {
@@ -146,39 +144,39 @@ void SchemeWidget::changeScheme(const QString &newScheme)
     m_tidalSchemeComponents->setCheckBoxesStatus(m_schemes_componentMap.value(newScheme));
 }
 
-void SchemeWidget::setIniDate(QDate date)
+/*void SchemeWidget::setIniDate(QDate date)
 {
     m_initialDateTime.setDate(date);
-}
+}*/
 
-void SchemeWidget::setEndDate(QDate date)
+/*void SchemeWidget::setEndDate(QDate date)
 {
     m_endDateTime.setDate(date);
-}
+}*/
 
-void SchemeWidget::setIniTime(QTime time)
+/*void SchemeWidget::setIniTime(QTime time)
 {
     m_initialDateTime.setTime(time);
-}
+}*/
 
-void SchemeWidget::setEndTime(QTime time)
+/*void SchemeWidget::setEndTime(QTime time)
 {
     m_endDateTime.setTime(time);
-}
+}*/
 
-void SchemeWidget::updateTimeInterval(QTime time)
+/*void SchemeWidget::updateTimeInterval(QTime time)
 {
     m_timeInterval = time.hour()*3600 + time.minute()*60;
-}
+}*/
 
-void SchemeWidget::enableCustomDataSelection(int index)
+/*void SchemeWidget::enableCustomDataSelection(int index)
 {
     if (index) m_customDataSelectionGroupBox->setEnabled(true);
     else m_customDataSelectionGroupBox->setEnabled(false);
-}
-void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTime &endDateTime, const QStringList &schemesLabels, const QStringList &componentsLabels)
+}*/
+void SchemeWidget::crearComponentes(const QStringList &schemesLabels, const QStringList &componentsLabels)
 {
-     //TODO:connections
+
 
     //m_loadingQuickWidget = new QQuickWidget(QUrl(QStringLiteral("qrc:/analizing.qml")));
 
@@ -215,7 +213,7 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
     //m_schemeDescriptionPlainTextEdit->setFixedHeight(100);
 
     m_configEsquemaToolButton = new QToolButton(this);
-    m_configEsquemaToolButton->setIcon(QIcon(":images/configure.png"));
+    m_configEsquemaToolButton->setIcon(QIcon(":images/configure1.png"));
     m_configEsquemaToolButton->setToolTip(tr("Configurar esquemas de analisis"));
     connect(m_configEsquemaToolButton,SIGNAL(clicked(bool)),this,SLOT(createConfigSchemeDialog()));
 
@@ -226,13 +224,13 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
     m_analizarPushButton->setEnabled(false);
     connect(m_analizarPushButton,SIGNAL(clicked(bool)),this,SLOT(beginHarmonicAnalisis()));
 
-    //m_analizandoProgressBar = new QProgressBar;
-    //m_analizandoProgressBar->setTextVisible(true);
+    m_tableFrame = new QFrame;
+    m_tableFrame->hide();
 
-    //m_saveHarmonicConstantsButton = new QPushButton(QIcon(":images/save.png"),tr("Guardar C.Armonicas"));
-    //m_saveHarmonicConstantsButton->setToolTip(tr("Guardar Constantes Armónicas"));
-    //m_saveHarmonicConstantsButton->setEnabled(false);
-    //connect(m_saveHarmonicConstantsButton,SIGNAL(clicked(bool)),this,SIGNAL(saveHarmonicConstantsButtonClicked()));
+    m_saveHarmonicConstantsButton = new QPushButton(QIcon(":images/writeToFile1.png"),tr("Guardar"));
+    m_saveHarmonicConstantsButton->setToolTip(tr("Guardar Constantes Armónicas"));
+    m_saveHarmonicConstantsButton->setEnabled(false);
+    connect(m_saveHarmonicConstantsButton,SIGNAL(clicked(bool)),this,SIGNAL(saveHarmonicConstantsButtonClicked()));
 
     m_harmonicConstantTableView = new QTableView(this);
 
@@ -245,7 +243,7 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
     }
     m_harmonicConstantTableView->setMinimumWidth(width);
 
-    m_harmonicConstantTableView->hide();
+    //m_harmonicConstantTableView->hide();
 
     m_analisisTypeGroupBox = new QGroupBox(tr("Análisis Armónico"));
     m_fitMethodGroupBox = new QGroupBox(tr("Método de Ajuste"));
@@ -261,7 +259,7 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
     m_SystemSolutionMethodComboBox->addItem(tr("DCMP LU"));
     m_SystemSolutionMethodComboBox->addItem(tr("SVD"));
     //*********************Data time filter*******************************
-    m_dataSelectionGroupBox = new QGroupBox(tr("Seleccion de Datos"),this);
+    /*m_dataSelectionGroupBox = new QGroupBox(tr("Seleccion de Datos"),this);
     m_dataSelectionComboBox = new QComboBox(this);
     m_dataSelectionComboBox->addItem(tr("Todos"));
     m_dataSelectionComboBox->addItem(tr("Personalizado"));
@@ -299,7 +297,7 @@ void SchemeWidget::crearComponentes(const QDateTime &iniDateTime, const QDateTim
     connect(m_dataSelectionComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(enableCustomDataSelection(int)));
 
     m_saveSelectedData = new QPushButton(QIcon(":images/save.png"),tr("Guardar Datos"));
-    connect(m_saveSelectedData,SIGNAL(clicked(bool)),this,SIGNAL(saveDataButtonClicked()));
+    connect(m_saveSelectedData,SIGNAL(clicked(bool)),this,SIGNAL(saveDataButtonClicked()));*/
 
     //********************************************************************
     m_animation = new QPropertyAnimation(m_harmonicConstantTableView,"geometry",this);
@@ -356,7 +354,7 @@ void SchemeWidget::interfazLayout()
     analisisGroupBox->setLayout(mainLayout);
 
     //************Time data filter******************************
-    QHBoxLayout *customIntervalLayout = new QHBoxLayout;
+    /*QHBoxLayout *customIntervalLayout = new QHBoxLayout;
     customIntervalLayout->addWidget(m_customIntervalLabel);
     customIntervalLayout->addWidget(m_customIntervalTimeEdit);
 
@@ -406,15 +404,23 @@ void SchemeWidget::interfazLayout()
     mainLeftLayout->addStretch();
     mainLeftLayout->addWidget(m_saveSelectedData);
 
-    m_dataSelectionGroupBox->setLayout(mainLeftLayout);
+    m_dataSelectionGroupBox->setLayout(mainLeftLayout);*/
 
 
     //**********************************************************
 
+    QVBoxLayout *tableLayout  = new QVBoxLayout;
+    tableLayout->addWidget(m_harmonicConstantTableView);
+    tableLayout->addWidget(m_saveHarmonicConstantsButton);
+    tableLayout->setAlignment(m_saveHarmonicConstantsButton,Qt::AlignRight);
+
+    m_tableFrame->setLayout(tableLayout);
+    m_tableFrame->layout()->setMargin(0);
+
     QHBoxLayout *definiteLayout = new QHBoxLayout;
-    definiteLayout->addWidget(m_dataSelectionGroupBox);
+    //definiteLayout->addWidget(m_dataSelectionGroupBox);
     definiteLayout->addWidget(analisisGroupBox);
-    definiteLayout->addWidget(m_harmonicConstantTableView);
+    definiteLayout->addWidget(m_tableFrame);
 
     this->setLayout(definiteLayout);
 }

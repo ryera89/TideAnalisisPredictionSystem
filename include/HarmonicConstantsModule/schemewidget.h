@@ -7,9 +7,9 @@
 #include "tidalschemeselectionwidget.h"
 #include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
 #include <QDateTime>
-
-#include <QtQuickWidgets>
+#include <QMovie>
 #include <QPropertyAnimation>
+#include <QFrame>
 
 class QComboBox;
 class QPushButton;
@@ -31,7 +31,7 @@ class SchemeWidget : public QDialog
 {  
     Q_OBJECT
 public:
-    explicit SchemeWidget(const QDateTime &iniDateTime, const QDateTime &endDateTime, const QStringList &schemesLabels, const QStringList &componentsLabels, const QMap<QString,QMap<QString,bool>> &schemes_componentMap,const QMap<QString,QString> &schemeDescription,QWidget *parent = 0);
+    explicit SchemeWidget(const QStringList &schemesLabels, const QStringList &componentsLabels, const QMap<QString,QMap<QString,bool>> &schemes_componentMap,const QMap<QString,QString> &schemeDescription,QWidget *parent = 0);
 
     QMap<QString,bool> selectedSchemeComponentStatus() const;
     void setHarmonicConstantModelData(const QVector<HarmonicConstant> &datos);
@@ -39,9 +39,9 @@ public:
     int harmonicAnalisisTypeMethod();
     int equationSystemSolutionMethod();
 
-    QDateTime initialDateTime() const{return m_initialDateTime;}
-    QDateTime endDateTime() const{return m_endDateTime;}
-    quint64 timeInterval() const{return m_timeInterval;}
+    //QDateTime initialDateTime() const{return m_initialDateTime;}
+    //QDateTime endDateTime() const{return m_endDateTime;}
+    //quint64 timeInterval() const{return m_timeInterval;}
 
     int currentSelectionComboBoxIndex() const;
 signals:
@@ -57,14 +57,14 @@ private slots:
     void updateInternalData();
     void changeScheme(const QString &newScheme);
 
-    void setIniDate(QDate date);
-    void setEndDate(QDate date);
+    //void setIniDate(QDate date);
+    //void setEndDate(QDate date);
 
-    void setIniTime(QTime time);
-    void setEndTime(QTime time);
+    //void setIniTime(QTime time);
+    //void setEndTime(QTime time);
 
-    void updateTimeInterval(QTime time);
-    void enableCustomDataSelection(int index);
+    //void updateTimeInterval(QTime time);
+    //void enableCustomDataSelection(int index);
 
 private:
     QStringList m_schemesLabels;
@@ -81,10 +81,12 @@ private:
 
     QToolButton *m_configEsquemaToolButton;
     QPushButton *m_analizarPushButton;
-    //QProgressBar *m_analizandoProgressBar;
 
+    QFrame *m_tableFrame;
     QTableView *m_harmonicConstantTableView;
     HarmonicConstantFullTableModel *m_harmonicConstantTableModel;
+
+    QPushButton *m_saveHarmonicConstantsButton;
 
     QGroupBox *m_analisisTypeGroupBox;
     QGroupBox *m_fitMethodGroupBox;
@@ -94,25 +96,25 @@ private:
     //QRadioButton *m_svdRadioButton;
 
     //*********************Data time filter***********************************
-    QComboBox *m_dataSelectionComboBox;
-    QGroupBox *m_dataSelectionGroupBox;
-    QGroupBox *m_customDataSelectionGroupBox;
+    //QComboBox *m_dataSelectionComboBox;
+    //QGroupBox *m_dataSelectionGroupBox;
+    //QGroupBox *m_customDataSelectionGroupBox;
 
-    QDateEdit *m_iniDateEdit;
-    QDateEdit *m_endDateEdit;
-    QTimeEdit *m_iniTimeEdit;
-    QTimeEdit *m_endTimeEdit;
+    //QDateEdit *m_iniDateEdit;
+    //QDateEdit *m_endDateEdit;
+    //QTimeEdit *m_iniTimeEdit;
+    //QTimeEdit *m_endTimeEdit;
 
-    QLabel *m_customIntervalLabel;
-    QTimeEdit *m_customIntervalTimeEdit;
+    //QLabel *m_customIntervalLabel;
+    //QTimeEdit *m_customIntervalTimeEdit;
 
-    QDateTime m_initialDateTime;
-    QDateTime m_endDateTime;
+    //QDateTime m_initialDateTime;
+    //QDateTime m_endDateTime;
 
-    quint64 m_timeInterval;
+    //quint64 m_timeInterval;
 
-    QPushButton *m_saveSelectedData;
-    //QPushButton *m_saveHarmonicConstantsButton;
+    //QPushButton *m_saveSelectedData;
+
     //************************************************************************
 
     //Loading Label
@@ -134,7 +136,7 @@ private:
     //void setComponentsLabels(const QStringList &componentsNames);
     void setSchemesComponentsMap(const QMap<QString,QMap<QString,bool>> &schemes_componentMap);
 
-    void crearComponentes(const QDateTime &iniDateTime, const QDateTime &endDateTime,const QStringList &schemesLabels, const QStringList &componentsLabels);
+    void crearComponentes(const QStringList &schemesLabels, const QStringList &componentsLabels);
     void interfazLayout();
 
     //void createLoadingWidget(); //Funcion que crea el componente QML;

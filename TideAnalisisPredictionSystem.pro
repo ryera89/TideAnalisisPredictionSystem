@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts qml quick positioning quickwidgets concurrent
+QT       += core gui charts positioning concurrent
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,7 +32,6 @@ SOURCES += main.cpp\
     include/measurement/measurement.cpp \
     include/model_view/tablemodel.cpp \
     include/model_view/tidaltabledelegate.cpp \
-    include/ChartModelMapper/xytidalchartmodelmapper.cpp \
     include/mainComponents/customchartview.cpp \
     include/measurement/tidaldata.cpp \
     include/mainComponents/customtableview.cpp \
@@ -111,7 +110,6 @@ HEADERS  += \
     include/measurement/measurement.h \
     include/model_view/tablemodel.h \
     include/model_view/tidaltabledelegate.h \
-    include/ChartModelMapper/xytidalchartmodelmapper.h \
     include/mainComponents/customchartview.h \
     include/measurement/tidaldata.h \
     include/mainComponents/customtableview.h \
@@ -169,7 +167,8 @@ HEADERS  += \
     include/HarmonicConstantsModule/HarmonicConstantClass/astronomicalmeanlongitudes.h \
     include/HarmonicConstantsModule/HarmonicConstantClass/nodalfactorformulas.h \
     include/ProjectMetaData/timezoneselection.h \
-    include/maths/customminsqr.h
+    include/maths/customminsqr.h \
+    include/maths/customfitsvd.h
 
 RC_ICONS = aquarius-48.ico
 
@@ -182,8 +181,6 @@ DISTFILES += \
     images/analisis.png \
     images/configure.png \
     images/erase.png \
-    Processing.qml \
-    analizing.qml \
     images/supercargando.gif
 
 FORMS += \

@@ -8,16 +8,16 @@ void TablaHorariaDeMarea::createTable(const TidalData &m_data)
     this->clear();
 
     this->setRowCount(m_data.m_measurementDates.size()+4);
-    this->setColumnCount(m_data.maxMeasurementNumberPerDay + 6);
+    this->setColumnCount(m_data.m_measurementTimes.size() + 6);
 
     this->horizontalHeader()->hide();
 
     this->setSpan(0,0,2,1);
-    this->setSpan(0,1,1,m_data.maxMeasurementNumberPerDay);
-    this->setSpan(0,m_data.maxMeasurementNumberPerDay + 1,2,1);
-    this->setSpan(0,m_data.maxMeasurementNumberPerDay + 2,2,1);
-    this->setSpan(0,m_data.maxMeasurementNumberPerDay + 3,1,2);
-    this->setSpan(0,m_data.maxMeasurementNumberPerDay + 5,2,1);
+    this->setSpan(0,1,1,m_data.m_measurementTimes.size());
+    this->setSpan(0,m_data.m_measurementTimes.size() + 1,2,1);
+    this->setSpan(0,m_data.m_measurementTimes.size() + 2,2,1);
+    this->setSpan(0,m_data.m_measurementTimes.size() + 3,1,2);
+    this->setSpan(0,m_data.m_measurementTimes.size() + 5,2,1);
 
     const QString fecha = "FECHA";
     const QString hora = "HORA";
@@ -49,42 +49,42 @@ void TablaHorariaDeMarea::createTable(const TidalData &m_data)
     item2->setBackgroundColor(Qt::lightGray);
     item2->setTextAlignment(Qt::AlignCenter);
     item2->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    this->setItem(0,m_data.maxMeasurementNumberPerDay + 1,item2);
+    this->setItem(0,m_data.m_measurementTimes.size() + 1,item2);
 
     QTableWidgetItem *item3 = new QTableWidgetItem;
     item3->setData(Qt::DisplayRole,nivel_medio);
     item3->setBackgroundColor(Qt::lightGray);
     item3->setTextAlignment(Qt::AlignCenter);
     item3->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    this->setItem(0,m_data.maxMeasurementNumberPerDay + 2,item3);
+    this->setItem(0,m_data.m_measurementTimes.size() + 2,item3);
 
     QTableWidgetItem *item4 = new QTableWidgetItem;
     item4->setData(Qt::DisplayRole,extremos);
     item4->setBackgroundColor(Qt::lightGray);
     item4->setTextAlignment(Qt::AlignCenter);
     item4->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    this->setItem(0,m_data.maxMeasurementNumberPerDay + 3,item4);
+    this->setItem(0,m_data.m_measurementTimes.size() + 3,item4);
 
     QTableWidgetItem *item5 = new QTableWidgetItem;
     item5->setData(Qt::DisplayRole,diff);
     item5->setBackgroundColor(Qt::lightGray);
     item5->setTextAlignment(Qt::AlignCenter);
     item5->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    this->setItem(0,m_data.maxMeasurementNumberPerDay + 5,item5);
+    this->setItem(0,m_data.m_measurementTimes.size() + 5,item5);
 
     QTableWidgetItem *item6 = new QTableWidgetItem;
     item6->setData(Qt::DisplayRole,max);
     item6->setBackgroundColor(Qt::lightGray);
     item6->setTextAlignment(Qt::AlignCenter);
     item6->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    this->setItem(1,m_data.maxMeasurementNumberPerDay + 3,item6);
+    this->setItem(1,m_data.m_measurementTimes.size() + 3,item6);
 
     QTableWidgetItem *item7 = new QTableWidgetItem;
     item7->setData(Qt::DisplayRole,min);
     item7->setBackgroundColor(Qt::lightGray);
     item7->setTextAlignment(Qt::AlignCenter);
     item7->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-    this->setItem(1,m_data.maxMeasurementNumberPerDay + 4,item7);
+    this->setItem(1,m_data.m_measurementTimes.size() + 4,item7);
 
     QTableWidgetItem *item8 = new QTableWidgetItem;
     item8->setData(Qt::DisplayRole,suma);
@@ -142,11 +142,9 @@ void TablaHorariaDeMarea::populateTable(const TidalData &m_data)
         this->setItem(i+2,columnCount() - 1,item);
 
     }
-
-    //WARNING Esto para datos muestrados a la misma hora todos los dias
-    for (int i = 0; i < m_data.maxMeasurementNumberPerDay; ++i){
+    for (int i = 0; i < m_data.m_measurementTimes.size(); ++i){
         QTableWidgetItem *item = new QTableWidgetItem;
-        item->setText(m_data.m_measurements[i].measurementTime().toString("hh:mm:ss"));   //setData(Qt::DisplayRole, m_data.m_measurements[i].measurementTime());
+        item->setText(m_data.m_measurementTimes.at(i).toString("hh:mm:ss"));   //setData(Qt::DisplayRole, m_data.m_measurements[i].measurementTime());
         item->setTextAlignment(Qt::AlignCenter);
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->setItem(1,i+1,item);
@@ -154,15 +152,39 @@ void TablaHorariaDeMarea::populateTable(const TidalData &m_data)
 
     int count = 0; //Contador para llenar la tabla correctamente
 
+    //TODO: Arreglar esto de aqui
     for (int i = 0; i < m_data.m_measurementDates.size(); ++i){
+        int kprima = 0;
         for (int j = 0; j < m_data.m_measurementNumberPerDay.value(m_data.m_measurementDates[i]); ++j){
             QTableWidgetItem *item = new QTableWidgetItem;
             item->setData(Qt::DisplayRole, m_data.m_measurements[j + count].seaLevel());
             item->setTextAlignment(Qt::AlignCenter);
             item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-            this->setItem(i+2,j+1,item);
+            for (int k = kprima; k < m_data.m_measurementTimes.size(); ++k){ //Para poner el valor del nivel en la celda correcta
+                if (m_data.m_measurements.at(j + count).measurementTime() == m_data.m_measurementTimes.at(k)){
+                    this->setItem(i+2,k+1,item);
+                    kprima = k+1;
+                    break;
+                }else{  //Pone un item vacio en la celda que no tenga mediciones
+                    QTableWidgetItem *item = new QTableWidgetItem;
+                    item->setData(Qt::DisplayRole, QVariant());
+                    item->setTextAlignment(Qt::AlignCenter);
+                    item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+                    this->setItem(i+2,k+1,item);
+                }
+            }
+            if ((kprima-1) < (m_data.m_measurementTimes.size()-1) && j == (m_data.m_measurementNumberPerDay.value(m_data.m_measurementDates[i])-1)){
+                for (int t = kprima; t < m_data.m_measurementTimes.size();++t){
+                    QTableWidgetItem *item = new QTableWidgetItem;
+                    item->setData(Qt::DisplayRole, QVariant());
+                    item->setTextAlignment(Qt::AlignCenter);
+                    item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+                    this->setItem(i+2,t+1,item);
+                }
+            }
         }
-        if (m_data.m_measurementNumberPerDay.value(m_data.m_measurementDates[i])
+
+        /*if (m_data.m_measurementNumberPerDay.value(m_data.m_measurementDates[i])
                 < m_data.maxMeasurementNumberPerDay){
             for (int j = m_data.
                  m_measurementNumberPerDay.value(m_data.m_measurementDates[i]);
@@ -175,7 +197,7 @@ void TablaHorariaDeMarea::populateTable(const TidalData &m_data)
                 this->setItem(i+2,j+1,item);
 
             }
-        }
+        }*/
 
         count += m_data.m_measurementNumberPerDay.value(m_data.m_measurementDates[i]);
     }
@@ -202,14 +224,6 @@ void TablaHorariaDeMarea::populateTable(const TidalData &m_data)
         item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->setItem(rowCount() - 1,column,item1);
     }
-
-    //NOTE: falta las dos ultimas filas
-
-    /*for (int i  = 0; i < rowCount(); ++i){
-        for (int j = 0; j < columnCount(); ++j){
-            this->item(i,j)->setFlags(Qt::ItemIsSelectable);
-        }
-    }*/
 
     for (int column = 1; column < columnCount() - 5; ++column){
         setColumnWidth(column,55);

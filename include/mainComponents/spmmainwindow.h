@@ -76,7 +76,7 @@ private slots:
     //bool saveFrequencyFile();
     void harmonicAnalisis();
     void harmonicAnalisisWithAllData();
-    void harmonicAnalisisWithCustomData();
+    //void harmonicAnalisisWithCustomData();
     void saveHarmonicConstantToFile();
 
 protected slots:
@@ -103,7 +103,7 @@ protected slots:
     void appendImportedData();
 
     //bool writeFrequencyFile(const QString &filePath);
-    bool saveAnalisisData();
+    //bool saveAnalisisData();
 
     //void gettingData(const QVector<QStringList> &data, int dateField, int timeField, int heightField);
 
@@ -222,6 +222,7 @@ private:
      QVector<HarmonicConstant> m_harmonicConstantVector; //Donde se almacenan las constantes armonicas;
      static QVector<HarmonicConstant> m_selectedHarmonicConstantVector; //Constantes armonicas seleccionadas para analisis
 
+     static bool m_daylightTimeSaving;
      /******************************Private Functions For Funcionality*******************************************/
      void syncData(const QVector<HarmonicConstant> &components);
 
@@ -230,7 +231,7 @@ private:
      bool createHarmonicAnalisisDialogFromConfigFile();
      //bool loadHarmonicConstantsFromFile();
      //static void setSelectectedHarmonicConstants();
-     bool saveAnalisisDataToFile(const QString &filePath);
+     //bool saveAnalisisDataToFile(const QString &filePath);
      void saveHarmonicConstants(const QString &filePath);
      void harmonicConstantSet();
 

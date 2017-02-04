@@ -284,11 +284,12 @@ void NonHarmonicCalcDialog::createComponents()
     m_tipoMareaLineEdit = new QLineEdit(this);
     m_tipoMareaLineEdit->setReadOnly(true);
 
-    m_calcAllPushButton = new QPushButton(tr("Calcular Todos"));
-    m_calcAllPushButton->setToolTip(tr("Calcula todas las posibles constantes no armonicas"));
+    m_calcAllPushButton = new QPushButton(tr("Calcular"));
+    m_calcAllPushButton->setToolTip(tr("Calcula todas las posibles constantes no armónicas"));
     connect(m_calcAllPushButton,SIGNAL(clicked(bool)),this,SLOT(calculateAll()));
 
-    m_savePushButton = new QPushButton(QIcon(":images/save.png"),tr("Guardar"));
+    m_savePushButton = new QPushButton(QIcon(":images/writeToFile1.png"),tr("Guardar"));
+    m_savePushButton->setToolTip(tr("Guardar constantes no armónicas"));
     connect(m_savePushButton,SIGNAL(clicked(bool)),this,SLOT(saveToFile()));
     m_closePushButton = new QPushButton(QIcon(":images/No.png"),tr("Cerrar"));
     connect(m_closePushButton,SIGNAL(clicked(bool)),this,SLOT(close()));

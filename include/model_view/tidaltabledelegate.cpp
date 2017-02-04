@@ -6,12 +6,7 @@
 #include <QLineEdit>
 #include <QPainter>
 
-TidalTableDelegate::TidalTableDelegate(QObject *parent): QStyledItemDelegate(parent)
-{
-
-}
-
-//WARNING: Pueden existir problemas en la conversion de datos
+TidalTableDelegate::TidalTableDelegate(QObject *parent): QStyledItemDelegate(parent){}
 void TidalTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     if (index.column() == dateColumn){

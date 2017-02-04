@@ -769,7 +769,6 @@ void NivelacionAcuaticaWidget::createLoadDialog()
         connect(m_loadDialog,SIGNAL(importButtonClicked()),this,SLOT(beginDataExtrationFromFile()));
         connect(m_loadDialog,SIGNAL(appendDataActionTrigered()),this,SLOT(appendDataFromFile()));
 
-        //TODO: Las conexiones de los senales del dialogo para coger la localizacion Eq_Id, Lat, Long
         m_loadDialog->show();
     }
 }

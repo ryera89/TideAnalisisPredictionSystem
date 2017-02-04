@@ -50,6 +50,9 @@ void SchemeConfigDialog::updateSchemeDescription()
 
 void SchemeConfigDialog::selectAnalisisScheme(const QModelIndex &current, const QModelIndex &previous)
 {
+
+    Q_UNUSED(previous);
+
     if (current.isValid()){
         QString str = m_myModel->stringList().at(current.row());
 
@@ -120,7 +123,7 @@ bool SchemeConfigDialog::writeSchemesFile()
 
     }else{
         QMessageBox::information(this,tr("Error escribiendo archivo"),tr("Error escribiendo el archivo de configuracion %1").arg(file.fileName()));
-        emit acceptButtonClicked(); //TODO valorar esto
+        emit acceptButtonClicked();
         return false;
     }
     emit acceptButtonClicked();
@@ -174,8 +177,7 @@ void SchemeConfigDialog::createComponent(const QStringList &schemesLabels, const
     m_descriptionEdit = new QPlainTextEdit(this);
     connect(m_descriptionEdit,SIGNAL(textChanged()),this,SLOT(updateSchemeDescription()));
 
-    m_descriptionGroupBox = new QGroupBox("Descripcion",this);
-    //TODO: ortografia
+    m_descriptionGroupBox = new QGroupBox("Descripción",this);
 }
 
 void SchemeConfigDialog::settingLayout()

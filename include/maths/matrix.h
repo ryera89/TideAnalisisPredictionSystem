@@ -12,7 +12,7 @@ private:
     valarray<double>* v;
     size_t d1, d2;
 public:
-    Matrix(); //NOTE: Esto es Solo para probar valorar para sino remover despues
+    Matrix();
     Matrix(size_t x, size_t y, double value = 0.0);
     Matrix(const Matrix& M1);
     Matrix& operator=(const Matrix& M1);

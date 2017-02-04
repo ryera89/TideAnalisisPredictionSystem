@@ -7,15 +7,8 @@ TidalData::TidalData(const QVector<TidesMeasurement> &measurements)
 {
     m_measurements = measurements;
 
-    findMeasurementDates();
-    settingUpData();
-}
-
-void TidalData::setDataSource(const QVector<TidesMeasurement> &measurement)
-{
-    m_measurements = measurement;
-
     m_measurementDates.clear();
+    m_measurementTimes.clear();
 
     m_dateSums.clear();
     m_meanSeaLevel.clear();
@@ -27,21 +20,68 @@ void TidalData::setDataSource(const QVector<TidesMeasurement> &measurement)
     settingUpData();
 }
 
+void TidalData::setDataSource(const QVector<TidesMeasurement> &measurement)
+{
+    m_measurements = measurement;
+
+    m_measurementDates.clear();
+    m_measurementTimes.clear();
+
+    m_dateSums.clear();
+    m_meanSeaLevel.clear();
+    m_extremes.clear();
+    m_differences.clear();
+    m_measurementNumberPerDay.clear();
+
+
+    findMeasurementDates();
+    settingUpData();
+}
+
 void TidalData::findMeasurementDates()
 {
+    bool flag = false;
     QDate date = m_measurements.at(0).measurementDate();
     m_measurementDates.push_back(date);
+    m_measurementTimes.push_back(m_measurements.at(0).measurementTime());
     for (int i = 1; i < m_measurements.size(); ++i){
         QDate aux = m_measurements.at(i).measurementDate();
+        QTime timeAux = m_measurements.at(i).measurementTime();
         if (aux != date){
             date = aux;
             m_measurementDates.push_back(date);
+            flag = true;
         }
+        if (!flag){
+            m_measurementTimes.push_back(timeAux);
+        }else{
+            QTime auxTime = m_measurements.at(i).measurementTime();
+            for (int j = 0; j < m_measurementTimes.size(); ++j){
+                QTime time1 = m_measurementTimes.at(j);
+                if (time1 == auxTime) break;
+
+                if (j == 0 && time1 > auxTime){
+                    m_measurementTimes.push_front(auxTime);
+                    break;
+                }
+                if (j < m_measurements.size() - 1){
+                    QTime time2 = m_measurementTimes.at(j+1);
+                    if (time1 < auxTime && time2 > auxTime){
+                        m_measurementTimes.insert(j+1,auxTime);
+                        break;
+                    }
+                }else{
+                    m_measurementTimes.push_back(auxTime);
+                    break;
+                }
+
+            }
+        }
+
     }
 }
 
 //Para data ordenada cronologicamnete
-//WARNING: puede exitir un Bug en el break;
 void TidalData::settingUpData()
 {
     int aux = 0;

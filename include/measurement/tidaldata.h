@@ -18,6 +18,7 @@ public:
 
     QVector<TidesMeasurement> m_measurements;
     QVector<QDate> m_measurementDates;
+    QVector<QTime> m_measurementTimes;
 
     QHash<QDate,double> m_dateSums;
     QHash<QDate,double> m_meanSeaLevel;

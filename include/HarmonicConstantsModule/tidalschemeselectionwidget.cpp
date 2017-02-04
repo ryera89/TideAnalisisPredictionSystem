@@ -99,10 +99,10 @@ void TidalSchemeSelectionWidget::changingCheckBoxStatus(int i)
         }
         //freqTable->setUpTable(rowNumber,columnNumber, headerList);
         QStringList labels;
-        for (int i = 0; i < rowNumber; ++i){  //NOTE: Ver si lo puedo implementar con QVariant
+        for (int i = 0; i < rowNumber; ++i){
             for (int j = 0; j < columnNumber; ++j){
                QString str;
-               in >> str;                        //WARNING: may be a bug
+               in >> str;
                if (j == 0) labels.push_back(str);
             }
         }
@@ -128,7 +128,7 @@ void TidalSchemeSelectionWidget::createComponentsCheckBoxes(const QStringList &l
 
 
     foreach (QString str, labels) {
-        QCheckBox *componentCheckBoxes =  new QCheckBox;   //NOTE: aqui se puede cambiar por richtextcheck box si lo decido despues
+        QCheckBox *componentCheckBoxes =  new QCheckBox;
         componentCheckBoxes->setText(str);      //componentCheckBoxes->Label()->setText(QString('A'+ i) + "<sub>a</sub>");   //font size='5'
         m_componentsCheckBoxes.push_back(componentCheckBoxes);
         mapper->setMapping(componentCheckBoxes,m_componentsCheckBoxes.size() - 1);

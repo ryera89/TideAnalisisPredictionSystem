@@ -1,7 +1,7 @@
 #include "mainwindow.h"
 #include <QApplication>
 #include "include/mainComponents/spmmainwindow.h"
-#include <QQuickView>
+
 
 
 int main(int argc, char *argv[])
