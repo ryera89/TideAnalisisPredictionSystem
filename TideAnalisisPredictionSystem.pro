@@ -88,7 +88,11 @@ SOURCES += main.cpp\
     include/HarmonicConstantsModule/HarmonicConstantClass/astronomicalmeanlongitudes.cpp \
     include/HarmonicConstantsModule/HarmonicConstantClass/nodalfactorformulas.cpp \
     include/ProjectMetaData/timezoneselection.cpp \
-    include/maths/customminsqr.cpp
+    include/maths/customminsqr.cpp \
+    include/PredictionModule/predictionfunctions.cpp \
+    include/PredictionModule/predictormainwindow.cpp \
+    include/PredictionModule/predictonsettingswidget.cpp \
+    include/PredictionModule/predictionsettings.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -168,7 +172,11 @@ HEADERS  += \
     include/HarmonicConstantsModule/HarmonicConstantClass/nodalfactorformulas.h \
     include/ProjectMetaData/timezoneselection.h \
     include/maths/customminsqr.h \
-    include/maths/customfitsvd.h
+    include/maths/customfitsvd.h \
+    include/PredictionModule/predictionfunctions.h \
+    include/PredictionModule/predictormainwindow.h \
+    include/PredictionModule/predictonsettingswidget.h \
+    include/PredictionModule/predictionsettings.h
 
 RC_ICONS = aquarius-48.ico
 

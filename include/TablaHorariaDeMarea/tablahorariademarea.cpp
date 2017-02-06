@@ -234,12 +234,7 @@ void TablaHorariaDeMarea::populateTable(const TidalData &m_data)
     for (int column = columnCount() - 1; column >= columnCount() - 5; --column){
         setColumnWidth(column,70);
     }
-
-
 }
-
-
-
 void TablaHorariaDeMarea::loadData(const TidalData &m_data)
 {
     createTable(m_data);

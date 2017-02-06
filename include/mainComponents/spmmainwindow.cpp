@@ -36,6 +36,7 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
     m_filterDialog = Q_NULLPTR;
     m_averageDialog = Q_NULLPTR;
     m_alcanceLimiteWindow = Q_NULLPTR;
+    m_predictor = Q_NULLPTR;
 
     setCentralWidget(m_central);
 
@@ -339,6 +340,14 @@ void SPMmainWindow::createAlcanceLimiteWindow()
     m_alcanceLimiteWindow->show();
 }
 
+void SPMmainWindow::createPredictor()
+{
+    m_predictor = new PredictorMainWindow;
+    m_predictor->setHarmonicConstants(SPMmainWindow::m_selectedHarmonicConstantVector);
+
+    m_predictor->show();
+}
+
 /*bool SPMmainWindow::saveFrequencyFile()
 {
     if (this->writeFrequencyFile(m_frequencyFilePath)){
@@ -394,7 +403,7 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
         dateTimeVector.push_back(meas.measurementDateTime());
 
         quint64 seconds = firstDateTime.secsTo(meas.measurementDateTime());
-        qreal timeInHours = seconds/3600.0 + 1; //+1 porque las mediciones empiezan a partir de 1;
+        qreal timeInHours = seconds/3600.0;// + 1; //+1 porque las mediciones empiezan a partir de 1;
 
         timeValarray[i] = timeInHours;
         levelValarray[i] = meas.seaLevel();
@@ -972,6 +981,9 @@ void SPMmainWindow::createActions()
     //TODO: icon
     connect(m_alcanceLimiteAction,&QAction::triggered,this,&SPMmainWindow::createAlcanceLimiteWindow);
 
+    m_predictorAction = new QAction(tr("Predicción"));
+    connect(m_predictorAction,&QAction::triggered,this,&SPMmainWindow::createPredictor);
+
     //ChartActions--------------------------------------------------------------
     m_themeLightAction = new QAction(tr("Claro"),this);
     m_themeLightAction->setCheckable(true);
@@ -1096,6 +1108,7 @@ void SPMmainWindow::createMenus()
     m_toolMenu = menuBar()->addMenu(tr("Herramientas"));
     m_toolMenu->addAction(m_nivelacionAcuaticaAction);
     m_toolMenu->addAction(m_alcanceLimiteAction);
+    m_toolMenu->addAction(m_predictorAction);
     //m_toolMenu->addAction(m_freqEditorAction);
 
     m_chartMenu = menuBar()->addMenu(tr("Gráfico"));

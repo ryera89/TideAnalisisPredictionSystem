@@ -19,9 +19,10 @@ void XYTidalChartModelMapper::setSeries(QXYSeries *series)
     if (series) m_series = series;
 }
 
-//WARNING: Ver si hay problemas en la conversion.
 void XYTidalChartModelMapper::updateSeriesData(const QModelIndex &topLeft, const QModelIndex &bottomRight, const QVector<int> &roles)
 {
+    Q_UNUSED(roles)
+
     int topRow = topLeft.row();
     int bottomRow = bottomRight.row();
 
