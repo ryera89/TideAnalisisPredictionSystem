@@ -20,13 +20,14 @@ QVector<TidesMeasurement> predictionWithNodalFactorCte(const double &datum, cons
         hcF.push_back(f);
         hcV_u.push_back(V0_plus_u);
 
-        std::cout << hcVector.at(i).name().toStdString() << " " << f << " " << V0_plus_u << std::endl;
+        //std::cout << hcVector.at(i).name().toStdString() << " " << f << " " << V0_plus_u << std::endl;
     }
 
-    QDateTime aux(from);
+    QDateTime aux(from.date(),from.time(),Qt::UTC);
+    QDateTime auxEnd(to.date(),to.time(),Qt::UTC);
     QVector<TidesMeasurement> resp;
     double t = 0.0;
-    while (aux <= to){
+    while (aux <= auxEnd){
         double h = datum;
         for (int i = 0; i < hcVector.size(); ++i){
             double aux1 = hcVector.at(i).frequency()*t;
@@ -39,8 +40,8 @@ QVector<TidesMeasurement> predictionWithNodalFactorCte(const double &datum, cons
         TidesMeasurement predMeas(h,aux);
         resp.push_back(predMeas);
 
+        //std::cout << t << std::endl;
         t += interval/3600.0;
-        std::cout << t << std::endl;
         aux = aux.addSecs(interval);
     }
 
@@ -66,10 +67,11 @@ QVector<TidesMeasurement> predictionWithNodalFactorVar(const double &datum, cons
         hcV_u.push_back(V0_plus_u);
     }*/
 
-    QDateTime aux(from);
+    QDateTime aux(from.date(),from.time(),Qt::UTC);
+    QDateTime auxEnd(to.date(),to.time(),Qt::UTC);
     double t = 0.0;
     QVector<TidesMeasurement> resp;
-    while (aux <= to){
+    while (aux <= auxEnd){
         double h = datum;
         AstronomicalMeanLongitudes astlong(aux);
         for (int i = 0; i < hcVector.size(); ++i){
@@ -87,6 +89,8 @@ QVector<TidesMeasurement> predictionWithNodalFactorVar(const double &datum, cons
         TidesMeasurement predMeas(h,aux);
         resp.push_back(predMeas);
 
+        //std::cout << t << std::endl;
+        //std::cout << aux.toString("dd/MM/yyyy hh:mm").toStdString() << std::endl;
         t += interval/3600.0;
         aux = aux.addSecs(interval);
     }

@@ -47,6 +47,9 @@ signals:
     void harmonicAnalisisFinished();
 private slots:
     void newProject();
+    void openProject();
+    void saveProject();
+    void saveProjectAs();
 
     void loadDataFile();
     void createManualDataIntWidget();
@@ -104,17 +107,20 @@ protected slots:
     void beginDataExtrationFromFile();
     void appendImportedData();
 
-    //bool writeFrequencyFile(const QString &filePath);
+
     //bool saveAnalisisData();
 
     //void gettingData(const QVector<QStringList> &data, int dateField, int timeField, int heightField);
 
 private:
 
-    enum {SchemesMagicNumber = 18041989, ComponentsMagicNumber = 19891804};  //Magic Numbers for config files recognition
+    enum {SchemesMagicNumber = 18041989, MagicNumber = 19891804};  //Magic Numbers for config files recognition
     //Config files filespath--------------------------------------------------------------------
-    const QString m_frequencyFilePath = "data/frequency.frq"; //fichero donde se guardan la frecuencias de las constantes armonicas
+    //const QString m_frequencyFilePath = "data/frequency.frq"; //fichero donde se guardan la frecuencias de las constantes armonicas
     const QString m_schemesFilePath = "data/schemes.sch"; //Fichero donde se guardan los esquemas
+
+
+    QString m_projectFilePath; //Para cuando se abre un proyecto;
 
     /*********************************Visual Widgets**********************************************/
     //Central Widget Main Interface----------------------------------------------------------------------
@@ -233,7 +239,8 @@ private:
 
 
      bool createHarmonicAnalisisDialogFromConfigFile();
-     //bool loadHarmonicConstantsFromFile();
+     bool readFile(const QString &filePath);
+     bool writeFile(const QString &filePath);
      //static void setSelectectedHarmonicConstants();
      //bool saveAnalisisDataToFile(const QString &filePath);
      void saveHarmonicConstants(const QString &filePath);

@@ -152,7 +152,6 @@ void TablaHorariaDeMarea::populateTable(const TidalData &m_data)
 
     int count = 0; //Contador para llenar la tabla correctamente
 
-    //TODO: Arreglar esto de aqui
     for (int i = 0; i < m_data.m_measurementDates.size(); ++i){
         int kprima = 0;
         for (int j = 0; j < m_data.m_measurementNumberPerDay.value(m_data.m_measurementDates[i]); ++j){

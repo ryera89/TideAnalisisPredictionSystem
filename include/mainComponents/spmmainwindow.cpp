@@ -38,6 +38,8 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
     m_alcanceLimiteWindow = Q_NULLPTR;
     m_predictor = Q_NULLPTR;
 
+    m_projectFilePath = QString();
+
     setCentralWidget(m_central);
 
 
@@ -146,15 +148,55 @@ QSize SPMmainWindow::sizeHint() const
 
 void SPMmainWindow::newProject()
 {
-    m_metadataStorage = ProjectMetaData();
-    QVector<TidesMeasurement> newData;
-    newData.resize(100);
-    m_central->tableModel()->setMeasurements(newData);
-    m_selectedHarmonicConstantVector.clear();
+    int resp = QMessageBox::question(this,tr("Nuevo Proyecto"),tr("Se eliminarán los datos del "
+                                                       "proyecto. \n¿Desea continuar?"));
+    if (resp == QMessageBox::Yes){
+        m_metadataStorage = ProjectMetaData();
+        QVector<TidesMeasurement> newData;
+        newData.resize(100);
+        m_central->tableModel()->setMeasurements(newData);
+        m_selectedHarmonicConstantVector.clear();
 
-    m_projectMetaDataDialog = new MetaDataDialog(m_metadataStorage,this);
-    m_projectMetaDataDialog->show();
-    connect(m_projectMetaDataDialog,SIGNAL(okButtonClicked(bool)),this,SLOT(updateMetaData()));
+        m_projectMetaDataDialog = new MetaDataDialog(m_metadataStorage,this);
+        m_projectMetaDataDialog->show();
+        connect(m_projectMetaDataDialog,SIGNAL(okButtonClicked(bool)),this,SLOT(updateMetaData()));
+    }
+
+}
+
+void SPMmainWindow::openProject()
+{
+    QString fileName = QFileDialog::getOpenFileName(this,tr("Abrir Proyecto"),"",tr("Archivos thd (*.thd)"));
+
+    if (!fileName.isEmpty()){
+         m_projectFilePath = fileName;
+         readFile(fileName);
+    }
+}
+
+void SPMmainWindow::saveProject()
+{
+    if (m_projectFilePath.isEmpty()){
+        QString fileName = QFileDialog::getSaveFileName(this,tr("Guardar Proyecto"),"",tr("Archivos thd (*.thd)"));
+
+        if (!fileName.isEmpty()){
+            if (QFileInfo(fileName).suffix().isEmpty()) fileName.append(".thd");
+            m_projectFilePath = fileName;
+            writeFile(fileName);
+        }
+    }else{
+        writeFile(m_projectFilePath);
+    }
+}
+
+void SPMmainWindow::saveProjectAs()
+{
+    QString fileName = QFileDialog::getSaveFileName(this,tr("Guardar Proyecto"),"",tr("Archivos thd (*.thd)"));
+    if (!fileName.isEmpty()){
+        if (QFileInfo(fileName).suffix().isEmpty()) fileName.append(".thd");
+        m_projectFilePath = fileName;
+        writeFile(fileName);
+    }
 }
 
 void SPMmainWindow::loadDataFile()
@@ -426,8 +468,8 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
             std::cout << minimosCuadrados.parametros()[k] << std::endl;
         }*/
 
-            std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() << std::endl;
-            std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;
+            //std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() << std::endl;
+            //std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;
         }else{
 
             Fitsvd test(timeValarray,levelValarray,var,SPMmainWindow::funcion);
@@ -437,8 +479,8 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
                 SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(test.a[k+1],test.a[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
             }
 
-        std::cout << "Chi cuadrado=" << test.chisq << std::endl;
-        std::cout << "Nivel Medio=" << test.a[0] << std::endl;
+        //std::cout << "Chi cuadrado=" << test.chisq << std::endl;
+        //std::cout << "Nivel Medio=" << test.a[0] << std::endl;
         }
          applyCorrectionsToHarmonicConstants();
     }else{
@@ -449,8 +491,8 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
             for (int k = 0; k < SPMmainWindow::m_selectedHarmonicConstantVector.size(); ++k){
                 SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(minimosCuadrados.parametros()[k+1],minimosCuadrados.parametros()[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
             }
-            std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() << std::endl;
-            std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;
+            //std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() << std::endl;
+            //std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] << std::endl;
         }else{
             Customfitsvd test(timeValarray,levelValarray,var,dateTimeVector,SPMmainWindow::funcionModificada);
             test.fit();
@@ -459,8 +501,8 @@ void SPMmainWindow::harmonicAnalisisWithAllData()
                 SPMmainWindow::m_selectedHarmonicConstantVector[k].setComponentValues(test.a[k+1],test.a[k+1+(SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
             }
 
-        std::cout << "Chi cuadrado=" << test.chisq << std::endl;
-        std::cout << "Nivel Medio=" << test.a[0] << std::endl;
+        //std::cout << "Chi cuadrado=" << test.chisq << std::endl;
+        //std::cout << "Nivel Medio=" << test.a[0] << std::endl;
         }
         determineHarmonicContantPhase();
     }
@@ -599,7 +641,7 @@ void SPMmainWindow::saveHarmonicConstantToFile()
     }
 }
 
-/*bool SPMmainWindow::writeFrequencyFile(const QString &filePath)
+bool SPMmainWindow::writeFile(const QString &filePath)
 {
     QFile file(filePath);
 
@@ -609,12 +651,27 @@ void SPMmainWindow::saveHarmonicConstantToFile()
 
        QApplication::setOverrideCursor(Qt::WaitCursor);
 
-       out << qint32(ComponentsMagicNumber);
+       out << qint32(MagicNumber);
 
-       out << qint16(m_frequencyEditor->harmonicConstantsModel()->rowCount(QModelIndex()));
+       out << QString(m_metadataStorage.projectName()); //QString
+       out << QString(m_metadataStorage.stationName()); //QString
+       out << QString(m_metadataStorage.localizationName()); //QString
+       out << int(m_metadataStorage.timeZoneOffset()); //int
+       out << bool(m_metadataStorage.isDaylightTimeSaving()); //bool
+       out << double(m_metadataStorage.nivelReferencia()); //double
+       out << int(m_metadataStorage.referenciaUnit()); //MeasurementUnitEditWidget;
+       out << double(m_metadataStorage.ceroPuesto()); //double
+       out << int(m_metadataStorage.ceroUnit()); //MeasurementUnitEditWidget
+       out << double(m_metadataStorage.latitud()); //double
+       out << double(m_metadataStorage.longitud()); //double
+       out << QString(m_metadataStorage.equipmentID()); //QString
 
-       foreach (HarmonicConstant harmonicConstant, m_frequencyEditor->harmonicConstantsModel()->allData()) {
-           out << harmonicConstant.name() << (double)harmonicConstant.frequency() << harmonicConstant.description();
+       quint32 dataNumber = m_central->tableModel()->measurementData().size();
+
+       out << quint32(dataNumber);
+
+       foreach (TidesMeasurement tm, m_central->tableModel()->measurementData()) {
+           out << QDateTime(tm.measurementDateTime()) << double(tm.seaLevel());
        }
 
        QApplication::restoreOverrideCursor();
@@ -626,9 +683,9 @@ void SPMmainWindow::saveHarmonicConstantToFile()
 
         return false;
     }
-
+    file.close();
     return true;
-}*/
+}
 
 /*bool SPMmainWindow::saveAnalisisData()
 {
@@ -938,17 +995,17 @@ void SPMmainWindow::createActions()
     m_loadProjectAction = new QAction(QIcon(":/images/project-open.png"),tr("&Abrir"),this);
     m_loadProjectAction->setShortcut(QKeySequence::Open);
     m_loadProjectAction->setToolTip(tr("Cargar proyecto"));
-    //TODO connect
+    connect(m_loadProjectAction,&QAction::triggered,this,&SPMmainWindow::openProject);
 
     m_saveProjectAction = new QAction(QIcon(":/images/save.png"),tr("&Guardar"),this);
     m_saveProjectAction->setShortcut(QKeySequence::Save);
     m_saveProjectAction->setToolTip(tr("Guardar proyecto"));
-    //TODO connect
+    connect(m_saveProjectAction,&QAction::triggered,this,&SPMmainWindow::saveProject);
 
     m_saveAsProjectAction = new QAction(QIcon(":/images/saveAs.png"),tr("Guardar &Como..."),this);
     m_saveAsProjectAction->setShortcut(QKeySequence::SaveAs);
     m_saveAsProjectAction->setToolTip(tr("Guardar proyecto como..."));
-    //TODO connect
+    connect(m_saveAsProjectAction,&QAction::triggered,this,&SPMmainWindow::saveProjectAs);
 
     m_projectMetaDataAction = new QAction(QIcon(":/images/project-info.png"),tr("&Información"),this);
     m_projectMetaDataAction->setToolTip(tr("Información del Proyecto"));
@@ -1283,9 +1340,9 @@ bool SPMmainWindow::createHarmonicAnalisisDialogFromConfigFile()
     }
 }
 
-/*bool SPMmainWindow::loadHarmonicConstantsFromFile()
+bool SPMmainWindow::readFile(const QString &filePath)
 {
-    QFile file(m_frequencyFilePath);
+    QFile file(filePath);
 
     if (file.open(QIODevice::ReadOnly)){
         QDataStream in(&file);
@@ -1297,40 +1354,109 @@ bool SPMmainWindow::createHarmonicAnalisisDialogFromConfigFile()
 
         in >> number;
 
-        if (number != ComponentsMagicNumber){
+        if (number != MagicNumber){
             QMessageBox::information(this,tr("Error al leer archivo"),tr("El archivo %1 no tiene el formato requerido.").arg(file.fileName()));
             return false;
         }
 
-        qint16 rowNumber;
-        //qint16 columnNumber;
+        QString projectName;
+        QString stationName;
+        QString locationName;
+        int timeZoneOffset;
+        bool daylightTimeSaving;
+        double nivelReferencia;
+        int unidadNivelReferencia;
+        double ceroPuesto;
+        int unidadCeroPuesto;
+        double latitud;
+        double longitud;
+        QString equipmetID;
 
-        in >> rowNumber;
-
-        QVector<HarmonicConstant> datos;
 
 
-        QString name;
-        double frequency;
-        QString description;
+        in >> projectName >> stationName >> locationName >> timeZoneOffset >> daylightTimeSaving
+                >> nivelReferencia >> unidadNivelReferencia >> ceroPuesto >> unidadCeroPuesto
+                >> latitud >> longitud >> equipmetID;
 
-        for (int i = 0; i < rowNumber; ++i){
-            in >> name >> frequency >> description;
-            datos.push_back(HarmonicConstant(name,frequency,description));
+        MeasurementUnitEditWidget::Units refUnit;
+        MeasurementUnitEditWidget::Units ceroUnit;
+
+        switch (unidadNivelReferencia) {
+        case 0:
+            refUnit = MeasurementUnitEditWidget::M;
+            break;
+        case 1:
+            refUnit = MeasurementUnitEditWidget::DM;
+            break;
+        case 2:
+            refUnit = MeasurementUnitEditWidget::CM;
+            break;
+        case 3:
+            refUnit = MeasurementUnitEditWidget::MM;
+            break;
+        default:
+            break;
+        }
+        switch (unidadCeroPuesto) {
+        case 0:
+            ceroUnit = MeasurementUnitEditWidget::M;
+            break;
+        case 1:
+            ceroUnit = MeasurementUnitEditWidget::DM;
+            break;
+        case 2:
+            ceroUnit = MeasurementUnitEditWidget::CM;
+            break;
+        case 3:
+            ceroUnit = MeasurementUnitEditWidget::MM;
+            break;
+        default:
+            break;
         }
 
-        m_harmonicConstantVector = datos;
+        m_metadataStorage.setProjectName(projectName);
+        m_metadataStorage.setStationName(stationName);
+        m_metadataStorage.setLocalizationName(locationName);
+        m_metadataStorage.setTimeZoneOffSet(timeZoneOffset);
+        m_metadataStorage.setDayLightTimeSaving(daylightTimeSaving);
+        m_metadataStorage.setNivelReferencia(nivelReferencia);
+        m_metadataStorage.setReferenceUnits(refUnit);
+        m_metadataStorage.setCeroPuesto(ceroPuesto);
+        m_metadataStorage.setCeroUnits(ceroUnit);
+        m_metadataStorage.setLatitud(latitud);
+        m_metadataStorage.setLongitud(longitud);
+        m_metadataStorage.setEquipmentID(equipmetID);
+
+        quint32 dataNumber;
+
+        in >> dataNumber;
+
+        QVector<TidesMeasurement> datos;
+
+        QDateTime dateTime;
+        double level;
+        for (quint32 i = 0; i < dataNumber; ++i){
+            in >> dateTime >> level;
+
+            TidesMeasurement tm(level,dateTime);
+            datos.push_back(tm);
+        }
+
+        m_central->tableModel()->setMeasurements(datos);
 
         QApplication::restoreOverrideCursor();
 
-        return true;
+        file.close();
+
+    }else{
+        QMessageBox::information(this,tr("Error al leer archivo"),tr("No se puede leer el archivo %1:\n%2.")
+                                 .arg(file.fileName().arg(file.errorString())));
+
+        return false;
     }
 
-    QMessageBox::information(this,tr("Error al leer archivo"),tr("No se puede leer el archivo %1:\n%2.")
-                             .arg(file.fileName().arg(file.errorString())));
-
-    return false;
-}*/
+    return true;
+}
 
 /*bool SPMmainWindow::saveAnalisisDataToFile(const QString &filePath)
 {
