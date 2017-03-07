@@ -26,6 +26,9 @@ NivelacionAcuaticaWidget::NivelacionAcuaticaWidget(const QVector<TidesMeasuremen
 
     connect(m_metodoComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(setMetodoDeNivelacion(int)));
 
+    setWindowTitle(tr("Nivelación Acuática"));
+    setWindowIcon(QIcon(":images/nivelacion_acuatica.png"));
+    setWindowState(Qt::WindowMaximized);
     setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -791,6 +794,8 @@ void NivelacionAcuaticaWidget::calculateMetodoDeUnPuestoPermanente()
 
     m_puestoProvNMMDisplayResult->setText(QString::number(value,'g',3));
 
+    m_nivelMedioLineSerie->clear();
+
     m_nivelMedioLineSerie->append(m_puestoProvSerie->pointsVector().first().x(),value);
     m_nivelMedioLineSerie->append(m_puestoProvSerie->pointsVector().last().x(),value);
 
@@ -820,6 +825,8 @@ void NivelacionAcuaticaWidget::calculateMetodoDeDosPuestosPermanentes()
 
     qreal value = calcularNivelacionAcuatica2PuestoPermanete(m_dataTableModel->diffPProvPuestoPerm1(),m_dataTableModel->diffPProvPuestoPerm2(),
                                                              nmm01,nmm02,pProvCoordinates,pPerm1Coordinates,pPerm2Coordinates);
+
+    m_nivelMedioLineSerie->clear();
 
     m_nivelMedioLineSerie->append(m_puestoProvSerie->pointsVector().first().x(),value);
     m_nivelMedioLineSerie->append(m_puestoProvSerie->pointsVector().last().x(),value);

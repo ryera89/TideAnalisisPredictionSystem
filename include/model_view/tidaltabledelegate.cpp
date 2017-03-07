@@ -25,7 +25,7 @@ void TidalTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
         }else{
             painter->setPen(myOption.palette.windowText().color());
         }
-        painter->drawText(myOption.rect.adjusted(0,0,-3,0),date.toString("yyyy/MM/dd"),
+        painter->drawText(myOption.rect.adjusted(0,0,-3,0),date.toString("dd/MM/yyyy"),
                           QTextOption(Qt::AlignVCenter | Qt::AlignRight));
         painter->restore();
 
@@ -66,7 +66,7 @@ void TidalTableDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
                 }else{
                     painter->setPen(myOption.palette.windowText().color());
                 }
-                painter->drawText(myOption.rect.adjusted(0,0,-3,0),QString::number(level),
+                painter->drawText(myOption.rect.adjusted(0,0,-3,0),QString::number(level,'f',3),
                                   QTextOption(Qt::AlignVCenter | Qt::AlignRight));
                 painter->restore();
             }else{
@@ -81,7 +81,7 @@ QWidget *TidalTableDelegate::createEditor(QWidget *parent, const QStyleOptionVie
 {
     if (index.column() == dateColumn){
         QDateEdit *dateEdit = new QDateEdit(parent);
-        dateEdit->setDisplayFormat("yyyy/MM/dd");
+        dateEdit->setDisplayFormat("dd/MM/yyyy");
 
         connect(dateEdit,SIGNAL(editingFinished()),this,SLOT(commitAndCloseDateEditor()));
         return dateEdit;

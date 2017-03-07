@@ -2,12 +2,15 @@
 #include <QHBoxLayout>
 #include <QGridLayout>
 #include <QVBoxLayout>
-
+#include <QHeaderView>
 #include <QLabel>
 #include <QRadioButton>
 #include <QGroupBox>
 #include <QDateEdit>
 #include <QPushButton>
+#include <QToolButton>
+#include <QTextTable>
+#include "tablahorariareport.h"
 
 TablaHorariaWidget::TablaHorariaWidget(QWidget *parent) : QWidget(parent)
 {
@@ -22,6 +25,197 @@ TablaHorariaWidget::TablaHorariaWidget(QWidget *parent) : QWidget(parent)
 QSize TablaHorariaWidget::sizeHint() const
 {
     return this->maximumSize();
+}
+
+void TablaHorariaWidget::createTable()
+{
+    TablaHorariaReport *reportWindow = new TablaHorariaReport;
+    reportWindow->setWindowIcon(QIcon(":images/timetable.png"));
+    reportWindow->setWindowTitle(tr("Tabla Horaria de Marea"));
+
+
+    QTextCursor cursor = reportWindow->reportEdit()->textCursor();
+
+    QTextBlockFormat titleBlockFormat;
+    titleBlockFormat.setAlignment(Qt::AlignHCenter);
+
+    QTextCharFormat titleCharFormat;
+    titleCharFormat.setFontWeight(QFont::Bold);
+    titleCharFormat.setFontPointSize(14);
+
+    QTextCharFormat subTitleCharFormat;
+    subTitleCharFormat.setFontWeight(QFont::Bold);
+    subTitleCharFormat.setFontPointSize(12);
+
+    cursor.insertBlock(titleBlockFormat);
+    cursor.insertText(tr("TABLA HORARIA DE MAREA [m]"),titleCharFormat);
+
+    cursor.insertBlock(titleBlockFormat);
+    cursor.insertText("Puesto: " + m_nombreDelPuesto + ". " + "Latitud: " +
+                      m_latitudStr + ", " + "Longitud: " + m_longitudStr,subTitleCharFormat);
+
+    cursor.insertBlock();
+    cursor.insertBlock();
+
+    int rowNumber = nonHiddenRowNumber();
+    int colNumber = m_tablaHoraria->columnCount();
+
+    QTextTableFormat tableFormat;
+    QBrush blackBrush(Qt::SolidPattern);
+    tableFormat.setBorderBrush(blackBrush);
+    tableFormat.setBorder(0.5);
+    tableFormat.setBorderStyle(QTextTableFormat::BorderStyle_Solid);
+    tableFormat.setAlignment(Qt::AlignCenter);
+
+    QTextCharFormat boldCharFormat;
+    boldCharFormat.setFontWeight(QFont::Bold);
+    boldCharFormat.setFontPointSize(7);
+
+    QTextCharFormat normalCharFormat;
+    normalCharFormat.setFontWeight(QFont::Normal);
+    normalCharFormat.setFontPointSize(7);
+
+
+    QTextTableCellFormat cellFormat;
+    cellFormat.setLeftPadding(2);
+    cellFormat.setRightPadding(2);
+    cellFormat.setTopPadding(2);
+
+
+
+    QTextTable *tablaHoraria = cursor.insertTable(rowNumber,colNumber,tableFormat);
+    QTextBlockFormat cellBlockFormat;
+    cellBlockFormat.setAlignment(Qt::AlignCenter);
+
+    tablaHoraria->mergeCells(0,0,2,1);
+    tablaHoraria->mergeCells(0,1,1,colNumber - 6);
+    tablaHoraria->mergeCells(0,colNumber - 5,2,1);
+    tablaHoraria->mergeCells(0,colNumber - 4,2,1);
+    tablaHoraria->mergeCells(0,colNumber - 3,1,2);
+    tablaHoraria->mergeCells(0,colNumber - 1,2,1);
+
+    const QString fecha = "FECHA";
+    const QString hora = "HORA";
+    const QString suma = "SUMA";
+    const QString nivel_medio = " NIVEL \n MEDIO";
+    const QString extremos = "EXTREMOS";
+    const QString max = "MAX";
+    const QString min = "MIN";
+    const QString diff = "DIF";
+
+    cursor = tablaHoraria->cellAt(0,0).firstCursorPosition();
+    tablaHoraria->cellAt(0,0).setFormat(cellFormat);
+    cursor.setBlockFormat(cellBlockFormat);
+    cursor.insertText(fecha,boldCharFormat);
+
+    cursor = tablaHoraria->cellAt(0,1).firstCursorPosition();
+    tablaHoraria->cellAt(0,1).setFormat(cellFormat);
+    cursor.setBlockFormat(cellBlockFormat);
+    cursor.insertText(hora,boldCharFormat);
+
+    cursor = tablaHoraria->cellAt(0,colNumber - 5).firstCursorPosition();
+    tablaHoraria->cellAt(0,colNumber - 5).setFormat(cellFormat);
+    cursor.setBlockFormat(cellBlockFormat);
+    cursor.insertText(suma,boldCharFormat);
+
+    cursor = tablaHoraria->cellAt(0,colNumber - 4).firstCursorPosition();
+    tablaHoraria->cellAt(0,colNumber - 4).setFormat(cellFormat);
+    cursor.setBlockFormat(cellBlockFormat);
+    cursor.insertText(nivel_medio,boldCharFormat);
+
+    cursor = tablaHoraria->cellAt(0,colNumber - 3).firstCursorPosition();
+    tablaHoraria->cellAt(0,colNumber - 3).setFormat(cellFormat);
+    cursor.setBlockFormat(cellBlockFormat);
+    cursor.insertText(extremos,boldCharFormat);
+
+    cursor = tablaHoraria->cellAt(0,colNumber - 1).firstCursorPosition();
+    tablaHoraria->cellAt(0,colNumber - 1).setFormat(cellFormat);
+    cursor.setBlockFormat(cellBlockFormat);
+    cursor.insertText(diff,boldCharFormat);
+
+    cursor = tablaHoraria->cellAt(1,colNumber - 3).firstCursorPosition();
+    tablaHoraria->cellAt(1,colNumber - 3).setFormat(cellFormat);
+    cursor.setBlockFormat(cellBlockFormat);
+    cursor.insertText(max,boldCharFormat);
+
+    cursor = tablaHoraria->cellAt(1,colNumber - 2).firstCursorPosition();
+    tablaHoraria->cellAt(1,colNumber - 2).setFormat(cellFormat);
+    cursor.setBlockFormat(cellBlockFormat);
+    cursor.insertText(min,boldCharFormat);
+
+    /*cursor = tablaHoraria->cellAt(rowNumber - 2,0).firstCursorPosition();
+    cursor.setBlockFormat(cellBlockFormat);
+    cursor.insertText(suma);
+
+    cursor = tablaHoraria->cellAt(rowNumber - 1,0).firstCursorPosition();
+    cursor.setBlockFormat(cellBlockFormat);
+    cursor.insertText(promedio);*/
+
+    /*cursor = tablaHoraria->cellAt(1,colNumber - 2).firstCursorPosition();
+    cursor.setBlockFormat(cellBlockFormat);
+    cursor.insertText(min);*/
+
+    for (int i = 1; i <= colNumber-6; ++i){
+        QString h = m_tablaHoraria->item(1,i)->text();
+        cursor = tablaHoraria->cellAt(1,i).firstCursorPosition();
+        tablaHoraria->cellAt(1,i).setFormat(cellFormat);
+        cursor.setBlockFormat(cellBlockFormat);
+        cursor.insertText(h,normalCharFormat);
+    }
+
+
+    int rowCont = m_tablaHoraria->rowCount();
+    int colCont = m_tablaHoraria->columnCount();
+    int k = 2; //Row for text table
+
+    for (int j = 2; j < rowCont; ++j ){ //j rows, i columns
+        if (!m_tablaHoraria->isRowHidden(j)){
+            for (int i = 0; i < colCont; ++i){
+
+                if (j < rowCont - 2 && i == 0){
+                    QString str = m_tablaHoraria->item(j,i)->data(Qt::DisplayRole).toDate().toString("d/M/yy");
+                    cursor = tablaHoraria->cellAt(k,i).firstCursorPosition();
+                    tablaHoraria->cellAt(k,i).setFormat(cellFormat);
+                    cursor.setBlockFormat(cellBlockFormat);
+                    cursor.insertText(str,normalCharFormat);
+                }else{
+                    QString str = m_tablaHoraria->item(j,i)->text();
+                    cursor = tablaHoraria->cellAt(k,i).firstCursorPosition();
+                    tablaHoraria->cellAt(k,i).setFormat(cellFormat);
+                    cursor.setBlockFormat(cellBlockFormat);
+                    cursor.insertText(str,normalCharFormat);
+                }
+            }
+            ++k;
+        }
+
+    }
+
+    reportWindow->show();
+
+}
+
+void TablaHorariaWidget::loadMetaData(const ProjectMetaData &metadata)
+{
+    m_nombreDelPuesto = metadata.stationName();
+
+    double latitud = metadata.latitud();
+    m_latitudStr = "0.000";
+    if (latitud > 0.0){
+        m_latitudStr = QString::number(latitud,'f',3) + "⁰ N";
+    }
+    if (latitud < 0.0){
+        m_latitudStr = QString::number(qAbs(latitud),'f',3) + "⁰ S";
+    }
+
+    double longitud = metadata.longitud();
+    m_longitudStr = "0.000";
+    if (longitud > 0.0){
+        m_longitudStr = QString::number(longitud,'f',3) + "⁰ E";
+    }
+    if (longitud < 0.0){
+        m_longitudStr = QString::number(qAbs(longitud),'f',3) + "⁰ W";
+    }
 }
 
 void TablaHorariaWidget::loadTableData(const TidalData &m_data)
@@ -112,6 +306,7 @@ void TablaHorariaWidget::showAllData(bool showAll)
 void TablaHorariaWidget::createComponents()
 {
     m_tablaHoraria = new TablaHorariaDeMarea(this);
+    m_tablaHoraria->verticalHeader()->hide();
 
     m_showDataGroupBox = new QGroupBox(tr("Datos Mostrados"));
     m_intervalGroupBox = new QGroupBox(tr("Intervalo Personalizado"));
@@ -146,6 +341,13 @@ void TablaHorariaWidget::createComponents()
     m_applyPushButton->setDisabled(true);
     connect(m_applyPushButton,SIGNAL(clicked(bool)),this,SLOT(showInterval()));
 
+    m_printToolButton = new QToolButton;
+    m_printToolButton->setIcon(QIcon(":images/print-icon.png"));
+    m_printToolButton->setMinimumSize(90,90);
+    m_printToolButton->setIconSize(QSize(90,90));
+    connect(m_printToolButton,SIGNAL(clicked(bool)),this,SLOT(createTable()));
+
+
     QVBoxLayout *datosMostradoLayout = new QVBoxLayout;
     datosMostradoLayout->addWidget(m_allRadioButton);
     datosMostradoLayout->addWidget(m_customRadioButton);
@@ -170,6 +372,7 @@ void TablaHorariaWidget::createComponents()
     upLayout->addWidget(m_intervalGroupBox);
     upLayout->addSpacing(40);
     upLayout->addWidget(m_extremesGroupBox);
+    upLayout->addWidget(m_printToolButton);
 
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(upLayout);
@@ -204,13 +407,13 @@ void TablaHorariaWidget::setSumAndMeanOfNotHiddenRows()
                         minimo = number;
                         m_minimoInInterval.setSeaLevel(minimo);
                         m_minimoInInterval.setMeasurementDate(m_tablaHoraria->item(m_notHiddenRows.at(i),0)->data(Qt::DisplayRole).toDate());
-                        m_minimoInInterval.setMeasurementTime(QTime::fromString(m_tablaHoraria->item(1,column)->text(),"hh:mm:ss"));
+                        m_minimoInInterval.setMeasurementTime(QTime::fromString(m_tablaHoraria->item(1,column)->text(),"hh:mm"));
                     }
                     if (number > maximo){
                         maximo = number;
                         m_maximoInInterval.setSeaLevel(maximo);
                         m_maximoInInterval.setMeasurementDate(m_tablaHoraria->item(m_notHiddenRows.at(i),0)->data(Qt::DisplayRole).toDate());
-                        m_maximoInInterval.setMeasurementTime(QTime::fromString(m_tablaHoraria->item(1,column)->text(),"hh:mm:ss"));
+                        m_maximoInInterval.setMeasurementTime(QTime::fromString(m_tablaHoraria->item(1,column)->text(),"hh:mm"));
 
                     }
                 }
@@ -220,7 +423,9 @@ void TablaHorariaWidget::setSumAndMeanOfNotHiddenRows()
         double promedio = suma/counter;
 
         m_tablaHoraria->item(m_tablaHoraria->rowCount() - 2,column)->setData(Qt::DisplayRole,suma);
+        m_tablaHoraria->item(m_tablaHoraria->rowCount() - 2,column)->setText(QString::number(suma,'f',3));
         m_tablaHoraria->item(m_tablaHoraria->rowCount() - 1,column)->setData(Qt::DisplayRole,promedio);
+        m_tablaHoraria->item(m_tablaHoraria->rowCount() - 1,column)->setText(QString::number(promedio,'f',3));
     }
     m_maxLabel->setText(tr("Nivel Máximo: %1  Fecha: %2 %3").arg(m_maximoInInterval.seaLevel()).
                         arg(m_maximoInInterval.measurementDate().toString("dd/MM/yyyy")).arg(m_maximoInInterval.measurementTime().toString("hh:mm:ss")));
@@ -270,7 +475,9 @@ void TablaHorariaWidget::setSumAndMeanOfAllRows()
         double promedio = suma/counter;
 
         m_tablaHoraria->item(m_tablaHoraria->rowCount() - 2,column)->setData(Qt::DisplayRole,suma);
+        m_tablaHoraria->item(m_tablaHoraria->rowCount() - 2,column)->setText(QString::number(suma,'f',3));
         m_tablaHoraria->item(m_tablaHoraria->rowCount() - 1,column)->setData(Qt::DisplayRole,promedio);
+        m_tablaHoraria->item(m_tablaHoraria->rowCount() - 1,column)->setText(QString::number(promedio,'f',3));
     }
     m_maxLabel->setText(tr("Nivel Máximo: %1  Fecha: %2 %3").arg(m_maximo.seaLevel()).
                         arg(m_maximo.measurementDate().toString("dd/MM/yyyy")).arg(m_maximo.measurementTime().toString("hh:mm:ss")));
@@ -278,3 +485,14 @@ void TablaHorariaWidget::setSumAndMeanOfAllRows()
     m_minLabel->setText(tr("Nivel Mínimo: %1  Fecha: %2 %3").arg(m_minimo.seaLevel()).
                         arg(m_minimo.measurementDate().toString("dd/MM/yyyy")).arg(m_minimo.measurementTime().toString("hh:mm:ss")));
 }
+
+int TablaHorariaWidget::nonHiddenRowNumber()
+{
+    int rows = 0;
+    for (int i = 0; i < m_tablaHoraria->rowCount(); ++i){
+        if (!m_tablaHoraria->isRowHidden(i)) ++rows;
+    }
+
+    return rows;
+}
+

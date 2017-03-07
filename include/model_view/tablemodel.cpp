@@ -3,8 +3,7 @@
 
 TableModel::TableModel(QObject *parent): QAbstractTableModel(parent)
 {
-    headers << "Fecha" << "Hora" << "Nivel del Mar";
-    measurements.resize(100);
+    headers << "Fecha" << "Hora" << "Nivel [m]";
 }
 
 int TableModel::rowCount(const QModelIndex& /*parent*/) const
@@ -127,7 +126,10 @@ bool TableModel::removeRow(int row, const QModelIndex &parent)
 void TableModel::setMeasurements(const QVector<TidesMeasurement> &measurement)
 {
     beginResetModel();
-    measurements = measurement;
+    measurements.clear();
+    foreach (const TidesMeasurement &meas , measurement) {
+        if (meas.isValid()) measurements.push_back(meas);
+    }
     endResetModel();
 }
 
@@ -135,7 +137,7 @@ QVector<QPointF> TableModel::measurementDataRealPoints() const
 {
     QVector<QPointF> points;
     foreach(TidesMeasurement m, measurements){
-        quint64 x = m.measurementDateTime().toMSecsSinceEpoch();
+        qint64 x = m.measurementDateTime().toMSecsSinceEpoch();
 
         QPointF point(x,m.seaLevel());
         points.append(point);

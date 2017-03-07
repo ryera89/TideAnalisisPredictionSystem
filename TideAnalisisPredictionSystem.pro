@@ -4,11 +4,11 @@
 #
 #-------------------------------------------------
 
-QT       += core gui charts positioning concurrent
+QT       += core gui charts positioning concurrent printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = TideAnalisisPredictionSystem
+TARGET = SIPMAR
 TEMPLATE = app
 
 
@@ -92,7 +92,25 @@ SOURCES += main.cpp\
     include/PredictionModule/predictionfunctions.cpp \
     include/PredictionModule/predictormainwindow.cpp \
     include/PredictionModule/predictonsettingswidget.cpp \
-    include/PredictionModule/predictionsettings.cpp
+    include/PredictionModule/predictionsettings.cpp \
+    include/model_view/readonlytabledelegate.cpp \
+    include/PredictionModule/mytableview.cpp \
+    include/mainComponents/uploadhcdialog.cpp \
+    include/Presentation/widget.cpp \
+    include/HarmonicConstantsModule/Model_View/hctabledelegate.cpp \
+    include/Report/ceroprofpage.cpp \
+    include/Report/chapaspage.cpp \
+    include/Report/conclusionpage.cpp \
+    include/Report/finalpage.cpp \
+    include/Report/generalidadespage.cpp \
+    include/Report/intropage.cpp \
+    include/Report/metadatapage.cpp \
+    include/Report/reportwindow.cpp \
+    include/Report/reportwizard.cpp \
+    include/TablaHorariaDeMarea/tablahorariareport.cpp \
+    include/HarmonicConstantsModule/ManualHarmonicConstants/manualharmonicconstantintrodialog.cpp \
+    include/HarmonicConstantsModule/ManualHarmonicConstants/manualharmonicconstantsmodel.cpp \
+    include/HarmonicConstantsModule/ManualHarmonicConstants/manualharmonicconstantsdelegate.cpp
 
 HEADERS  += \
     include/loadDialog/linenumbereditor.h \
@@ -176,7 +194,25 @@ HEADERS  += \
     include/PredictionModule/predictionfunctions.h \
     include/PredictionModule/predictormainwindow.h \
     include/PredictionModule/predictonsettingswidget.h \
-    include/PredictionModule/predictionsettings.h
+    include/PredictionModule/predictionsettings.h \
+    include/model_view/readonlytabledelegate.h \
+    include/PredictionModule/mytableview.h \
+    include/mainComponents/uploadhcdialog.h \
+    include/Presentation/widget.h \
+    include/HarmonicConstantsModule/Model_View/hctabledelegate.h \
+    include/Report/ceroprofpage.h \
+    include/Report/chapaspage.h \
+    include/Report/conclusionpage.h \
+    include/Report/finalpage.h \
+    include/Report/generalidadespage.h \
+    include/Report/intropage.h \
+    include/Report/metadatapage.h \
+    include/Report/reportwindow.h \
+    include/Report/reportwizard.h \
+    include/TablaHorariaDeMarea/tablahorariareport.h \
+    include/HarmonicConstantsModule/ManualHarmonicConstants/manualharmonicconstantintrodialog.h \
+    include/HarmonicConstantsModule/ManualHarmonicConstants/manualharmonicconstantsmodel.h \
+    include/HarmonicConstantsModule/ManualHarmonicConstants/manualharmonicconstantsdelegate.h
 
 RC_ICONS = aquarius-48.ico
 
@@ -193,4 +229,6 @@ DISTFILES += \
 
 FORMS += \
     include/AverageDialog/averagedialog.ui \
-    include/AlcanceLimite/alcancelimitewindow.ui
+    include/AlcanceLimite/alcancelimitewindow.ui \
+    include/mainComponents/uploadhcdialog.ui \
+    include/Presentation/widget.ui

@@ -174,6 +174,7 @@ private:
     QString m_dateFormat;
 
     void settingUpEveryThing();
+    double determineLevelFromCorr(const double &corr);
 };
 
 #endif // LOADDIALOG_H

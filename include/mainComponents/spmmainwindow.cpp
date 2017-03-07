@@ -20,7 +20,21 @@ bool SPMmainWindow::m_daylightTimeSaving = false;
 
 SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    m_central = new CentralWidget(this);
+    m_firstOpen = true;
+
+    m_central = new CentralWidget;
+    m_central->hide();
+
+    m_presentation = new Widget;
+
+    QWidget *central = new QWidget;
+
+    QVBoxLayout *layoutC = new QVBoxLayout;
+    layoutC->addWidget(m_presentation);
+    layoutC->addWidget(m_central);
+    layoutC->setMargin(0);
+
+    central->setLayout(layoutC);
 
     m_metadataStorage.setTimeZoneOffSet(-5); //Zona Horaria de Cuba UTC-05:00
 
@@ -30,38 +44,21 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
     m_projectMetaDataDialog = Q_NULLPTR;
     m_schemeWidget = Q_NULLPTR;
     m_nonHarmonicConstantDialog = Q_NULLPTR;
-    //m_frequencyEditor = Q_NULLPTR;
     m_nivelacionAcuaticaWidget = Q_NULLPTR;
     m_samplingDialog = Q_NULLPTR;
     m_filterDialog = Q_NULLPTR;
     m_averageDialog = Q_NULLPTR;
     m_alcanceLimiteWindow = Q_NULLPTR;
     m_predictor = Q_NULLPTR;
+    m_upHcDialog = Q_NULLPTR;
+    m_reportWizard = Q_NULLPTR;
+    m_manualHCIntroDialog = Q_NULLPTR;
 
     m_projectFilePath = QString();
 
-    setCentralWidget(m_central);
+    m_hcDirDataBase = "data/HarmonicConstantsRecord";
 
-
-
-    //m_datosDeMarea = TidalData(QVector<TidesMeasurement>(100));
-
-    //m_tidalTableModel = new ReadOnlyTableModel(m_datosDeMarea);
-
-    //m_central->tableView()->setModel(m_tidalTableModel);
-
-    /*int width = 20 + m_central->tableView()->verticalHeader()->width();
-    for (int i = 0; i < m_tidalTableModel->columnCount(QModelIndex()); ++i){
-         width += m_central->tableView()->columnWidth(i);
-    }
-    m_central->tableView()->setFixedWidth(width);*/
-
-    //mapper = new XYTidalChartModelMapper(m_tidalTableModel,m_central->chartSerie());
-    //connect(mapper,SIGNAL(chartSeriesSeted()),m_central,SLOT(setSeriesData()));
-    //connect(mapper,SIGNAL(chartSeriesUpdated(int)),m_central,SLOT(updateSerieData(int)));
-
-    //this->layout()->addWidget(m_dataTable);
-    //this->layout()->addWidget(m_freqEditor);
+    setCentralWidget(central);
 
     createActions();
     createMenus();
@@ -70,16 +67,13 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
     m_themeDarkAction->setChecked(true);
     m_animationNoAnimationAction->setChecked(true);
 
-    //loadHarmonicConstantsFromFile();
     harmonicConstantSet();
 
-   // QHBoxLayout *mainLayout = new QHBoxLayout;
+    connect(m_central->tableModel(),SIGNAL(modelReset()),this,SLOT(hidePresentation()));
 
-    //mainLayout->addWidget(m_dataTable);
-   // mainLayout->addWidget(m_freqEditor);
-
-    //this->layout()->addItem(mainLayout);
     setWindowIcon(QIcon(":images/aquarius-48.png"));
+    setWindowTitle(tr("SIPMAR"));
+    setWindowState(Qt::WindowMaximized);
 }
 
 QVector<double> SPMmainWindow::funcion(const double &t)
@@ -146,18 +140,76 @@ QSize SPMmainWindow::sizeHint() const
     return this->maximumSize();
 }
 
+void SPMmainWindow::hidePresentation()
+{
+    m_presentation->hide();
+    m_central->show();
+}
+
+void SPMmainWindow::getNonHarmonicConstansForReport()
+{
+    m_HoraDelPuestoMedia = m_nonHarmonicConstantDialog->horaDelPuestoMedia();
+    m_HoraDelPuesto = m_nonHarmonicConstantDialog->horaDelPuesto();
+    m_DuracionDelVaciante = m_nonHarmonicConstantDialog->duracionDelVaciante();
+    m_DuracionDelLlenate = m_nonHarmonicConstantDialog->duracionDelLenante();
+    m_CrecimientoDeLaMareaSemidiurna = m_nonHarmonicConstantDialog->crecimientoDeLaMareaSemidiurna();
+    m_CrecimientoDeLaMareaParalactica = m_nonHarmonicConstantDialog->crecimientoDeLaMareaParalactica();
+    m_CrecimientoDeLaMareaDiurna = m_nonHarmonicConstantDialog->crecimientoDeLaMareaDiurna();
+    m_HoraCotidianaDeLaMareaSemidiurna = m_nonHarmonicConstantDialog->horaCotidianaMareaSemidiurna();
+    m_HoraCotidianaDeLaMareaDiurna = m_nonHarmonicConstantDialog->horaCotidianaMareaDiurna();
+    m_AlturaPromedioDeLaMareaSemidiurna = m_nonHarmonicConstantDialog->alturaPromedioDeLaMareaSemidiurna();
+    m_AlturaPromedioDeLaMareaSicigias = m_nonHarmonicConstantDialog->alturaPromedioDeLaMareaSicigias();
+    m_AlturaPromedioDeLaMareaCuadratura = m_nonHarmonicConstantDialog->alturaPromedioDeLaMareaCuadratura();
+    m_AlturaPromedioDeLaMareaTropical = m_nonHarmonicConstantDialog->alturaPromedioDeLaMareaTropical();
+    m_RelacionDeAmplitud = m_nonHarmonicConstantDialog->relacionDeAmplitud();
+}
+
+void SPMmainWindow::about()
+{
+    QMessageBox::about(this,tr("Acerca de SIPMAR"),
+                       tr("<h2>SIPMAR v2.0</h2>"
+                          "<p><h3>2017 Equipo de Desarrollo UDI Geocuba Estudios Marinos.<h3></p>"
+                          "<p>El sistema de procesamiento de mareas es un software de escritorio creado para el"
+                          " procesamiento y análisis de los datos de marea que son registrados por las estaciones"
+                          " mareográficas, con el objetivo de garantizar las correcciones necesaria para los"
+                          " levantamientos hidrográficos y geofísicos.</p>"
+                          "<p>El SPM cuenta con funcionalidades que permiten la edición y análisis de los datos de"
+                          "marea según las nuevas tendencias internacionales asi como la corrección de las componentes"
+                          "de marea por los términos de aguas someras.</p>"
+                          "<p>Utilizando este software usted podrá:<br>"
+                          "-Determinar las constantes armónicas.<br>"
+                          "-Determinar las constantes no armónicas.<br>"
+                          "-Realizar la nivelación acuática del puesto de nivel.<br>"
+                          "-Determinar el alcance límite del puesto de nivel.<br>"
+                          "-Determinar el mínimo teórico.<br>"
+                          "-Predicción a intervalos regulares de tiempo.<br>"
+                          "-Predicción de pleamares y bajamares.</p>"
+                          "<p>Consulte el Manual de Usuario para esclarecer dudas o para conocer los paso exactos"
+                          " que necesita para procesar su información.</p>"));
+}
+
 void SPMmainWindow::newProject()
 {
-    int resp = QMessageBox::question(this,tr("Nuevo Proyecto"),tr("Se eliminarán los datos del "
-                                                       "proyecto. \n¿Desea continuar?"));
-    if (resp == QMessageBox::Yes){
+    if (!m_firstOpen){
+        int resp = QMessageBox::question(this,tr("Nuevo Proyecto"),tr("Se eliminarán los datos del "
+                                                                      "proyecto. \n¿Desea continuar?"));
+        if (resp == QMessageBox::Yes){
+            m_metadataStorage = ProjectMetaData();
+            QVector<TidesMeasurement> newData;
+            m_central->tableModel()->setMeasurements(newData);
+            m_selectedHarmonicConstantVector.clear();
+
+            m_projectMetaDataDialog = new MetaDataDialog(m_metadataStorage,this,Qt::WindowCloseButtonHint);
+            m_projectMetaDataDialog->show();
+            connect(m_projectMetaDataDialog,SIGNAL(okButtonClicked(bool)),this,SLOT(updateMetaData()));
+        }
+    }else{
         m_metadataStorage = ProjectMetaData();
         QVector<TidesMeasurement> newData;
-        newData.resize(100);
         m_central->tableModel()->setMeasurements(newData);
         m_selectedHarmonicConstantVector.clear();
 
-        m_projectMetaDataDialog = new MetaDataDialog(m_metadataStorage,this);
+        m_projectMetaDataDialog = new MetaDataDialog(m_metadataStorage,this,Qt::WindowCloseButtonHint);
         m_projectMetaDataDialog->show();
         connect(m_projectMetaDataDialog,SIGNAL(okButtonClicked(bool)),this,SLOT(updateMetaData()));
     }
@@ -231,6 +283,7 @@ void SPMmainWindow::crearTablaHoraria()
     }else{
     TidalData data(m_central->tableModel()->measurementData());
     m_tablaHorariaWidget = new TablaHorariaWidget;
+    m_tablaHorariaWidget->loadMetaData(m_metadataStorage);
     m_tablaHorariaWidget->loadTableData(data);
 
     m_tablaHorariaWidget->show();
@@ -250,6 +303,7 @@ void SPMmainWindow::createNonHarmonicDialog()
     m_nonHarmonicConstantDialog = new NonHarmonicCalcDialog(m_metadataStorage.longitud(),this);
     m_nonHarmonicConstantDialog->loadHarmonicConstants(SPMmainWindow::m_selectedHarmonicConstantVector);
     m_nonHarmonicConstantDialog->setMetaData(m_metadataStorage);
+    connect(m_nonHarmonicConstantDialog,SIGNAL(closed()),this,SLOT(getNonHarmonicConstansForReport()));
     m_nonHarmonicConstantDialog->show();
 }
 
@@ -316,6 +370,7 @@ void SPMmainWindow::createHarmonicAnalisisDialog()
     //connect(m_schemeWidget,SIGNAL(saveDataButtonClicked()),this,SLOT(saveAnalisisData()));
     connect(m_schemeWidget,SIGNAL(saveHarmonicConstantsButtonClicked()),this,SLOT(saveHarmonicConstantToFile()));
     connect(this,SIGNAL(harmonicAnalisisFinished()),m_schemeWidget,SLOT(enableSaveHarmonicConstantButton()));
+    connect(m_schemeWidget,SIGNAL(uploadHCButtonClicked()),this,SLOT(createUpHcDialog()));
     m_schemeWidget->show();
 
 }
@@ -384,11 +439,62 @@ void SPMmainWindow::createAlcanceLimiteWindow()
 
 void SPMmainWindow::createPredictor()
 {
-    m_predictor = new PredictorMainWindow;
-    m_predictor->setHarmonicConstants(SPMmainWindow::m_selectedHarmonicConstantVector);
+    m_predictor = new PredictorMainWindow(m_hcDirDataBase);
+    //m_predictor->setHarmonicConstants(SPMmainWindow::m_selectedHarmonicConstantVector);
+    m_predictor->setChartTheme(m_central->chartView()->chart()->theme());
+    m_predictor->setAnimationOptions(m_central->chartView()->chart()->animationOptions());
+    m_predictor->setRenderHints(m_central->chartView()->renderHints());
 
     m_predictor->show();
 }
+
+void SPMmainWindow::createUpHcDialog()
+{
+    m_upHcDialog = new UploadHCDialog(this);
+    connect(m_upHcDialog,SIGNAL(accepted()),this,SLOT(uploadHCToDataBase()));
+    m_upHcDialog->show();
+}
+
+void SPMmainWindow::createReportWizard()
+{
+    m_reportWizard = new ReportWizard(this);
+    m_reportWizard->setHarmonicConstants(m_selectedHarmonicConstantVector);
+    //Constantes No Armonicas
+    m_reportWizard->m_HoraDelPuestoMedia = m_HoraDelPuestoMedia;
+    m_reportWizard->m_HoraDelPuesto = m_HoraDelPuesto;
+    m_reportWizard->m_DuracionDelVaciante = m_DuracionDelVaciante;
+    m_reportWizard->m_DuracionDelLlenate = m_DuracionDelLlenate;
+    m_reportWizard->m_CrecimientoDeLaMareaSemidiurna = m_CrecimientoDeLaMareaSemidiurna;
+    m_reportWizard->m_CrecimientoDeLaMareaParalactica = m_CrecimientoDeLaMareaParalactica;
+    m_reportWizard->m_CrecimientoDeLaMareaDiurna = m_CrecimientoDeLaMareaDiurna;
+    m_reportWizard->m_HoraCotidianaDeLaMareaSemidiurna = m_HoraCotidianaDeLaMareaSemidiurna;
+    m_reportWizard->m_HoraCotidianaDeLaMareaDiurna = m_HoraCotidianaDeLaMareaDiurna;
+    m_reportWizard->m_AlturaPromedioDeLaMareaSemidiurna = m_AlturaPromedioDeLaMareaSemidiurna;
+    m_reportWizard->m_AlturaPromedioDeLaMareaSicigias = m_AlturaPromedioDeLaMareaSicigias;
+    m_reportWizard->m_AlturaPromedioDeLaMareaCuadratura = m_AlturaPromedioDeLaMareaCuadratura;
+    m_reportWizard->m_AlturaPromedioDeLaMareaTropical = m_AlturaPromedioDeLaMareaTropical;
+    m_reportWizard->m_RelacionDeAmplitud = m_RelacionDeAmplitud;
+
+    m_reportWizard->setMetaData(m_metadataStorage);
+    if (!m_central->tableModel()->measurementData().isEmpty()){
+        m_reportWizard->setMeasurementsPeriod(m_central->tableModel()->measurementData().first().measurementDate(),
+                                              m_central->tableModel()->measurementData().last().measurementDate());
+    }
+
+
+    m_reportWizard->show();
+}
+
+void SPMmainWindow::createManualHCDialog()
+{
+    m_manualHCIntroDialog = new ManualHarmonicConstantIntroDialog;
+    m_manualHCIntroDialog->setWindowTitle(tr("Introducción manual de constantes armónicas"));
+    m_manualHCIntroDialog->setHCVector(m_harmonicConstantVector);
+    m_manualHCIntroDialog->setModal(true);
+
+    m_manualHCIntroDialog->show();
+}
+
 
 /*bool SPMmainWindow::saveFrequencyFile()
 {
@@ -641,6 +747,38 @@ void SPMmainWindow::saveHarmonicConstantToFile()
     }
 }
 
+void SPMmainWindow::uploadHCToDataBase()
+{
+    QRegExp regexp("\\s+");
+
+    m_provincia = m_upHcDialog->provincia().toUpper().replace(regexp," ");
+    m_localidad = m_upHcDialog->localidad().toUpper().replace(regexp," ");
+
+    if (m_provincia.isEmpty() || m_localidad.isEmpty()){
+        QMessageBox::information(m_upHcDialog,tr("Error Al Subir Constantes Armónicas"),tr("Faltan datos necesarios para el correcto guardado de "
+                                                                                           "las Constantes Armónicas."));
+    }else{
+        if (!m_central->tableModel()->measurementData().isEmpty()){
+            QDate from(m_central->tableModel()->measurementData().first().measurementDate());
+            QDate to(m_central->tableModel()->measurementData().last().measurementDate());
+
+            QString fileName(m_provincia + "_" + m_localidad + "_" + from.toString("dd-MM-yyyy")
+                             + "_" + to.toString("dd-MM-yyyy") + ".hcr");
+
+            QString infoFileName(m_provincia + "_" + m_localidad + "_" + from.toString("dd-MM-yyyy")
+                                 + "_" + to.toString("dd-MM-yyyy") + ".txt");
+
+            QString filePath(m_hcDirDataBase + "/" + fileName);
+            QString infoFilePath(m_hcDirDataBase + "/" + infoFileName);
+
+            saveHCToDataBase(filePath);
+            saveHCInfoToDataBase(infoFilePath);
+
+            m_upHcDialog->close();
+        }
+    }
+}
+
 bool SPMmainWindow::writeFile(const QString &filePath)
 {
     QFile file(filePath);
@@ -684,6 +822,180 @@ bool SPMmainWindow::writeFile(const QString &filePath)
         return false;
     }
     file.close();
+    return true;
+}
+
+bool SPMmainWindow::saveHCToDataBase(const QString &filePath)
+{
+    QFile file(filePath);
+
+    if (file.open(QIODevice::WriteOnly)){
+       QDataStream out(&file);
+       out.setVersion(QDataStream::Qt_5_7);
+
+       QApplication::setOverrideCursor(Qt::WaitCursor);
+
+       out << qint32(HCMagicNumber);
+
+       out << QString(m_provincia); //QString
+       out << QString(m_localidad); //QString
+       out << QString(m_metadataStorage.localizationName()); //QString
+       //out << int(m_metadataStorage.timeZoneOffset()); //int
+       //out << bool(m_metadataStorage.isDaylightTimeSaving()); //bool
+       //out << double(m_metadataStorage.nivelReferencia()); //double
+       //out << int(m_metadataStorage.referenciaUnit()); //MeasurementUnitEditWidget;
+       //out << double(m_metadataStorage.ceroPuesto()); //double
+       //out << int(m_metadataStorage.ceroUnit()); //MeasurementUnitEditWidget
+       out << double(m_metadataStorage.latitud()); //double
+       out << double(m_metadataStorage.longitud()); //double
+       //out << QString(m_metadataStorage.equipmentID()); //QString
+
+       quint32 dataNumber = m_selectedHarmonicConstantVector.size();
+
+       out << quint32(dataNumber);
+
+       foreach (HarmonicConstant hc, m_selectedHarmonicConstantVector) {
+           out << QString(hc.name()) << double(hc.frequency()) << double(hc.amplitud())
+               << double(hc.phase()) << double(hc.correctedPhase()) << int(hc.origin())
+               << int(hc.doodsonNumbers().D1()) << int(hc.doodsonNumbers().D2()) << int(hc.doodsonNumbers().D3())
+               << int(hc.doodsonNumbers().D4()) << int(hc.doodsonNumbers().D5()) << int(hc.doodsonNumbers().D6())
+               << int(hc.doodsonNumbers().Extended());
+       }
+
+       QApplication::restoreOverrideCursor();
+
+    }else{
+        QMessageBox::warning(this,tr("Error al escribir archivo"),
+                             tr("No se puede escribir el archivo %1:\n%2.")
+                             .arg(file.fileName().arg(file.errorString())));
+
+        return false;
+    }
+    file.close();
+    return true;
+}
+
+bool SPMmainWindow::saveHCInfoToDataBase(const QString &filePath)
+{
+    QFile file(filePath);
+
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)){
+        QTextStream out(&file);
+
+        out << "CONSTANTES ARMONICAS" << endl;
+        out << endl;
+
+
+
+        qreal latitud = m_metadataStorage.latitud();
+        qreal longitud = m_metadataStorage.longitud();
+
+        out << "PROYECTO: "<< m_metadataStorage.projectName().toUpper() << endl;
+        out << "ESTACION: " << m_metadataStorage.stationName().toUpper() << endl;
+        out << "SITUACION: " << m_metadataStorage.localizationName().toUpper() << endl;
+
+        out << "PROVINCIA: "<< m_provincia << endl;
+        out << "LOCALIDAD: "<< m_localidad << endl;
+
+        out.setRealNumberNotation(QTextStream::FixedNotation);
+        out.setRealNumberPrecision(3);
+        if (latitud < 0.0)  out << "LATITUD: " << qFabs(latitud) << "S" << endl;
+        if (latitud > 0.0)  out << "LATITUD: " << latitud << "N" << endl;
+        if (latitud == 0.0) out << "LATITUD: " << "0.000" << endl;
+
+        if (longitud < 0.0)  out << "LONGITUD: " << qFabs(longitud) << "W" << endl;
+        if (longitud > 0.0)  out << "LONGITUD: " << longitud << "E" << endl;
+        if (longitud == 0.0) out << "LONGITUD: " << "0.000" << endl;  
+
+        out << endl;
+
+        QString constituente("CONSTITUENTE");
+        QString v_ang("V. ANGULAR[grad/seg]");
+        QString amp("AMPLITUD[m]");
+        QString fase("FASE[grad]");
+        QString faseC("FASE.C[grad]");
+        QString origen("ORIGEN");
+        QString numDod("NUMERO_DOODSON");
+
+
+        out.setPadChar('-');
+
+        out << constituente << "  " << v_ang << "  " << amp << "  " << fase << "  " << faseC << "  " << origen << "  " << numDod <<endl;
+        //out << "------------" << "  " << "--------------------" << "  " << "-----------" << "  " << "----------" << endl;
+
+        foreach (HarmonicConstant hc, m_selectedHarmonicConstantVector) {
+            out.setFieldWidth(constituente.length());
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << hc.name();
+
+
+            out.setFieldWidth(0);
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << "  ";
+
+            out.setFieldWidth(v_ang.length());
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out.setRealNumberPrecision(7);
+            out << hc.frequency();
+
+            out.setFieldWidth(0);
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << "  ";
+
+            out.setFieldWidth(amp.length());
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out.setRealNumberPrecision(6);
+            out << hc.amplitud();
+
+            out.setFieldWidth(0);
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << "  ";
+
+            out.setFieldWidth(fase.length());
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out.setRealNumberPrecision(3);
+            out << hc.phase();
+
+            out.setFieldWidth(0);
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << "  ";
+
+            out.setFieldWidth(faseC.length());
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << hc.correctedPhase();
+
+            out.setFieldWidth(0);
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << "  ";
+
+            out.setFieldWidth(origen.length());
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << hc.origin();
+
+            out.setFieldWidth(0);
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << "  ";
+
+            //out.setFieldWidth(numDod.length());
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << "(" << hc.doodsonNumbers().D1() << "," << hc.doodsonNumbers().D2() << "," << hc.doodsonNumbers().D3() <<
+                   "," << hc.doodsonNumbers().D4() << "," << hc.doodsonNumbers().D5() <<"," << hc.doodsonNumbers().D6() <<
+                   "," << hc.doodsonNumbers().Extended() <<")";
+
+            out.setFieldWidth(0);
+            out.setFieldAlignment(QTextStream::AlignCenter);
+            out << endl;
+        }
+
+
+    }else{
+        QMessageBox::information(this,tr("Error Guardando Archivo"),tr("No se puede escribir el archivo"
+                                                                       "%1").arg(file.fileName()));
+
+        return false;
+    }
+    file.close();
+
     return true;
 }
 
@@ -829,8 +1141,14 @@ void SPMmainWindow::beginDataExtration()
             datos.push_back(m_manualDataIntroductionWidget->model()->measurementData().at(i));
 
             if (conversion != 1.0){
-                qreal value = m_manualDataIntroductionWidget->model()->measurementData().at(i).seaLevel()*conversion;
-                datos[i].setSeaLevel(value);
+                qreal value = datos.last().seaLevel()*conversion;
+                datos.last().setSeaLevel(value);
+            }
+
+            if (m_manualDataIntroductionWidget->isCorrectionRButtonChecked()){
+                double corr = datos.last().seaLevel();
+                double level = m_manualDataIntroductionWidget->determineLevelFromCorr(corr);
+                datos.last().setSeaLevel(level);
             }
         }
     }
@@ -884,8 +1202,14 @@ void SPMmainWindow::appendManualDataToProject()
             datos.push_back(m_manualDataIntroductionWidget->model()->measurementData().at(i));
 
             if (conversion != 1.0){
-                qreal value = m_manualDataIntroductionWidget->model()->measurementData().at(i).seaLevel()*conversion;
-                datos[i].setSeaLevel(value);
+                qreal value = datos.last().seaLevel()*conversion;
+                datos.last().setSeaLevel(value);
+            }
+
+            if (m_manualDataIntroductionWidget->isCorrectionRButtonChecked()){
+                double corr = datos.last().seaLevel();
+                double level = m_manualDataIntroductionWidget->determineLevelFromCorr(corr);
+                datos.last().setSeaLevel(level);
             }
         }
     }
@@ -909,10 +1233,15 @@ void SPMmainWindow::appendManualDataToProject()
             return;
         }
 
+    }else{
+        currentData.append(datos);
+        m_central->tableModel()->setMeasurements(currentData);
+        m_manualDataIntroductionWidget->close();
+        return;
     }
-    currentData.append(datos);
-    m_central->tableModel()->setMeasurements(currentData);
-    m_manualDataIntroductionWidget->close();
+    QMessageBox::critical(this,tr("Error al Agregar Datos"),tr("Existen incompatibilidades temporales entre los datos que desea"
+                                                                  " agregar al proyecto y los datos existentes."));
+
 }
 
 void SPMmainWindow::beginDataExtrationFromFile()
@@ -972,9 +1301,14 @@ void SPMmainWindow::appendImportedData()
             return;
         }
 
+    }else{
+        datos.append(newData);
+        m_central->tableModel()->setMeasurements(datos);
+        m_loadDialog->close();
+        return;
     }
-    datos.append(newData);
-    m_central->tableModel()->setMeasurements(datos);
+    QMessageBox::critical(this,tr("Error al Agregar Datos"),tr("Existen incompatibilidades temporales entre los datos que desea"
+                                                                  " agregar al proyecto y los datos existentes."));
     m_loadDialog->close();
 }
 
@@ -1024,23 +1358,27 @@ void SPMmainWindow::createActions()
     m_harmonicAnalisisAction = new QAction(QIcon(":images/harmonic-analisis.png"),tr("Análisis Armónico"),this);
     m_harmonicAnalisisAction->setToolTip(tr("Análisis Armónico"));
     connect(m_harmonicAnalisisAction,SIGNAL(triggered(bool)),this,SLOT(createHarmonicAnalisisDialog()));
-    m_nonHarmonicAnalisisAction = new QAction(QIcon(":images/non_harmonic-analisis.png"),tr("Constantes No Armonicas"),this);
-    m_nonHarmonicAnalisisAction->setToolTip(tr("Constantes No Armonicas"));
+    m_nonHarmonicAnalisisAction = new QAction(QIcon(":images/non_harmonic-analisis.png"),tr("Constantes No Armónicas"),this);
+    m_nonHarmonicAnalisisAction->setToolTip(tr("Constantes No Armónicas"));
     connect(m_nonHarmonicAnalisisAction,SIGNAL(triggered(bool)),this,SLOT(createNonHarmonicDialog()));
 
     //m_freqEditorAction = new QAction(tr("Editor de Componentes"),this);
     //connect(m_freqEditorAction,SIGNAL(triggered(bool)),this,SLOT(createFrequencyEditor()));
 
     m_nivelacionAcuaticaAction = new QAction(QIcon(":images/nivelacion_acuatica.png"),tr("Nivelación Acuática"));
+    m_nivelacionAcuaticaAction->setToolTip(tr("Nivelación Acuática del Puesto de Nivel"));
     connect(m_nivelacionAcuaticaAction,SIGNAL(triggered(bool)),this,SLOT(createNivelacionAcuaticaWidget()));
 
-    m_alcanceLimiteAction = new QAction(tr("Alcance Límite"),this);
-    //TODO: icon
+    m_alcanceLimiteAction = new QAction(QIcon(":images/radar-128.png"),tr("Alcance Límite"),this);
+    m_alcanceLimiteAction->setToolTip(tr("Alcance Límite del Puesto de Nivel"));
     connect(m_alcanceLimiteAction,&QAction::triggered,this,&SPMmainWindow::createAlcanceLimiteWindow);
 
-    m_predictorAction = new QAction(tr("Predicción"));
+    m_predictorAction = new QAction(QIcon(":images/prediction.png"),tr("Predicción & Nivel Mínimo Teórico"));
+    m_predictorAction->setToolTip(tr("Predicción & Nivel Mínimo Teórico"));
     connect(m_predictorAction,&QAction::triggered,this,&SPMmainWindow::createPredictor);
 
+    m_manualHCIntroAction = new QAction(tr("Introducción manual de constantes armónicas"));
+    connect(m_manualHCIntroAction,SIGNAL(triggered(bool)),this,SLOT(createManualHCDialog()));
     //ChartActions--------------------------------------------------------------
     m_themeLightAction = new QAction(tr("Claro"),this);
     m_themeLightAction->setCheckable(true);
@@ -1130,6 +1468,12 @@ void SPMmainWindow::createActions()
 
     m_averageDialogAction = new QAction(tr("Promedio"));
     connect(m_averageDialogAction,SIGNAL(triggered(bool)),this,SLOT(createAverageDialog()));
+
+    m_reportAction = new QAction(QIcon(":images/report-icon.png"),tr("Formulario del puesto"));
+    connect(m_reportAction,&QAction::triggered,this,&SPMmainWindow::createReportWizard);
+
+    m_aboutAction = new QAction(QIcon(":images/About.png"),tr("Acerca de SIPMAR"));
+    connect(m_aboutAction,&QAction::triggered,this,&SPMmainWindow::about);
 }
 
 void SPMmainWindow::createMenus()
@@ -1166,6 +1510,8 @@ void SPMmainWindow::createMenus()
     m_toolMenu->addAction(m_nivelacionAcuaticaAction);
     m_toolMenu->addAction(m_alcanceLimiteAction);
     m_toolMenu->addAction(m_predictorAction);
+    m_toolMenu->addSeparator();
+    m_toolMenu->addAction(m_manualHCIntroAction);
     //m_toolMenu->addAction(m_freqEditorAction);
 
     m_chartMenu = menuBar()->addMenu(tr("Gráfico"));
@@ -1176,30 +1522,53 @@ void SPMmainWindow::createMenus()
 
     m_chartMenu->addAction(m_chartRenderHintAction);
 
+    m_reportMenu = menuBar()->addMenu(tr("Reporte"));
+    m_reportMenu->addAction(m_reportAction);
     //m_viewMenu = menuBar()->addMenu(tr("Ver"));
     //m_viewMenu->addAction(m_tablaHorariadeMareaAction);
+
+    m_aboutMenu = menuBar()->addMenu(tr("Acerca de..."));
+    m_aboutMenu->addAction(m_aboutAction);
+
 }
 
 void SPMmainWindow::createToolBars()
 {
-    m_projectToolBar = addToolBar(tr("Project"));
+    m_projectToolBar = new QToolBar("Proyecto");
     m_projectToolBar->addAction(m_newProjectAction);
     m_projectToolBar->addAction(m_loadProjectAction);
     m_projectToolBar->addAction(m_saveProjectAction);
     m_projectToolBar->addAction(m_saveAsProjectAction);
     m_projectToolBar->addAction(m_projectMetaDataAction);
+    //m_projectToolBar->setOrientation(Qt::Vertical);
+    //m_projectToolBar->setAllowedAreas(Qt::LeftToolBarArea);
 
-    m_dataToolBar = addToolBar(tr("Data"));
+
+    m_dataToolBar = new QToolBar("Datos");
     m_dataToolBar->addAction(m_manualDataIntroductionAction);
     m_dataToolBar->addAction(m_importFrom_ASCII_Action);
+    //m_dataToolBar->setOrientation(Qt::Vertical);
+    //m_dataToolBar->setAllowedAreas(Qt::LeftToolBarArea);
 
-    m_analsisToolBar = addToolBar(tr("Analisis"));
+    m_analsisToolBar = new QToolBar("Analisis");
     m_analsisToolBar->addAction(m_tablaHorariadeMareaAction);
     m_analsisToolBar->addAction(m_harmonicAnalisisAction);
     m_analsisToolBar->addAction(m_nonHarmonicAnalisisAction);
+    //m_analsisToolBar->setOrientation(Qt::Vertical);
+    //m_analsisToolBar->setAllowedAreas(Qt::LeftToolBarArea);
 
-    m_toolToolBar = addToolBar(tr("Herramientas"));
+    m_toolToolBar = new QToolBar("Herramientas");
     m_toolToolBar->addAction(m_nivelacionAcuaticaAction);
+    m_toolToolBar->addAction(m_alcanceLimiteAction);
+    m_toolToolBar->addAction(m_predictorAction);
+    //m_toolToolBar->setOrientation(Qt::Vertical);
+    //m_toolToolBar->setAllowedAreas(Qt::LeftToolBarArea);
+
+    this->addToolBar(Qt::LeftToolBarArea,m_projectToolBar);
+    this->addToolBar(Qt::LeftToolBarArea,m_dataToolBar);
+    this->addToolBar(Qt::LeftToolBarArea,m_analsisToolBar);
+    this->addToolBar(Qt::LeftToolBarArea,m_toolToolBar);
+
 }
 
 void SPMmainWindow::syncData(const QVector<HarmonicConstant> &components) //Para sync si hay un cambio en los componentes que se editan en otra facilidad
@@ -1506,7 +1875,7 @@ void SPMmainWindow::saveHarmonicConstants(const QString &filePath)
 {
     QFile file(filePath);
 
-    if (file.open(QIODevice::WriteOnly)){
+    if (file.open(QIODevice::WriteOnly | QIODevice::Text)){
         QTextStream out(&file);
 
         out << "CONSTANTES ARMONICAS" << endl;

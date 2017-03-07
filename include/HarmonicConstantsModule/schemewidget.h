@@ -48,6 +48,7 @@ signals:
     void analizeButtonClicked();
     void saveDataButtonClicked();
     void saveHarmonicConstantsButtonClicked();
+    void uploadHCButtonClicked();
 public slots:
     void enableSaveHarmonicConstantButton();
     void beginHarmonicAnalisis();
@@ -87,6 +88,7 @@ private:
     HarmonicConstantFullTableModel *m_harmonicConstantTableModel;
 
     QPushButton *m_saveHarmonicConstantsButton;
+    QPushButton *m_uploadHCToDataBase;
 
     QGroupBox *m_analisisTypeGroupBox;
     QGroupBox *m_fitMethodGroupBox;

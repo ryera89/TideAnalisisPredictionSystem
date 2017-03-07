@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-class QTableView;
+#include "include/EditionComponents/editiontable.h"
 #include <QHBoxLayout>
 #include "spmchart.h"
 #include <QPlainTextEdit>
@@ -12,6 +12,7 @@ class QTableView;
 #include "include/model_view/readonlytablemodel.h"
 #include "customchartview.h"
 #include "include/SelectionRangeLabel/selectionrangelabel.h"
+#include "include/PredictionModule/mytableview.h"
 #include <iostream>
 
 class DisplayedDataLabels;
@@ -57,10 +58,15 @@ private slots:
 
     void updateSeriesDataAtRowRemove(const QModelIndex &parent, int in, int last); //Update series in data elimination
 
+    void zoomYAxis(int zoomLevel);
+
     void updateOnRealTimeSelectionRange(QPointF iniPos, QPointF currentPos);
+
+    void selectDataInChart(int row0, int rowf);
+    void deselectDataInChart();
 private:
     //Table Facilities
-    QTableView *m_tidalTableView;
+    MyTableView *m_tidalTableView;
 
     //Chart Facilities
     SPMChart *m_tideChart;
@@ -80,6 +86,12 @@ private:
     //Display Facilities
     QSlider *m_rangeSlider;
     QSpinBox *m_rangeSpinBox;
+
+    QSlider *m_zoomYSlider;
+    QSpinBox *m_zoomYSpinBox;
+
+    double m_yMin;
+    double m_yMax;
     //DisplayedDataLabels *m_rangeIniDDLabel;
     //DisplayedDataLabels *m_rangeEndDDLabel;
     //DisplayedDataLabels *m_selectionIniDDLabel;
@@ -93,7 +105,7 @@ private:
 
 
     int m_currentXZoomLevel;
-    QHash<int, int> m_mapForValuesInMainAndSelectionSeries;
+    QMap<int, int> m_mapForValuesInMainAndSelectionSeries;
 
     void createComponents();
     void setInterfazLayout();

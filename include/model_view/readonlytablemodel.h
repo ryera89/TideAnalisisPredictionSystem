@@ -23,6 +23,7 @@ public:
 
     QVector<TidesMeasurement> measurementData() const{return m_data;}
 
+    QVector<QPointF> measurementDataRealPoints() const;
 private:
     QVector<TidesMeasurement> m_data;
     QStringList headers;

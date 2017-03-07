@@ -4,12 +4,14 @@
 #include <QWidget>
 //#include <QVector>
 #include "tablahorariademarea.h"
+#include "include/ProjectMetaData/projectmetadata.h"
 
 class QDateEdit;
 class QLabel;
 class QRadioButton;
 class QGroupBox;
 class QPushButton;
+class QToolButton;
 
 class TablaHorariaWidget : public QWidget
 {
@@ -19,10 +21,14 @@ public:
 
     QSize sizeHint() const;
 
+
+
 signals:
 
 public slots:
     void loadTableData(const TidalData &m_data);
+    void createTable();
+    void loadMetaData(const ProjectMetaData &metadata);
 
 private slots:
     void setIntervalState(bool enabledState);
@@ -59,10 +65,18 @@ private:
     TidesMeasurement m_maximoInInterval;
     TidesMeasurement m_minimoInInterval;
 
+    QToolButton *m_printToolButton;
+
+    QString m_nombreDelPuesto;
+    QString m_latitudStr;
+    QString m_longitudStr;
+
     void createComponents();
 
     void setSumAndMeanOfNotHiddenRows();
     void setSumAndMeanOfAllRows();
+
+    int nonHiddenRowNumber();
 };
 
 #endif // TABLAHORARIAWIDGET_H

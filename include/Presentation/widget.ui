@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Widget</class>
+ <widget class="QWidget" name="Widget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>753</width>
+    <height>675</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Widget</string>
+  </property>
+  <property name="windowOpacity">
+   <double>1.000000000000000</double>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <property name="spacing">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QFrame" name="frame">
+       <property name="styleSheet">
+        <string notr="true">#frame{
+border-image: url(:/images/FONDO1.jpg);
+background-color: transparent;
+}</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <family>Verdana</family>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">/*#label{
+border-image: url(:/images/FONDO1.jpg);
+
+}*/</string>
+          </property>
+          <property name="text">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;El sistema de procesamiento de mareas es un software de escritorio creado para el &lt;br/&gt;procesamiento y análisis de los datos de marea que son registrados por las estaciones &lt;br/&gt;mareográficas, con el objetivo de garantizar las correcciones necesaria para los&lt;br/&gt;levantamientos hidrográficos y geofísicos.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;El SPM cuenta con funcionalidades que permiten la edición y análisis de los datos de &lt;/span&gt;&lt;span style=&quot; font-weight:600; color:#000000;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;marea según las nuevas tendencias internacionales, la corrección de  las componentes &lt;/span&gt;&lt;span style=&quot; font-weight:600; color:#000000;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;de marea por los términos de aguas someras.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;Utilizando este software usted podrá:&lt;/span&gt;&lt;span style=&quot; font-weight:600; color:#000000;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;-Determinar las constantes armónicas.&lt;/span&gt;&lt;span style=&quot; font-weight:600; color:#000000;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;-Determinar las constantes no armónicas.&lt;/span&gt;&lt;span style=&quot; font-weight:600; color:#000000;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;-Realizar la nivelación acuática del puesto de nivel.&lt;/span&gt;&lt;span style=&quot; font-weight:600; color:#000000;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;-Determinar el alcance límite del puesto de nivel.&lt;/span&gt;&lt;span style=&quot; font-weight:600; color:#000000;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;-Determinar el mínimo teórico.&lt;/span&gt;&lt;span style=&quot; font-weight:600; color:#000000;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;-Predicción a intervalos regulares de tiempo.&lt;/span&gt;&lt;span style=&quot; font-weight:600; color:#000000;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;-Predicción de pleamares y bajamares.&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;Consulte el &lt;/span&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; text-decoration: underline; color:#000000;&quot;&gt;Manual de Usuario&lt;/span&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt; para esclarecer dudas o para conocer los paso exactos&lt;/span&gt;&lt;span style=&quot; font-weight:600; color:#000000;&quot;&gt;&lt;br/&gt;&lt;/span&gt;&lt;span style=&quot; font-family:'Calibri'; font-size:14pt; font-weight:600; color:#000000;&quot;&gt;que necesita para procesar su información.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+          <property name="margin">
+           <number>4</number>
+          </property>
+          <property name="indent">
+           <number>4</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>

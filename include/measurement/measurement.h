@@ -44,7 +44,7 @@ public:
     QDate measurementDate() const {return m_date;}
     QTime measurementTime() const {return m_time;}
 
-    QDateTime measurementDateTime() const{return QDateTime(m_date,m_time);}
+    QDateTime measurementDateTime() const{return QDateTime(m_date,m_time,Qt::UTC);}
 
     TidalTimeLevel dateMeasurement() const;
 

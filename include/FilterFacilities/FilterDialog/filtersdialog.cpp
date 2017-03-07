@@ -74,7 +74,7 @@ FiltersDialog::FiltersDialog(const QVector<TidesMeasurement> &data, QWidget *par
     m_blockSpinBox = new QSpinBox;
     m_blockSpinBox->setRange(2,UINT16_MAX);
 
-    m_glitchInfoLabel = new QLabel(tr("Pendiente entre Puntos Consecutivos, Limite Superior"));
+    m_glitchInfoLabel = new QLabel(tr("Pendiente entre Puntos Consecutivos, Límite Superior"));
 
     m_blockInfoLabel = new QLabel(tr("Mínimo de Puntos Adyacentes de Igual Nivel"));
 

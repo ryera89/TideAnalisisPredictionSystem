@@ -117,13 +117,13 @@ void LoadDialog::getDataPoints(){
     qreal unitScale = 1.0;
     switch (unitIndex) {
     case 1:
-        unitScale/=10;
+        unitScale = 0.1;
         break;
     case 2:
-        unitScale/=100;
+        unitScale = 0.01;
         break;
     case 3:
-        unitScale/=1000;
+        unitScale = 0.001;
         break;
     default:
         break;
@@ -173,6 +173,10 @@ void LoadDialog::getDataPoints(){
                 double height = heightVariant.toDouble(&d_ok);
                 height*=unitScale; //Conversion de unidades llevando a metros
 
+                if (m_corrRadioButton->isChecked())
+                    height = determineLevelFromCorr(height);
+
+
                 ++pro; //Progress Bar
                 m_importProgressBar->setValue(pro);
 
@@ -185,7 +189,10 @@ void LoadDialog::getDataPoints(){
                                                                    "2- Número de campos incorrectos. \n"
                                                                    "3- Número de líneas incorrectos. \n"
                                                                     "¿Desea continuar?"));
-                    if (desition == QMessageBox::No) break;
+                    if (desition == QMessageBox::No){
+                        m_importProgressBar->setValue(0);
+                        break;
+                    }
                 }
 
             }
@@ -212,13 +219,13 @@ void LoadDialog::getDataPointAndAppendData()
     qreal unitScale = 1.0;
     switch (unitIndex) {
     case 1:
-        unitScale/=10;
+        unitScale = 0.1;
         break;
     case 2:
-        unitScale/=100;
+        unitScale = 0.01;
         break;
     case 3:
-        unitScale/=1000;
+        unitScale = 0.001;
         break;
     default:
         break;
@@ -267,6 +274,9 @@ void LoadDialog::getDataPointAndAppendData()
                 QVariant heightVariant = level;
                 double height = heightVariant.toDouble(&d_ok);
                 height*=unitScale; //Conversion de unidades llevando a metros
+
+                if (m_corrRadioButton->isChecked())
+                    height = determineLevelFromCorr(height);
 
                 ++pro; //Progress Bar
                 m_importProgressBar->setValue(pro);
@@ -818,9 +828,9 @@ void LoadDialog::settingUpEveryThing()
     metaGroupBox->setLayout(metaLayout);
 
     QGroupBox *primaryData = new QGroupBox(tr("Tipo de Datos Primarios:"));
-    m_corrRadioButton = new QRadioButton(tr("Correcciones"));
-    m_corrRadioButton->setChecked(true);
+    m_corrRadioButton = new QRadioButton(tr("Correcciones"));  
     m_levelRadioButton = new QRadioButton(tr("Niveles"));
+    m_levelRadioButton->setChecked(true);
 
     QVBoxLayout *primaryDataTypeLayout = new QVBoxLayout;
     primaryDataTypeLayout->addWidget(m_corrRadioButton);
@@ -848,4 +858,10 @@ void LoadDialog::settingUpEveryThing()
     this->setLayout(mainLayout);
 
     this->setAttribute(Qt::WA_DeleteOnClose);
+}
+
+double LoadDialog::determineLevelFromCorr(const double &corr)
+{
+    double ref = nivelReferencia();
+    return ref - corr; //corr debe estar en metros
 }

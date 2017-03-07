@@ -6,7 +6,7 @@
 PredictonSettingsWidget::PredictonSettingsWidget(const PredictionSettings &predSetting,QWidget *parent) : QWidget(parent)
 {
     m_methodLabel = new QLabel("Método:");
-    m_nmmLabel = new QLabel("Nivel Medio:");
+    m_nmmLabel = new QLabel("Datum:");
     m_fromLabel = new QLabel("Inicio:");
     m_toLabel = new QLabel("Fin:");
     m_intervalLabel = new QLabel("Intervalo:");
@@ -49,6 +49,8 @@ PredictonSettingsWidget::PredictonSettingsWidget(const PredictionSettings &predS
     interfazLayout();
 
 
+    this->setWindowTitle(tr("Configuración"));
+    this->setWindowIcon(QIcon(":images/configure2.png"));
     this->setWindowModality(Qt::ApplicationModal);
     this->setAttribute(Qt::WA_DeleteOnClose);
 }

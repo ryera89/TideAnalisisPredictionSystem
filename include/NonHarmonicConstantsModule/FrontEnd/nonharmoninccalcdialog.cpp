@@ -38,6 +38,7 @@ NonHarmonicCalcDialog::NonHarmonicCalcDialog(qreal longitud,QWidget *parent):QDi
     //m_NMMSpinBox->setSpinAndComboBoxesValues(unit,nmm);
     m_longitudEditor->setEditorAndComboValue(longitud);
 
+    this->setWindowTitle(tr("Constantes No Armónicas"));
     this->setWindowIcon(QIcon(":images/non_harmonic-analisis.png"));
     setModal(true);
 
@@ -77,9 +78,9 @@ void NonHarmonicCalcDialog::loadHarmonicConstants(const QVector<HarmonicConstant
     if (!m2Present || !s2Present || !k1Present || !o1Present){
         QMessageBox::critical(this,tr("Faltan Componentes Principales"), tr("Alguna/s de las componentes "
                                                                             "M2, S2, K1, O1 faltan en el "
-                                                                            "analisis armonico. Estas son "
-                                                                            "esenciales para el calculo de "
-                                                                            "las constantes no armonicas."));
+                                                                            "análisis armónico. Estas son "
+                                                                            "esenciales para el cálculo de "
+                                                                            "las constantes no armónicas."));
         return;
     }
     if (!n2Present || !k2Present || !p1Present || !q1Present || !m4Present || !m6Present){
@@ -110,6 +111,76 @@ void NonHarmonicCalcDialog::loadHarmonicConstants(const QVector<HarmonicConstant
 void NonHarmonicCalcDialog::setMetaData(const ProjectMetaData &metadata)
 {
     m_metaData = metadata;
+}
+
+QString NonHarmonicCalcDialog::relacionDeAmplitud() const
+{
+    return m_ampRelationLineEdit->text();
+}
+
+QString NonHarmonicCalcDialog::horaDelPuestoMedia() const
+{
+    return m_displayResultWidgetVector.at(0)->lineEditText();
+}
+
+QString NonHarmonicCalcDialog::horaDelPuesto() const
+{
+    return m_displayResultWidgetVector.at(1)->lineEditText();
+}
+
+QString NonHarmonicCalcDialog::duracionDelVaciante() const
+{
+    return m_displayResultWidgetVector.at(2)->lineEditText();
+}
+
+QString NonHarmonicCalcDialog::duracionDelLenante() const
+{
+    return m_displayResultWidgetVector.at(3)->lineEditText();
+}
+
+QString NonHarmonicCalcDialog::crecimientoDeLaMareaSemidiurna() const
+{
+    return m_displayResultWidgetVector.at(4)->lineEditText();
+}
+
+QString NonHarmonicCalcDialog::crecimientoDeLaMareaParalactica() const
+{
+    return m_displayResultWidgetVector.at(5)->lineEditText();
+}
+
+QString NonHarmonicCalcDialog::crecimientoDeLaMareaDiurna() const
+{
+    return m_displayResultWidgetVector.at(6)->lineEditText();
+}
+
+QString NonHarmonicCalcDialog::horaCotidianaMareaSemidiurna() const
+{
+    return m_displayResultWidgetVector.at(7)->lineEditText();
+}
+
+QString NonHarmonicCalcDialog::horaCotidianaMareaDiurna() const
+{
+    return m_displayResultWidgetVector.at(8)->lineEditText();
+}
+
+QString NonHarmonicCalcDialog::alturaPromedioDeLaMareaSemidiurna() const
+{
+    return m_displayResultWidgetVector.at(9)->lineEditText();
+}
+
+QString NonHarmonicCalcDialog::alturaPromedioDeLaMareaSicigias() const
+{
+    return m_displayResultWidgetVector.at(10)->lineEditText();
+}
+
+QString NonHarmonicCalcDialog::alturaPromedioDeLaMareaCuadratura() const
+{
+    return m_displayResultWidgetVector.at(11)->lineEditText();
+}
+
+QString NonHarmonicCalcDialog::alturaPromedioDeLaMareaTropical() const
+{
+    return m_displayResultWidgetVector.at(12)->lineEditText();
 }
 
 
@@ -240,6 +311,13 @@ void NonHarmonicCalcDialog::calculateAll()
             dispWid->pushButtonClicked();
         }
     }
+}
+
+void NonHarmonicCalcDialog::closeEvent(QCloseEvent *event)
+{
+    emit closed();
+
+    QDialog::closeEvent(event);
 }
 
 void NonHarmonicCalcDialog::createComponents()
@@ -588,7 +666,12 @@ QString NonHarmonicCalcDialog::fromDoubleToDaysAndHours(double value)
 
         int hours = qFloor((value-days)*24);
 
-        resp = QString::number(days) + " Días " + QString::number(hours) + " Horas";
+        if (days == 1) resp = QString::number(days) + " día ";
+        else resp = QString::number(days) + " días ";
+        if (hours == 1) resp += QString::number(hours) + " hora";
+        else resp += QString::number(hours) + " horas";
+
+        //resp = QString::number(days) + " días " + QString::number(hours) + " horas";
         return resp;
     }
     if (value < 0.0){
@@ -596,7 +679,12 @@ QString NonHarmonicCalcDialog::fromDoubleToDaysAndHours(double value)
 
         int hours = qCeil((value - days)*24);
 
-        resp = QString::number(days) + " Días " + QString::number(hours) + " Horas";
+        if (days == -1) resp = QString::number(days) + " día ";
+        else resp = QString::number(days) + " días ";
+        if (hours == -1) resp += QString::number(hours) + " hora";
+        else resp += QString::number(hours) + " horas";
+
+        //resp = QString::number(days) + " días " + QString::number(hours) + " horas";
         return resp;
     }
     return resp;
@@ -611,7 +699,12 @@ QString NonHarmonicCalcDialog::fromDoubleToHoursAndMinutes(double value)
 
         int hours = qFloor((value-days)*60);
 
-        resp = QString::number(days) + " Horas " + QString::number(hours) + " Minutos";
+        if (days == 1) resp = QString::number(days) + " día ";
+        else resp = QString::number(days) + " días ";
+        if (hours == 1) resp += QString::number(hours) + " hora";
+        else resp += QString::number(hours) + " horas";
+
+        //resp = QString::number(days) + " Horas " + QString::number(hours) + " Minutos";
         return resp;
     }
     if (value < 0.0){
@@ -619,7 +712,12 @@ QString NonHarmonicCalcDialog::fromDoubleToHoursAndMinutes(double value)
 
         int hours = qCeil((value - days)*60);
 
-        resp = QString::number(days) + " Horas " + QString::number(hours) + " Minutos";
+        if (days == -1) resp = QString::number(days) + " día ";
+        else resp = QString::number(days) + " días ";
+        if (hours == -1) resp += QString::number(hours) + " hora";
+        else resp += QString::number(hours) + " horas";
+
+        //resp = QString::number(days) + " Horas " + QString::number(hours) + " Minutos";
         return resp;
     }
     return resp;

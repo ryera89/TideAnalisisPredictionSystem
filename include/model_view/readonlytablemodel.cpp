@@ -59,6 +59,18 @@ void ReadOnlyTableModel::setMeasurements(const QVector<TidesMeasurement> &measur
     endResetModel();
 }
 
+QVector<QPointF> ReadOnlyTableModel::measurementDataRealPoints() const
+{
+    QVector<QPointF> points;
+    foreach(TidesMeasurement m, m_data){
+        quint64 x = m.measurementDateTime().toMSecsSinceEpoch();
+
+        QPointF point(x,m.seaLevel());
+        points.append(point);
+    }
+    return points;
+}
+
 /*void ReadOnlyTableModel::setMeasurements(const QVector<TidesMeasurement> &measurement)
 {
     beginResetModel();

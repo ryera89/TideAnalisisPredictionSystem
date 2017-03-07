@@ -22,12 +22,33 @@ public:
 
     void setMetaData(const ProjectMetaData &metadata);
 
+    QString relacionDeAmplitud() const;
+    QString horaDelPuestoMedia()const;
+    QString horaDelPuesto()const;
+    QString duracionDelVaciante() const;
+    QString duracionDelLenante() const;
+    QString crecimientoDeLaMareaSemidiurna() const;
+    QString crecimientoDeLaMareaParalactica() const;
+    QString crecimientoDeLaMareaDiurna() const;
+    QString horaCotidianaMareaSemidiurna() const;
+    QString horaCotidianaMareaDiurna() const;
+    QString alturaPromedioDeLaMareaSemidiurna() const;
+    QString alturaPromedioDeLaMareaSicigias() const;
+    QString alturaPromedioDeLaMareaCuadratura() const;
+    QString alturaPromedioDeLaMareaTropical() const;
+
 private slots:
     void calculate(int index);
 
     void saveToFile();
 
     void calculateAll();
+
+signals:
+    void closed();
+
+protected:
+    void closeEvent(QCloseEvent *event);
 
 private:
     QVector<displayResultWidget*> m_displayResultWidgetVector;

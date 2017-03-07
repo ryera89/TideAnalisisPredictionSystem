@@ -25,6 +25,8 @@ SchemeConfigDialog::SchemeConfigDialog(const QStringList &schemesLabels, const Q
     Qt::WindowFlags flag = Qt::Dialog | Qt::WindowCloseButtonHint;
     this->setWindowFlags(flag);
 
+    this->setWindowTitle(tr("Configuración de Esquemas"));
+    this->setWindowIcon(QIcon(":images/configure1.png"));
     this->setAttribute(Qt::WA_DeleteOnClose);
 }
 

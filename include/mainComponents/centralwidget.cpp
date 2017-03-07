@@ -6,6 +6,7 @@
 #include <QSpinBox>
 #include <QSlider>
 #include <iostream>
+#include "include/PredictionModule/predictormainwindow.h"
 CentralWidget::CentralWidget(QWidget *parent) : QWidget(parent)
 {
     m_currentXZoomLevel = 1;
@@ -110,80 +111,42 @@ void CentralWidget::updateSerieData(int row)
 
 void CentralWidget::setSeriesData()
 {
-    settingZoomPosibleValues();
-    //m_series->clear();
-    m_selectionSeries->clear();
-    m_mapForValuesInMainAndSelectionSeries.clear();
-    m_tideChartView->chart()->removeAxis(m_timeAxis);
-    m_tideChart->removeAxis(m_yAxis);
-    //m_tideChartView->chart()->removeAllSeries();
+    if (!m_tidalTableModel->measurementData().isEmpty()){
+        settingZoomPosibleValues();
+        m_zoomYSpinBox->setValue(10);
 
-    //m_series = new QSplineSeries;
-    //m_series->setUseOpenGL(true);
-    //m_series->setPointsVisible(true);
-    //m_selectionSeries = new QScatterSeries;
-    //m_selectionSeries->setUseOpenGL(true);
-    //m_selectionSeries->setMarkerSize(8);
-    //m_scatterSerie = new QScatterSeries;
-    //m_scatterSerie->setColor(Qt::red);
-    //m_scatterSerie->setMarkerSize(5);
-    //m_series = new MySeries;
+        m_selectionSeries->clear();
+        m_mapForValuesInMainAndSelectionSeries.clear();
 
-    int rowNumber = m_tidalTableModel->rowCount(QModelIndex());
-    //int columnNumber = m_model->columnCount(QModelIndex());
+        QPointF MinMax = findMinAndMax(m_tidalTableModel->measurementData());
+        m_yMin = MinMax.x();
+        m_yMax = MinMax.y();
+        if (m_yMin != m_yMax){
+           m_yAxis->setRange(m_yMin,m_yMax);
+        }else{
+            m_yAxis->setRange(m_yMin - 1.0 , m_yMin + 1.0);
+        }
 
-    QVector<QPointF> datos;
-    m_maxSerieYValue = 1.0;
-    m_minSerieYValue = 0.0;
 
-    for (int i = 0; i < rowNumber; ++i){
-        double y_value;
-        QDateTime x_value;
-        x_value.setDate(m_tidalTableModel->measurementData().at(i).measurementDate());
-        x_value.setTime(m_tidalTableModel->measurementData().at(i).measurementTime());
-        y_value = m_tidalTableModel->measurementData().at(i).seaLevel();
+        QDateTime datetime0(m_tidalTableModel->measurementData().first().measurementDateTime());
+        QDateTime datetimef(m_tidalTableModel->measurementData().last().measurementDateTime());
 
-        if (m_maxSerieYValue < y_value) m_maxSerieYValue = y_value;
-        if (m_minSerieYValue > y_value) m_minSerieYValue = y_value;
+        QDateTime aux = datetime0.addSecs(24*3600);
+        if (aux < datetimef){
+            m_timeAxis->setRange(datetime0,aux);
+        }else{
+            m_timeAxis->setRange(datetime0,datetimef);
+        }
 
-        datos.append(QPointF(x_value.toMSecsSinceEpoch(),y_value));
+        m_series->replace(m_tidalTableModel->measurementDataRealPoints());
+
+    }else{
+        m_series->clear();
+        m_selectionSeries->clear();
+        m_mapForValuesInMainAndSelectionSeries.clear();
     }
 
-    //m_series->chart()->axisX(m_series)->setRange(QDateTime::fromMSecsSinceEpoch(datos.first().x()),QDateTime::fromMSecsSinceEpoch(datos.last().x()));
-    m_series->replace(datos);
-    //m_scatterSerie->append(datos);
-
-
-    //m_tideChartView->chart()->removeSeries(m_series);
-    //m_tideChartView->chart()->removeAxis(m_timeAxis);
-
-    if (!m_series->pointsVector().isEmpty()){
-        qreal max = m_series->at(0).x() + 24*3600*1000;
-        if (max <= m_series->pointsVector().last().x())
-        m_timeAxis->setRange(QDateTime::fromMSecsSinceEpoch(m_series->at(0).x()),QDateTime::fromMSecsSinceEpoch(max));
-        else m_timeAxis->setRange(QDateTime::fromMSecsSinceEpoch(m_series->at(0).x()),QDateTime::fromMSecsSinceEpoch(m_series->pointsVector().last().x()));
-    }
-
-    m_yAxis->setRange(m_minSerieYValue,m_maxSerieYValue);
-    m_yAxis->applyNiceNumbers();
-
-    m_minSerieYValue = m_yAxis->min();
-    m_maxSerieYValue = m_yAxis->max();
-    //m_tideChartView->chart()->addSeries(m_series);
-    //m_tideChartView->chart()->createDefaultAxes();
-
-    //m_tideChartView->chart()->addSeries(m_series);
-    //m_tideChartView->chart()->addSeries(m_selectionSeries);
-    //m_tideChartView->chart()->createDefaultAxes();
-    m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
-    m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
-    m_tideChart->setAxisY(m_yAxis,m_series);
-    m_tideChart->setAxisY(m_yAxis,m_selectionSeries);
-
-    //m_tideChartView->chart()->setAxisX(m_timeAxis,m_scatterSerie);
-
-    //m_mapper->setSeries(m_series);
-
+    m_selectionPointRange->setText(tr("<b>[Sin Selección]</b>"));
 }
 
 void CentralWidget::zoomXAxis(int level)
@@ -275,6 +238,8 @@ void CentralWidget::getAndDisplayClickedPosInSeries(QPointF point)
     QVector<QPointF> selectedPoints;
     m_mapForValuesInMainAndSelectionSeries.clear();
 
+    m_tidalTableView->clearSelection();
+
     QVector<QPointF> seriesPointsVector;
     foreach (QPointF p, m_series->pointsVector()) {
         seriesPointsVector.append(m_tideChart->mapToPosition(p,m_series));
@@ -300,6 +265,8 @@ void CentralWidget::getAndDisplayClickedPosInSeries(QPointF point)
         selectedPoints.append(selectedPoint);
         m_mapForValuesInMainAndSelectionSeries[posInMainSeries] = 0;
 
+        m_tidalTableView->selectRow(posInMainSeries);
+
         QDateTime time = QDateTime::fromMSecsSinceEpoch(selectedPoint.x());
 
         m_selectionPointRange->setInternalData(time,selectedPoint.y(),time,selectedPoint.y());
@@ -307,39 +274,17 @@ void CentralWidget::getAndDisplayClickedPosInSeries(QPointF point)
         m_selectionPointRange->setText(tr("<b>[Sin Selección]</b>"));
     }
     m_selectionSeries->replace(selectedPoints);
-    /*QVector<QPointF> seriesPointsVector = m_series->pointsVector();
-
-    qreal distance = INT64_MAX; //distancia al punto
-    QPointF closest(INT64_MAX, INT64_MAX); //punto mas cercano
-
-    foreach (QPointF po, seriesPointsVector) {
-        qreal currentDist = qSqrt(qPow((po.y() - point.y()),2) + qPow((po.x() - point.x()),2));
-
-        if (currentDist < distance){
-            distance = currentDist;
-            closest = po;
-        }
-    }
-    if (distance < 50000*m_currentXZoomLevel){
-        QDateTime time = QDateTime::fromMSecsSinceEpoch(closest.x());
-
-        m_selectionIniDDLabel->setInternalData(time,closest.y());
-    }*/
-    //std::cout << distance << std::endl;
 }
 
 void CentralWidget::setPointSelectedRange(QPointF pPoint, QPointF rPoint)
 {
-    /*if (m_selectionSeries == Q_NULLPTR){
-        m_selectionSeries = new QScatterSeries;
-        m_tideChartView->chart()->addSeries(m_selectionSeries);
-        m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
-    }*/
-    //m_selectionSeries->clear();
+
     m_mapForValuesInMainAndSelectionSeries.clear();
 
     QPointF pSeriesPoint = m_tideChart->mapToValue(pPoint,m_series);
     QPointF rSeriesPoint = m_tideChart->mapToValue(rPoint,m_series);
+
+    m_tidalTableView->clearSelection();
 
     QVector<QPointF> selectedPoints;
 
@@ -365,6 +310,12 @@ void CentralWidget::setPointSelectedRange(QPointF pPoint, QPointF rPoint)
     }
 
     m_selectionSeries->replace(selectedPoints);
+
+    if (!m_mapForValuesInMainAndSelectionSeries.isEmpty()){
+        int aux1 = m_mapForValuesInMainAndSelectionSeries.keys().first();
+        int aux2 = m_mapForValuesInMainAndSelectionSeries.keys().last();
+        m_tidalTableView->setRowSelection(0,aux1,2,aux2,QItemSelectionModel::Select);
+    }
     updateDisplayRangeLabel();
 }
 
@@ -440,52 +391,29 @@ void CentralWidget::updateSeriesData(const QModelIndex &topLeft, const QModelInd
         y_value = m_tidalTableModel->data(m_tidalTableModel->index(i,2),
                                 Qt::DisplayRole).toDouble();
 
-        if (i < m_series->count()){
-            qreal valueChanged = m_series->at(i).y();
+        m_series->replace(i,x_value.toMSecsSinceEpoch(),y_value);
 
-            m_series->replace(i,x_value.toMSecsSinceEpoch(),y_value);
+        bool isAxisMod = false;
 
-            if (valueChanged == m_maxSerieYValue){ //Para arreglar el eje vertical
-                m_maxSerieYValue = m_series->pointsVector().first().y();
-                foreach(QPointF point, m_series->pointsVector()){
-                    qreal aux = point.y();
-                    if (aux > m_maxSerieYValue) m_maxSerieYValue = aux;
-                }
-                m_yAxis->setMax(m_maxSerieYValue);
-                m_yAxis->applyNiceNumbers();
-            }
-            if (valueChanged == m_minSerieYValue){ //Para arreglar el eje vertical
-                m_minSerieYValue = m_series->pointsVector().first().y();
-                foreach(QPointF point, m_series->pointsVector()){
-                    qreal aux = point.y();
-                    if (aux < m_minSerieYValue) m_minSerieYValue = aux;
-                }
-                m_yAxis->setMin(m_minSerieYValue);
-                m_yAxis->applyNiceNumbers();
-            }
+        QPointF MinMax = findMinAndMax(m_tidalTableModel->measurementData());
 
-        }else{
-            if (i == m_series->count()){
-                m_series->append(x_value.toMSecsSinceEpoch(),y_value);
+        if (m_yMin != MinMax.x()){
+            m_yMin = MinMax.x();
+            isAxisMod = true;
+        }
+        if (m_yMax != MinMax.y()){
+            m_yMax = MinMax.y();
+            isAxisMod = true;
+
+        }
+        if (isAxisMod){
+            m_zoomYSpinBox->setValue(10);
+            if (m_yMin != m_yMax){
+               m_yAxis->setRange(m_yMin,m_yMax);
             }else{
-                int k = m_series->count();
-                while (k < i){
-                    m_series->append(0,0);
-                    ++k;
-                }
-                m_series->append(x_value.toMSecsSinceEpoch(),y_value);
+               m_yAxis->setRange(m_yMin - 1.0,m_yMax + 1.0);
             }
         }
-       if (y_value > m_yAxis->max()){
-           m_maxSerieYValue = y_value;
-           m_yAxis->setMax(y_value);
-           m_yAxis->applyNiceNumbers();
-       }
-       if (y_value < m_yAxis->min()){
-           m_minSerieYValue = y_value;
-           m_yAxis->setMin(y_value);
-           m_yAxis->applyNiceNumbers();
-       }
     }
     updateSelectionSeriesData(topLeft,bottomRight,roles);
 }
@@ -519,6 +447,53 @@ void CentralWidget::updateSeriesDataAtRowRemove(const QModelIndex &parent, int i
     }
 }
 
+void CentralWidget::zoomYAxis(int zoomLevel)
+{
+    double scale = 0.0;
+
+    switch (zoomLevel) {
+    case 1:
+        scale = 0.9;
+        break;
+    case 2:
+        scale = 0.8;
+        break;
+    case 3:
+        scale = 0.7;
+        break;
+    case 4:
+        scale = 0.6;
+        break;
+    case 5:
+        scale = 0.5;
+        break;
+    case 6:
+        scale = 0.4;
+        break;
+    case 7:
+        scale = 0.3;
+        break;
+    case 8:
+        scale = 0.2;
+        break;
+    case 9:
+        scale = 0.1;
+        break;
+    default:
+        scale = 0.0;
+        break;
+    }
+
+    if (m_series){
+        double minYAxis = m_yMin - scale*(m_yMax - m_yMin);
+        double maxYAxis = m_yMax + scale*(m_yMax - m_yMin);
+
+        if (minYAxis < maxYAxis)
+           m_yAxis->setRange(minYAxis,maxYAxis);
+    }
+}
+
+
 void CentralWidget::updateOnRealTimeSelectionRange(QPointF iniPos, QPointF currentPos)
 {
     QPointF iniPoint;
@@ -540,6 +515,26 @@ void CentralWidget::updateOnRealTimeSelectionRange(QPointF iniPos, QPointF curre
 
     m_selectionPointRange->setInternalData(iniDateTime,iniValue,endDateTime,endValue);
 
+}
+
+void CentralWidget::selectDataInChart(int row0, int rowf)
+{
+    m_selectionSeries->clear();
+    m_mapForValuesInMainAndSelectionSeries.clear();
+
+    if (m_series->pointsVector().isEmpty()) return;
+
+    int k  = 0; //Para la posicion en la serie para seleccion
+    for (int i = row0; i <= rowf; ++i){
+        m_selectionSeries->append(m_series->at(i));
+        m_mapForValuesInMainAndSelectionSeries[i] = k;
+    }
+    updateDisplayRangeLabel();
+}
+
+void CentralWidget::deselectDataInChart()
+{
+    m_selectionSeries->clear();
 }
 
 void CentralWidget::updateDisplayRangeLabel()
@@ -595,7 +590,7 @@ void CentralWidget::createComponents()
 
     m_selectionSeries = new QScatterSeries;
     //m_selectionSeries->setUseOpenGL(true);
-    m_selectionSeries->setMarkerSize(8);
+    m_selectionSeries->setMarkerSize(7);
     m_selectionSeries->setName(tr("Selección"));
 
 
@@ -611,14 +606,14 @@ void CentralWidget::createComponents()
 
     m_tideChart->addSeries(m_series);
     m_tideChart->addSeries(m_selectionSeries);
+    m_tideChart->legend()->hide();
     //m_tideChart->createDefaultAxes();
 
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
     m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
     m_tideChart->setAxisY(m_yAxis,m_series);
     m_tideChart->setAxisY(m_yAxis,m_selectionSeries);
-    m_yAxis->applyNiceNumbers();
-    m_tideChartView->chart()->axisX(m_series)->setTitleText(tr("Tiempo"));
+    m_tideChartView->chart()->axisX(m_series)->setTitleText(tr("Fecha & Hora"));
     m_tideChartView->chart()->axisY(m_series)->setTitleText(tr("Nivel [m]"));
 
     connect(m_tideChartView,SIGNAL(seriesPoint(QPointF)),this,SLOT(getAndDisplayCursorPosInSeries(QPointF)));
@@ -639,20 +634,20 @@ void CentralWidget::createComponents()
     connect(m_rangeSlider,SIGNAL(valueChanged(int)),m_rangeSpinBox,SLOT(setValue(int)));
     connect(m_rangeSpinBox,SIGNAL(valueChanged(int)),this,SLOT(zoomXAxis(int)));
 
-    //QGroupBox *rangeGroupBox = new QGroupBox(this);
-    //rangeGroupBox->setLayout(rangeLayout);
-    //rangeGroupBox->setFixedWidth(200);
+    m_zoomYSlider = new QSlider(Qt::Horizontal);
+    m_zoomYSlider->setFixedWidth(100);
+    m_zoomYSlider->setTickInterval(1);
+    m_zoomYSlider->setRange(1,10);
+    m_zoomYSlider->setValue(10);
 
-    //m_selectionIniDDLabel = new DisplayedDataLabels(this);
-    //QFont selectionLabelFont = m_selectionIniDDLabel->font();
-    //selectionLabelFont.setBold(true);
-    //m_selectionIniDDLabel->setFont(selectionLabelFont);
-    //m_selectionIniDDLabel->setLabel(tr("Seleccion"));
-    //m_selectionIniDDLabel->setFixedWidth(200);
-    //m_selectionIniDDLabel->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+    m_zoomYSpinBox = new QSpinBox;
+    m_zoomYSpinBox->setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
+    m_zoomYSpinBox->setRange(1,10);
+    m_zoomYSpinBox->setValue(10);
 
-    //m_selectionEndDDLabel = new DisplayedDataLabels(this);
-    //m_selectionEndDDLabel->setLabel(tr("Fin"));
+    connect(m_zoomYSlider,&QAbstractSlider::valueChanged,m_zoomYSpinBox,&QSpinBox::setValue);
+    connect(m_zoomYSpinBox,SIGNAL(valueChanged(int)),m_zoomYSlider,SLOT(setValue(int)));
+    connect(m_zoomYSpinBox,SIGNAL(valueChanged(int)),this,SLOT(zoomYAxis(int)));
 
     m_cursorPosDDLabel = new DisplayedDataLabels(this);
     QFont labelFont = m_cursorPosDDLabel->font();
@@ -666,22 +661,6 @@ void CentralWidget::createComponents()
     m_selectionPointRange->setText(tr("<b>[Sin Selección]</b>"));
     m_selectionPointRange->setFixedWidth(370);
     m_selectionPointRange->setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
-
-    QVector<TidesMeasurement> measurements;
-    for (int i = 0; i < 100; ++i){
-        QDateTime dateTime(QDate::currentDate(),QTime(0,0));
-        dateTime = dateTime.addSecs(i*3600);
-        measurements.push_back(TidesMeasurement(0.0,dateTime.date(),dateTime.time()));
-    }
-    m_tidalTableModel->setMeasurements(measurements);
-    //QHBoxLayout *cursorLayout =  new QHBoxLayout;
-    //cursorLayout->addWidget(m_cursorPosDDLabel);
-
-    //QGroupBox *cursorGroupBox = new QGroupBox(tr("Cursor"),this);
-    //cursorGroupBox->setAlignment(Qt::AlignCenter);
-    //cursorGroupBox->setLayout(cursorLayout);
-
-    //Connections
 
     //connect(m_dataTable,SIGNAL(rowEliminated(int,int)),this,SLOT(updateDataInChartWhenRowIsEliminated(int,int)));
 }
@@ -711,6 +690,8 @@ void CentralWidget::setInterfazLayout()
     rangeLayout->addWidget(m_cursorPosDDLabel);
     rangeLayout->addWidget(m_selectionPointRange);
     rangeLayout->addStretch();
+    rangeLayout->addWidget(m_zoomYSlider);
+    rangeLayout->addWidget(m_zoomYSpinBox);
     rangeLayout->addWidget(m_rangeSlider);
     rangeLayout->addWidget(m_rangeSpinBox);
 
@@ -731,7 +712,13 @@ void CentralWidget::setInterfazLayout()
 
 void CentralWidget::settingUpTable()
 {
-    m_tidalTableView = new QTableView;
+    m_tidalTableView = new MyTableView;
+    m_tidalTableView->setSelectionMode(QAbstractItemView::ContiguousSelection);
+    m_tidalTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    connect(m_tidalTableView,&MyTableView::rowsSelected,this,&CentralWidget::selectDataInChart);
+    connect(m_tidalTableView,&MyTableView::noRowsSelected,this,&CentralWidget::deselectDataInChart);
+    connect(m_tidalTableView,&MyTableView::deleteKeyPressed,this,&CentralWidget::deleteSelectedPointOnGraph);
+
     m_tidalTableModel = new TableModel;
     m_tidalTableView->setItemDelegate(new TidalTableDelegate);
     m_tidalTableView->setModel(m_tidalTableModel);
@@ -745,6 +732,8 @@ void CentralWidget::settingUpTable()
          width += m_tidalTableView->columnWidth(i);
     }
     m_tidalTableView->setFixedWidth(width);
+    m_tidalTableView->resizeRowsToContents();
+    //m_tidalTableView->resizeColumnsToContents();
 }
 
 void CentralWidget::settingZoomPosibleValues()
@@ -765,16 +754,13 @@ void CentralWidget::settingZoomPosibleValues()
 void CentralWidget::deletePoints()
 {
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    int maxFlag = 0;
+    /*int maxFlag = 0;
     int begin = 0;
     bool flag = false;
     int i = 0;
-    //m_tideChartView->chart()->removeSeries(m_series);
-    //m_tideChartView->chart()->removeSeries(m_selectionSeries);
     foreach (QPointF point, m_selectionSeries->pointsVector()){
         QDateTime time = QDateTime::fromMSecsSinceEpoch(point.x());
-        //int i = 0;
-        //QVector<TidesMeasurement> dataMeasurement = m_tidalTableModel->measurementData();
+
         for (int k = i; k < m_tidalTableModel->measurementData().size();++k){
             if (m_tidalTableModel->measurementData().at(k).measurementDateTime() == time){ //Si coinciden en el tiempo eliminarlos
                 if (!flag){ begin = i; flag = true;}  //Para guardar la primera ves que se entra en el loop
@@ -784,30 +770,44 @@ void CentralWidget::deletePoints()
             }
             ++i;
         }
-        /*foreach (TidesMeasurement measu, m_tidalTableModel->measurementData()) { //Paracomparar elementos
-            if (measu.measurementDateTime() == time){ //Si coinciden en el tiempo eliminarlos
-                if (!flag){ begin = i; flag = true;}  //Para guardar la primera ves que se entra en el loop
-                ++maxFlag;
-                //m_tidalTableModel->removeRow(i,QModelIndex());
-                //m_series->remove(point);
-                //++flag;
-                break;
-            }
-             ++i;
-        }*/
     }
     m_selectionSeries->clear(); //vacia la serie donde se almacenan los datos seleccionados
     m_mapForValuesInMainAndSelectionSeries.clear();
     m_tidalTableModel->removeRows(begin,maxFlag-1,QModelIndex());
+    m_selectionPointRange->setText(tr("<b><font color = green> SIN SELECCIÓN</b></font>"));*/
+
+    int begin = m_mapForValuesInMainAndSelectionSeries.keys().first();
+    int max = m_mapForValuesInMainAndSelectionSeries.size();
+
+    m_selectionSeries->clear(); //vacia la serie donde se almacenan los datos seleccionados
+    m_mapForValuesInMainAndSelectionSeries.clear();
+
+    m_tidalTableModel->removeRows(begin,max-1,QModelIndex());
+
     m_selectionPointRange->setText(tr("<b><font color = green> SIN SELECCIÓN</b></font>"));
-    //m_tideChartView->chart()->addSeries(m_series);
-    //m_tideChartView->chart()->addSeries(m_selectionSeries);
 
-    //m_tideChartView->chart()->setAxisX(m_timeAxis,m_series);
-    //m_tideChartView->chart()->setAxisX(m_timeAxis,m_selectionSeries);
+    QPointF MinMax = findMinAndMax(m_tidalTableModel->measurementData());
 
-    //m_series->clear();
-    //m_series->append(m_tidalTableModel->measurementDataRealPoints().toList());
+    bool isAxisMod = false;
+
+    if (m_yMin < MinMax.x()){
+        m_yMin = MinMax.x();
+        isAxisMod = true;
+    }
+    if (m_yMax > MinMax.y()){
+        m_yMax = MinMax.y();
+        isAxisMod = true;
+
+    }
+    if (isAxisMod){
+        m_zoomYSpinBox->setValue(10);
+        if (m_yMin != m_yMax){
+           m_yAxis->setRange(m_yMin,m_yMax);
+        }else{
+           m_yAxis->setRange(m_yMin - 1.0,m_yMax + 1.0);
+        }
+    }
+
     QApplication::restoreOverrideCursor();
 }
 

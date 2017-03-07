@@ -37,8 +37,9 @@ ManualDataIntroductionWidget::ManualDataIntroductionWidget(QWidget *parent) : QD
 
     this->setFixedSize(sizeHint());
 
+    this->setWindowTitle(tr("Introducción Manual de Datos"));
+    this->setWindowIcon(QIcon(":images/manualData.png"));
     this->setAttribute(Qt::WA_DeleteOnClose);
-
 }
 
 void ManualDataIntroductionWidget::setProjectMetaData(const ProjectMetaData &metadata)
@@ -54,6 +55,11 @@ void ManualDataIntroductionWidget::setProjectMetaData(const ProjectMetaData &met
 
     m_metaDataWidget->setTimeZoneOffset(metadata.timeZoneOffset());
     m_metaDataWidget->setDaylightTimeSaving(metadata.isDaylightTimeSaving());
+}
+
+bool ManualDataIntroductionWidget::isCorrectionRButtonChecked() const
+{
+    return m_correctionsRadioButton->isChecked();
 }
 
 void ManualDataIntroductionWidget::setMinimumDateEditValue(const QDate &date)
@@ -184,10 +190,10 @@ void ManualDataIntroductionWidget::setConversionUnit(int index)
         m_conversionUnit = 0.1;
         break;
     case 2:
-        m_conversionUnit = 0.001;
+        m_conversionUnit = 0.01;
         break;
     case 3:
-        m_conversionUnit = 0.0001;
+        m_conversionUnit = 0.001;
         break;
     default:
         m_conversionUnit = 1.0;
@@ -216,6 +222,7 @@ void ManualDataIntroductionWidget::createComponents()
     m_mainGroupBox = new QGroupBox(this);
 
     m_levelRadioButton = new QRadioButton(tr("Niveles"));
+    m_levelRadioButton->setChecked(true);
     m_correctionsRadioButton = new QRadioButton(tr("Correcciones"));
 
     m_measurementUnitComboBox = new QComboBox;
@@ -258,19 +265,21 @@ void ManualDataIntroductionWidget::createComponents()
 
     m_iniDateEdit = new QDateEdit;
     m_iniDateEdit->setCalendarPopup(true);
-    m_iniDateEdit->setDisplayFormat("yyyy/MM/dd");
+    m_iniDateEdit->setDisplayFormat("dd/MM/yyyy");
     m_iniDateEdit->setMinimumDate(QDate(1970,1,1));
+    m_iniDateEdit->setDate(QDate::currentDate());
     connect(m_iniDateEdit,SIGNAL(dateChanged(QDate)),this,SLOT(setMinimumDateEditValue(QDate)));
 
     m_endDateEdit = new QDateEdit;
     m_endDateEdit->setCalendarPopup(true);
-    m_endDateEdit->setDisplayFormat("yyyy/MM/dd");
+    m_endDateEdit->setDisplayFormat("dd/MM/yyyy");
     m_endDateEdit->setMinimumDate(QDate(m_iniDateEdit->date()));
 
     m_iniTimeEdit = new QTimeEdit;
     m_iniTimeEdit->setDisplayFormat("hh:mm");
 
     m_endTimeEdit = new QTimeEdit;
+    m_endTimeEdit->setTime(QTime(23,0));
     m_endTimeEdit->setDisplayFormat("hh:mm");
 
     m_timeIntervalLabel = new QLabel(tr("Intervalo"));
@@ -422,4 +431,10 @@ void ManualDataIntroductionWidget::settingTableWidth()
     }
     m_editionTable->setFixedWidth(width);
 
+}
+
+double ManualDataIntroductionWidget::determineLevelFromCorr(const double &corr)
+{
+    double ref = nivelReferencia();
+    return ref - corr; //corr debe estar en metros
 }

@@ -12,6 +12,7 @@
 #include <QDateEdit>
 #include <QLabel>
 #include <QTimeEdit>
+#include "include/HarmonicConstantsModule/Model_View/hctabledelegate.h"
 
 #include "include/HarmonicConstantsModule/Model_View/harmonicconstantfulltablemodel.h"
 #include "include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytabledelegate.h"
@@ -30,6 +31,7 @@ SchemeWidget::SchemeWidget(const QStringList &schemesLabels, const QStringList &
     Qt::WindowFlags flag = Qt::Dialog | Qt::WindowCloseButtonHint;
     this->setWindowFlags(flag);
 
+    this->setWindowTitle(tr("Análisis Armónico"));
     this->setAttribute(Qt::WA_DeleteOnClose);
 }
 
@@ -82,6 +84,7 @@ void SchemeWidget::enableSaveHarmonicConstantButton()
     showHarmonicConstantTable();
 
     m_saveHarmonicConstantsButton->setEnabled(true);
+    m_uploadHCToDataBase->setEnabled(true);
 }
 void SchemeWidget::beginHarmonicAnalisis()
 {
@@ -89,6 +92,9 @@ void SchemeWidget::beginHarmonicAnalisis()
     m_loadingMovie->start();
     //m_loadingQuickWidget->setVisible(true);
     //m_harmonicConstantTableView->setVisible(false);
+
+    m_saveHarmonicConstantsButton->setEnabled(false);
+    m_uploadHCToDataBase->setEnabled(false);
 
     emit analizeButtonClicked();
 }
@@ -176,23 +182,21 @@ void SchemeWidget::changeScheme(const QString &newScheme)
 }*/
 void SchemeWidget::crearComponentes(const QStringList &schemesLabels, const QStringList &componentsLabels)
 {
+    /*m_loadingQuickWidget = new QQuickWidget(QUrl(QStringLiteral("qrc:/analizing.qml")));
 
-
-    //m_loadingQuickWidget = new QQuickWidget(QUrl(QStringLiteral("qrc:/analizing.qml")));
-
-    /*QSurfaceFormat format;
+    QSurfaceFormat format;
     if (QCoreApplication::arguments().contains(QStringLiteral("--coreprofile"))) {
         format.setVersion(4, 4);
         format.setProfile(QSurfaceFormat::CoreProfile);
     }
     if (QCoreApplication::arguments().contains(QStringLiteral("--multisample")))
         format.setSamples(4);
-    m_loadingQuickWidget->setFormat(format);*/
+    m_loadingQuickWidget->setFormat(format);
 
     //m_loadingQuickWidget->resize(100,200);
     //m_loadingQuickWidget->setResizeMode(QQuickWidget::SizeRootObjectToView);
 
-    //m_loadingQuickWidget->setVisible(false);
+    //m_loadingQuickWidget->setVisible(false)*/
 
     m_schemeComboBox = new QComboBox;
     m_schemeComboBox->addItem(tr("-Selecciona un esquema de análisis-"));
@@ -214,7 +218,7 @@ void SchemeWidget::crearComponentes(const QStringList &schemesLabels, const QStr
 
     m_configEsquemaToolButton = new QToolButton(this);
     m_configEsquemaToolButton->setIcon(QIcon(":images/configure1.png"));
-    m_configEsquemaToolButton->setToolTip(tr("Configurar esquemas de analisis"));
+    m_configEsquemaToolButton->setToolTip(tr("Configurar esquemas de análisis"));
     connect(m_configEsquemaToolButton,SIGNAL(clicked(bool)),this,SLOT(createConfigSchemeDialog()));
 
     m_analizarPushButton = new QPushButton(QIcon(":images/analisis.png"),tr("Analizar"),this);
@@ -228,11 +232,17 @@ void SchemeWidget::crearComponentes(const QStringList &schemesLabels, const QStr
     m_tableFrame->hide();
 
     m_saveHarmonicConstantsButton = new QPushButton(QIcon(":images/writeToFile1.png"),tr("Guardar"));
-    m_saveHarmonicConstantsButton->setToolTip(tr("Guardar Constantes Armónicas"));
+    m_saveHarmonicConstantsButton->setToolTip(tr("Guardar Constantes Armónicas a archivo ASCII"));
     m_saveHarmonicConstantsButton->setEnabled(false);
     connect(m_saveHarmonicConstantsButton,SIGNAL(clicked(bool)),this,SIGNAL(saveHarmonicConstantsButtonClicked()));
 
+    m_uploadHCToDataBase = new QPushButton(QIcon(":images/data-upload.png"),tr("Registrar"));
+    m_uploadHCToDataBase->setToolTip(tr("Agregar set de constantes armónicas al registro"));
+    m_uploadHCToDataBase->setEnabled(false);
+    connect(m_uploadHCToDataBase,SIGNAL(clicked(bool)),this,SIGNAL(uploadHCButtonClicked()));
+
     m_harmonicConstantTableView = new QTableView(this);
+    m_harmonicConstantTableView->setItemDelegate(new HCTableDelegate);
 
     m_harmonicConstantTableModel = new HarmonicConstantFullTableModel;
     m_harmonicConstantTableView->setModel(m_harmonicConstantTableModel);
@@ -243,13 +253,8 @@ void SchemeWidget::crearComponentes(const QStringList &schemesLabels, const QStr
     }
     m_harmonicConstantTableView->setMinimumWidth(width);
 
-    //m_harmonicConstantTableView->hide();
-
     m_analisisTypeGroupBox = new QGroupBox(tr("Análisis Armónico"));
     m_fitMethodGroupBox = new QGroupBox(tr("Método de Ajuste"));
-    //m_luRadioButton = new QRadioButton(tr("Descomposicion LU"),this);
-    //m_luRadioButton->setChecked(true);
-    //m_svdRadioButton = new QRadioButton(tr("SVD"),this);
 
     m_HarmonicAnalisisMethodComboBox = new QComboBox;
     m_HarmonicAnalisisMethodComboBox->addItem(tr("Factores Nodales Fijos"));
@@ -409,10 +414,14 @@ void SchemeWidget::interfazLayout()
 
     //**********************************************************
 
+    QHBoxLayout *buttonLay = new QHBoxLayout;
+    buttonLay->addWidget(m_uploadHCToDataBase);
+    buttonLay->addWidget(m_saveHarmonicConstantsButton);
+
     QVBoxLayout *tableLayout  = new QVBoxLayout;
     tableLayout->addWidget(m_harmonicConstantTableView);
-    tableLayout->addWidget(m_saveHarmonicConstantsButton);
-    tableLayout->setAlignment(m_saveHarmonicConstantsButton,Qt::AlignRight);
+    tableLayout->addLayout(buttonLay);
+    tableLayout->setAlignment(buttonLay,Qt::AlignRight);
 
     m_tableFrame->setLayout(tableLayout);
     m_tableFrame->layout()->setMargin(0);

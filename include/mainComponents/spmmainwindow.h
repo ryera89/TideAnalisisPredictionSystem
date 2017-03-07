@@ -17,6 +17,12 @@
 #include <QtConcurrent/QtConcurrent>
 #include "include/AlcanceLimite/alcancelimitewindow.h"
 #include "include/PredictionModule/predictormainwindow.h"
+#include "uploadhcdialog.h"
+#include "include/Presentation/widget.h"
+#include "include/Report/reportwizard.h"
+#include "include/HarmonicConstantsModule/ManualHarmonicConstants/manualharmonicconstantintrodialog.h"
+
+
 
 using namespace QtConcurrent;
 
@@ -34,6 +40,8 @@ class SPMmainWindow : public QMainWindow
 public:
     explicit SPMmainWindow(QWidget *parent = 0);
 
+    enum FILE_ID{SchemesMagicNumber = 18041989, MagicNumber = 19891804, HCMagicNumber = 20150926};  //Magic Numbers for config files recognition
+
     //TidalData datosDeMarea() const{return m_datosDeMarea;}
     //QAbstractTableModel* model()const{return m_tidalTableModel;}
 
@@ -41,8 +49,15 @@ public:
     static QVector<double> funcion(const double &t);
     static QVector<double> funcionModificada(const double &t, const QDateTime &datetime, const  QDateTime &beginDate);
 
+    QString hcDataBaseDir() const{return m_hcDirDataBase;}
+
     QSize sizeHint() const;
 
+
+public slots:
+    void hidePresentation();
+    void getNonHarmonicConstansForReport();
+    void about();
 signals:
     void harmonicAnalisisFinished();
 private slots:
@@ -78,11 +93,18 @@ private slots:
     void createAlcanceLimiteWindow(); //Inrterfaz para el calculo del alcance limite
     void createPredictor();
 
+    void createUpHcDialog();
+    void createReportWizard();
+
+    void createManualHCDialog();
+
     //bool saveFrequencyFile();
     void harmonicAnalisis();
     void harmonicAnalisisWithAllData();
     //void harmonicAnalisisWithCustomData();
     void saveHarmonicConstantToFile();
+
+    void uploadHCToDataBase();
 
 protected slots:
     void setChartLightTheme(bool);
@@ -114,13 +136,20 @@ protected slots:
 
 private:
 
-    enum {SchemesMagicNumber = 18041989, MagicNumber = 19891804};  //Magic Numbers for config files recognition
+    Widget *m_presentation;
+
     //Config files filespath--------------------------------------------------------------------
     //const QString m_frequencyFilePath = "data/frequency.frq"; //fichero donde se guardan la frecuencias de las constantes armonicas
-    const QString m_schemesFilePath = "data/schemes.sch"; //Fichero donde se guardan los esquemas
+    const QString m_schemesFilePath = "data/Schemes/schemes.sch"; //Fichero donde se guardan los esquemas
 
+    QString m_hcDirDataBase;  //Directorio donde se almacenan las contantes armonicas
 
     QString m_projectFilePath; //Para cuando se abre un proyecto;
+
+    QString m_provincia; //Para guardar las constantes armonicas a la base de datos
+    QString m_localidad;
+
+    bool m_firstOpen;
 
     /*********************************Visual Widgets**********************************************/
     //Central Widget Main Interface----------------------------------------------------------------------
@@ -139,10 +168,10 @@ private:
      AverageDialog *m_averageDialog;
      AlcanceLimiteWindow *m_alcanceLimiteWindow;
      PredictorMainWindow *m_predictor;
-
+     UploadHCDialog *m_upHcDialog;
+     ReportWizard *m_reportWizard;
+     ManualHarmonicConstantIntroDialog *m_manualHCIntroDialog;
      //QML component
-
-
      /*************************ACTIONS*************************************************/
      //File Menu Actions----------------------------------------------------------------
      QAction *m_newProjectAction;
@@ -192,6 +221,12 @@ private:
      QAction *m_nivelacionAcuaticaAction;
      QAction *m_alcanceLimiteAction;
      QAction *m_predictorAction;
+     QAction *m_manualHCIntroAction;
+
+     //Report Action
+     QAction *m_reportAction;
+
+     QAction *m_aboutAction;
 
      //View Actions-----------------------------------------------------------------------
 
@@ -210,6 +245,11 @@ private:
      //QMenu *m_importSubMenu;
      QMenu *m_animationSubMenu;
      QMenu *m_themeSubMenu;
+
+     //Report Menu
+     QMenu *m_reportMenu;
+
+     QMenu *m_aboutMenu;
 
      /*************************ToolBars**********************************************************/
      QToolBar *m_projectToolBar;
@@ -232,6 +272,22 @@ private:
      QVector<HarmonicConstant> m_harmonicConstantVector; //Donde se almacenan las constantes armonicas;
      static QVector<HarmonicConstant> m_selectedHarmonicConstantVector; //Constantes armonicas seleccionadas para analisis
 
+     //Non Harmonic Constants
+     QString m_HoraDelPuestoMedia;
+     QString m_HoraDelPuesto;
+     QString m_DuracionDelVaciante;
+     QString m_DuracionDelLlenate;
+     QString m_CrecimientoDeLaMareaSemidiurna;
+     QString m_CrecimientoDeLaMareaParalactica;
+     QString m_CrecimientoDeLaMareaDiurna;
+     QString m_HoraCotidianaDeLaMareaSemidiurna;
+     QString m_HoraCotidianaDeLaMareaDiurna;
+     QString m_AlturaPromedioDeLaMareaSemidiurna;
+     QString m_AlturaPromedioDeLaMareaSicigias;
+     QString m_AlturaPromedioDeLaMareaCuadratura;
+     QString m_AlturaPromedioDeLaMareaTropical;
+     QString m_RelacionDeAmplitud;
+
      static bool m_daylightTimeSaving;
      /******************************Private Functions For Funcionality*******************************************/
      void syncData(const QVector<HarmonicConstant> &components);
@@ -241,6 +297,8 @@ private:
      bool createHarmonicAnalisisDialogFromConfigFile();
      bool readFile(const QString &filePath);
      bool writeFile(const QString &filePath);
+     bool saveHCToDataBase(const QString &filePath);
+     bool saveHCInfoToDataBase(const QString &filePath);
      //static void setSelectectedHarmonicConstants();
      //bool saveAnalisisDataToFile(const QString &filePath);
      void saveHarmonicConstants(const QString &filePath);

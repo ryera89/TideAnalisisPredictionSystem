@@ -107,36 +107,42 @@ void TablaHorariaDeMarea::populateTable(const TidalData &m_data)
     for (int i = 0; i < m_data.m_measurementDates.size(); ++i){
         QTableWidgetItem *item = new QTableWidgetItem;
         item->setData(Qt::DisplayRole, m_data.m_measurementDates[i]);
+        //item->setText(m_data.m_measurementDates[i].toString("d/M/yy"));
         item->setTextAlignment(Qt::AlignCenter);
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->setItem(i+2,0,item);
 
         item = new QTableWidgetItem;
         item->setData(Qt::DisplayRole,m_data.m_dateSums.value(m_data.m_measurementDates[i]));
+        item->setText(QString::number(m_data.m_dateSums.value(m_data.m_measurementDates[i]),'f',3));
         item->setTextAlignment(Qt::AlignCenter);
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->setItem(i+2,columnCount() - 5,item);
 
         item = new QTableWidgetItem;
         item->setData(Qt::DisplayRole,m_data.m_meanSeaLevel.value(m_data.m_measurementDates[i]));
+        item->setText(QString::number(m_data.m_meanSeaLevel.value(m_data.m_measurementDates[i]),'f',3));
         item->setTextAlignment(Qt::AlignCenter);
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->setItem(i+2,columnCount() - 4,item);
 
         item = new QTableWidgetItem;
         item->setData(Qt::DisplayRole,m_data.m_extremes.value(m_data.m_measurementDates[i]).x());
+        item->setText(QString::number(m_data.m_extremes.value(m_data.m_measurementDates[i]).x(),'f',3));
         item->setTextAlignment(Qt::AlignCenter);
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->setItem(i+2,columnCount() - 3,item);
 
         item = new QTableWidgetItem;
         item->setData(Qt::DisplayRole,m_data.m_extremes.value(m_data.m_measurementDates[i]).y());
+        item->setText(QString::number(m_data.m_extremes.value(m_data.m_measurementDates[i]).y(),'f',3));
         item->setTextAlignment(Qt::AlignCenter);
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->setItem(i+2,columnCount() - 2,item);
 
         item = new QTableWidgetItem;
         item->setData(Qt::DisplayRole,m_data.m_differences.value(m_data.m_measurementDates[i]));
+        item->setText(QString::number(m_data.m_differences.value(m_data.m_measurementDates[i]),'f',3));
         item->setTextAlignment(Qt::AlignCenter);
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->setItem(i+2,columnCount() - 1,item);
@@ -144,7 +150,7 @@ void TablaHorariaDeMarea::populateTable(const TidalData &m_data)
     }
     for (int i = 0; i < m_data.m_measurementTimes.size(); ++i){
         QTableWidgetItem *item = new QTableWidgetItem;
-        item->setText(m_data.m_measurementTimes.at(i).toString("hh:mm:ss"));   //setData(Qt::DisplayRole, m_data.m_measurements[i].measurementTime());
+        item->setText(m_data.m_measurementTimes.at(i).toString("hh:mm"));   //setData(Qt::DisplayRole, m_data.m_measurements[i].measurementTime());
         item->setTextAlignment(Qt::AlignCenter);
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->setItem(1,i+1,item);
@@ -157,6 +163,7 @@ void TablaHorariaDeMarea::populateTable(const TidalData &m_data)
         for (int j = 0; j < m_data.m_measurementNumberPerDay.value(m_data.m_measurementDates[i]); ++j){
             QTableWidgetItem *item = new QTableWidgetItem;
             item->setData(Qt::DisplayRole, m_data.m_measurements[j + count].seaLevel());
+            item->setText(QString::number(m_data.m_measurements[j + count].seaLevel(),'f',3));
             item->setTextAlignment(Qt::AlignCenter);
             item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             for (int k = kprima; k < m_data.m_measurementTimes.size(); ++k){ //Para poner el valor del nivel en la celda correcta
@@ -212,6 +219,7 @@ void TablaHorariaDeMarea::populateTable(const TidalData &m_data)
         }
         QTableWidgetItem *item = new QTableWidgetItem;
         item->setData(Qt::DisplayRole, suma);
+        item->setText(QString::number(suma,'f',3));
         item->setTextAlignment(Qt::AlignCenter);
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->setItem(rowCount() - 2,column,item);
@@ -219,6 +227,7 @@ void TablaHorariaDeMarea::populateTable(const TidalData &m_data)
         double promedio = suma/counter;
         QTableWidgetItem *item1 = new QTableWidgetItem;
         item1->setData(Qt::DisplayRole, promedio);
+        item1->setText(QString::number(promedio,'f',3));
         item1->setTextAlignment(Qt::AlignCenter);
         item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         this->setItem(rowCount() - 1,column,item1);

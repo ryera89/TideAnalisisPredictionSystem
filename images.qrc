@@ -1,11 +1,9 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/arrow_left.png</file>
         <file>images/arrow_right.png</file>
         <file>images/No.png</file>
         <file>images/add.png</file>
         <file>images/analisis.png</file>
-        <file>images/configure.png</file>
         <file>images/delete.png</file>
         <file>images/import.png</file>
         <file>images/application-exit.png</file>
@@ -31,12 +29,8 @@
         <file>images/nivelacion_acuatica.png</file>
         <file>images/load.png</file>
         <file>images/supercargando.gif</file>
-        <file>images/cargando.gif</file>
         <file>images/appendData.png</file>
         <file>images/replaceData.png</file>
-        <file>images/carga1.gif</file>
-        <file>images/carga2.gif</file>
-        <file>images/carga3.gif</file>
         <file>images/carga4.gif</file>
         <file>images/carga5.gif</file>
         <file>images/carga6.gif</file>
@@ -46,5 +40,16 @@
         <file>images/manualData.png</file>
         <file>images/writeToFile1.png</file>
         <file>images/writeToFile2.png</file>
+        <file>images/data-upload.png</file>
+        <file>images/radar-128.png</file>
+        <file>images/FONDO1.jpg</file>
+        <file>images/prediction.png</file>
+        <file>images/pdfPrint.png</file>
+        <file>images/print.png</file>
+        <file>images/report-icon.png</file>
+        <file>images/watermark.jpg</file>
+        <file>images/Wizard.png</file>
+        <file>images/print-icon.png</file>
+        <file>images/About.png</file>
     </qresource>
 </RCC>

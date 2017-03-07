@@ -42,6 +42,9 @@ public:
     void setProjectMetaData(const ProjectMetaData &metadata);
     double conversionUnit() const{return m_conversionUnit;}
 
+    bool isCorrectionRButtonChecked() const;
+    double determineLevelFromCorr(const double &corr);
+
 signals:
     void dataTrenfer(const QVector<TidesMeasurement> &data);
     void okButtonClicked();
@@ -120,9 +123,6 @@ private:
 
     void createComponents();
     void settingTableWidth();
-
-
-
 };
 
 #endif // MANUALDATAINTRODUCTIONWIDGET_H
