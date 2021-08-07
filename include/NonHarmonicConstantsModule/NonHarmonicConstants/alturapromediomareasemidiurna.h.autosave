@@ -1,0 +1,41 @@
+#ifndef ALTURAPROMEDIOMAREASEMIDIURNA_H
+#define ALTURAPROMEDIOMAREASEMIDIURNA_H
+
+#include <QString>
+class HarmonicConstant;
+
+class AlturaPromedioMareaSemidiurna
+{
+public:
+    explicit AlturaPromedioMareaSemidiurna(const HarmonicConstant &M2, const HarmonicConstant &S2, const HarmonicConstant &N2, 
+                                           const HarmonicConstant &K2, const HarmonicConstant &K1, const HarmonicConstant &O1, 
+                                           const HarmonicConstant &P1, const HarmonicConstant &Q1, const HarmonicConstant &M4, 
+                                           const HarmonicConstant &M6);
+    
+    double altura() const{return m_altura;}
+private:
+    HarmonicConstant &m_M2; 
+    HarmonicConstant &m_S2; 
+    HarmonicConstant &m_N2; 
+    HarmonicConstant &m_K2; 
+    HarmonicConstant &m_K1; 
+    HarmonicConstant &m_O1; 
+    HarmonicConstant &m_P1; 
+    HarmonicConstant &m_Q1; 
+    HarmonicConstant &m_M4; 
+    HarmonicConstant &m_M6;
+    
+    double m_altura;
+    
+    double A();
+    double B();
+    
+    double V();     //angulo v de la formula
+    double W();     //angulo w de la formula
+    
+    double Mn();    //componente de la formula
+    
+    void calculate();
+};
+
+#endif // ALTURAPROMEDIOMAREASEMIDIURNA_H

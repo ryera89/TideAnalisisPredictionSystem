@@ -49,7 +49,7 @@ public:
     static QVector<double> funcion(const double &t);
     static QVector<double> funcionModificada(const double &t, const QDateTime &datetime, const  QDateTime &beginDate);
 
-    QString hcDataBaseDir() const{return m_hcDirDataBase;}
+    static QString hcDataBaseDir();
 
     QSize sizeHint() const;
 
@@ -142,7 +142,7 @@ private:
     //const QString m_frequencyFilePath = "data/frequency.frq"; //fichero donde se guardan la frecuencias de las constantes armonicas
     const QString m_schemesFilePath = "data/Schemes/schemes.sch"; //Fichero donde se guardan los esquemas
 
-    QString m_hcDirDataBase;  //Directorio donde se almacenan las contantes armonicas
+    static QString m_hcDirDataBase;  //Directorio donde se almacenan las contantes armonicas
 
     QString m_projectFilePath; //Para cuando se abre un proyecto;
 

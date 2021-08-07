@@ -20,6 +20,11 @@ public:
 
     void setHCVector(const QVector<HarmonicConstant> &hcVector);
 
+
+
+public slots:
+    void saveToDataBase();
+
 private:
     QLabel *m_provinciaLabel;
     QLabel *m_localidadLabel;
@@ -39,6 +44,19 @@ private:
 
     QPushButton *m_acceptButton;
     QPushButton *m_cancelButton;
+
+    QString m_provincia;
+    QString m_localidad;
+
+    QVector<HarmonicConstant> m_hcVector;
+
+    void selectManualIntroducedHarmonicConstant();
+    void determineCorrectedPhaseForHCVector();
+
+    void uploadHCToDataBase();
+    bool saveHCToDataBase(const QString &filePath);
+    bool saveHCInfoToDataBase(const QString &filePath);
+
 };
 
 #endif // MANUALHARMONICCONSTANTINTRODIALOG_H

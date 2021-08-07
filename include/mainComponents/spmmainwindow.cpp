@@ -17,6 +17,7 @@
 
 QVector<HarmonicConstant> SPMmainWindow::m_selectedHarmonicConstantVector = QVector<HarmonicConstant>();
 bool SPMmainWindow::m_daylightTimeSaving = false;
+QString SPMmainWindow::m_hcDirDataBase = "data/HarmonicConstantsRecord";
 
 SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -56,7 +57,7 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent)
 
     m_projectFilePath = QString();
 
-    m_hcDirDataBase = "data/HarmonicConstantsRecord";
+    //m_hcDirDataBase = "data/HarmonicConstantsRecord";
 
     setCentralWidget(central);
 
@@ -134,6 +135,8 @@ QVector<double> SPMmainWindow::funcionModificada(const double &t, const QDateTim
     }
     return resp;
 }
+
+QString SPMmainWindow::hcDataBaseDir() {return m_hcDirDataBase;}
 
 QSize SPMmainWindow::sizeHint() const
 {
@@ -725,7 +728,7 @@ void SPMmainWindow::harmonicAnalisis()
 
     m_daylightTimeSaving = m_metadataStorage.isDaylightTimeSaving();
 
-    future = QtConcurrent::run(this,harmonicAnalisisWithAllData);
+    future = QtConcurrent::run(this,&SPMmainWindow::harmonicAnalisisWithAllData);
 
     while(future.isRunning()){
         qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
