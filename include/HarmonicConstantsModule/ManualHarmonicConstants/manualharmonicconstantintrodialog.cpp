@@ -138,7 +138,7 @@ void ManualHarmonicConstantIntroDialog::uploadHCToDataBase() {
                                 " amplitud nula."));
 
   } else {
-    QRegExp regexp("\\s+");
+    QRegularExpression regexp("\\s+");
 
     m_provincia = m_provinciaEdit->text().toUpper().replace(regexp, " ");
     m_localidad = m_localidadEdit->text().toUpper().replace(regexp, " ");
@@ -228,38 +228,45 @@ bool ManualHarmonicConstantIntroDialog::saveHCInfoToDataBase(
   if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
     QTextStream out(&file);
 
-    out << "CONSTANTES ARMONICAS" << endl;
-    out << endl;
+    out << "CONSTANTES ARMONICAS"
+        << "\n";
+    out << "\n";
 
     qreal latitud = m_latitudEditor->coordinate();
     qreal longitud = m_longitudEditor->coordinate();
 
-    out << "PROYECTO: " << QString() << endl;
-    out << "ESTACION: " << QString() << endl;
-    out << "SITUACION: " << QString() << endl;
+    out << "PROYECTO: " << QString() << "\n";
+    out << "ESTACION: " << QString() << "\n";
+    out << "SITUACION: " << QString() << "\n";
 
-    out << "PROVINCIA: " << m_provincia << endl;
-    out << "LOCALIDAD: " << m_localidad << endl;
+    out << "PROVINCIA: " << m_provincia << "\n";
+    out << "LOCALIDAD: " << m_localidad << "\n";
 
     out.setRealNumberNotation(QTextStream::FixedNotation);
     out.setRealNumberPrecision(3);
     if (latitud < 0.0)
-      out << "LATITUD: " << qFabs(latitud) << "S" << endl;
+      out << "LATITUD: " << qFabs(latitud) << "S"
+          << "\n";
     if (latitud > 0.0)
-      out << "LATITUD: " << latitud << "N" << endl;
+      out << "LATITUD: " << latitud << "N"
+          << "\n";
     if (latitud == 0.0)
       out << "LATITUD: "
-          << "0.000" << endl;
+          << "0.000"
+          << "\n";
 
     if (longitud < 0.0)
-      out << "LONGITUD: " << qFabs(longitud) << "W" << endl;
+      out << "LONGITUD: " << qFabs(longitud) << "W"
+          << "\n";
     if (longitud > 0.0)
-      out << "LONGITUD: " << longitud << "E" << endl;
+      out << "LONGITUD: " << longitud << "E"
+          << "\n";
     if (longitud == 0.0)
       out << "LONGITUD: "
-          << "0.000" << endl;
+          << "0.000"
+          << "\n";
 
-    out << endl;
+    out << "\n";
 
     QString constituente("CONSTITUENTE");
     QString v_ang("V. ANGULAR[grad/seg]");
@@ -272,9 +279,9 @@ bool ManualHarmonicConstantIntroDialog::saveHCInfoToDataBase(
     out.setPadChar('-');
 
     out << constituente << "  " << v_ang << "  " << amp << "  " << fase << "  "
-        << faseC << "  " << origen << "  " << numDod << endl;
+        << faseC << "  " << origen << "  " << numDod << "\n";
     // out << "------------" << "  " << "--------------------" << "  " <<
-    // "-----------" << "  " << "----------" << endl;
+    // "-----------" << "  " << "----------" << "\n";
 
     foreach (HarmonicConstant hc, m_hcVector) {
       out.setFieldWidth(constituente.length());
@@ -337,7 +344,7 @@ bool ManualHarmonicConstantIntroDialog::saveHCInfoToDataBase(
 
       out.setFieldWidth(0);
       out.setFieldAlignment(QTextStream::AlignCenter);
-      out << endl;
+      out << "\n";
     }
 
   } else {

@@ -33,7 +33,7 @@ SPMmainWindow::SPMmainWindow(QWidget *parent) : QMainWindow(parent) {
   QVBoxLayout *layoutC = new QVBoxLayout;
   layoutC->addWidget(m_presentation);
   layoutC->addWidget(m_central);
-  layoutC->setMargin(0);
+  // layoutC->setMargin(0);
 
   central->setLayout(layoutC);
 
@@ -623,12 +623,12 @@ void SPMmainWindow::harmonicAnalisisWithAllData() {
       }
 
       /*for (uint k = 0; k < minimosCuadrados.parametros().size(); ++k){
-      std::cout << minimosCuadrados.parametros()[k] << std::endl;
+      std::cout << minimosCuadrados.parametros()[k] << std::"\n";
   }*/
 
       // std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() <<
-      // std::endl; std::cout << "Nivel Medio="
-      // <<minimosCuadrados.parametros()[0] << std::endl;
+      // std::"\n"; std::cout << "Nivel Medio="
+      // <<minimosCuadrados.parametros()[0] << std::"\n";
     } else {
 
       Fitsvd test(timeValarray, levelValarray, var, SPMmainWindow::funcion);
@@ -642,8 +642,8 @@ void SPMmainWindow::harmonicAnalisisWithAllData() {
                    (SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
       }
 
-      // std::cout << "Chi cuadrado=" << test.chisq << std::endl;
-      // std::cout << "Nivel Medio=" << test.a[0] << std::endl;
+      // std::cout << "Chi cuadrado=" << test.chisq << std::"\n";
+      // std::cout << "Nivel Medio=" << test.a[0] << std::"\n";
     }
     applyCorrectionsToHarmonicConstants();
   } else {
@@ -662,8 +662,8 @@ void SPMmainWindow::harmonicAnalisisWithAllData() {
                  (SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
       }
       // std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() <<
-      // std::endl; std::cout << "Nivel Medio="
-      // <<minimosCuadrados.parametros()[0] << std::endl;
+      // std::"\n"; std::cout << "Nivel Medio="
+      // <<minimosCuadrados.parametros()[0] << std::"\n";
     } else {
       Customfitsvd test(timeValarray, levelValarray, var, dateTimeVector,
                         SPMmainWindow::funcionModificada);
@@ -677,8 +677,8 @@ void SPMmainWindow::harmonicAnalisisWithAllData() {
                    (SPMmainWindow::m_selectedHarmonicConstantVector.size())]);
       }
 
-      // std::cout << "Chi cuadrado=" << test.chisq << std::endl;
-      // std::cout << "Nivel Medio=" << test.a[0] << std::endl;
+      // std::cout << "Chi cuadrado=" << test.chisq << std::"\n";
+      // std::cout << "Nivel Medio=" << test.a[0] << std::"\n";
     }
     determineHarmonicContantPhase();
   }
@@ -777,8 +777,8 @@ SPMmainWindow::m_selectedHarmonicConstantVector.size(); ++k){
 
 
          std::cout << "Chi cuadrado=" <<minimosCuadrados.chiSquare() <<
-std::endl; std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] <<
-std::endl; }else{
+std::"\n"; std::cout << "Nivel Medio=" <<minimosCuadrados.parametros()[0] <<
+std::"\n"; }else{
 
         Fitsvd test(timeValarray,levelValarray,var,SPMmainWindow::funcion);
         test.fit();
@@ -790,8 +790,8 @@ SPMmainWindow::m_selectedHarmonicConstantVector.size(); ++k){
 
 
 
-        std::cout << "Chi cuadrado=" << test.chisq << std::endl;
-        std::cout << "Nivel Medio=" << test.a[0] << std::endl;
+        std::cout << "Chi cuadrado=" << test.chisq << std::"\n";
+        std::cout << "Nivel Medio=" << test.a[0] << std::"\n";
     }
 }*/
 void SPMmainWindow::harmonicAnalisis() {
@@ -799,11 +799,12 @@ void SPMmainWindow::harmonicAnalisis() {
 
   m_daylightTimeSaving = m_metadataStorage.isDaylightTimeSaving();
 
-  future = QtConcurrent::run(this, &SPMmainWindow::harmonicAnalisisWithAllData);
+  // future = QtConcurrent::run(this,
+  // &SPMmainWindow::harmonicAnalisisWithAllData);
 
-  while (future.isRunning()) {
-    qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-  }
+  // while (future.isRunning()) {
+  //   qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+  // }
 
   m_schemeWidget->setHarmonicConstantModelData(
       SPMmainWindow::m_selectedHarmonicConstantVector);
@@ -823,7 +824,7 @@ void SPMmainWindow::saveHarmonicConstantToFile() {
 }
 
 void SPMmainWindow::uploadHCToDataBase() {
-  QRegExp regexp("\\s+");
+  QRegularExpression regexp("\\s+");
 
   m_provincia = m_upHcDialog->provincia().toUpper().replace(regexp, " ");
   m_localidad = m_upHcDialog->localidad().toUpper().replace(regexp, " ");
@@ -963,39 +964,46 @@ bool SPMmainWindow::saveHCInfoToDataBase(const QString &filePath) {
   if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
     QTextStream out(&file);
 
-    out << "CONSTANTES ARMONICAS" << endl;
-    out << endl;
+    out << "CONSTANTES ARMONICAS"
+        << "\n";
+    out << "\n";
 
     qreal latitud = m_metadataStorage.latitud();
     qreal longitud = m_metadataStorage.longitud();
 
-    out << "PROYECTO: " << m_metadataStorage.projectName().toUpper() << endl;
-    out << "ESTACION: " << m_metadataStorage.stationName().toUpper() << endl;
+    out << "PROYECTO: " << m_metadataStorage.projectName().toUpper() << "\n";
+    out << "ESTACION: " << m_metadataStorage.stationName().toUpper() << "\n";
     out << "SITUACION: " << m_metadataStorage.localizationName().toUpper()
-        << endl;
+        << "\n";
 
-    out << "PROVINCIA: " << m_provincia << endl;
-    out << "LOCALIDAD: " << m_localidad << endl;
+    out << "PROVINCIA: " << m_provincia << "\n";
+    out << "LOCALIDAD: " << m_localidad << "\n";
 
     out.setRealNumberNotation(QTextStream::FixedNotation);
     out.setRealNumberPrecision(3);
     if (latitud < 0.0)
-      out << "LATITUD: " << qFabs(latitud) << "S" << endl;
+      out << "LATITUD: " << qFabs(latitud) << "S"
+          << "\n";
     if (latitud > 0.0)
-      out << "LATITUD: " << latitud << "N" << endl;
+      out << "LATITUD: " << latitud << "N"
+          << "\n";
     if (latitud == 0.0)
       out << "LATITUD: "
-          << "0.000" << endl;
+          << "0.000"
+          << "\n";
 
     if (longitud < 0.0)
-      out << "LONGITUD: " << qFabs(longitud) << "W" << endl;
+      out << "LONGITUD: " << qFabs(longitud) << "W"
+          << "\n";
     if (longitud > 0.0)
-      out << "LONGITUD: " << longitud << "E" << endl;
+      out << "LONGITUD: " << longitud << "E"
+          << "\n";
     if (longitud == 0.0)
       out << "LONGITUD: "
-          << "0.000" << endl;
+          << "0.000"
+          << "\n";
 
-    out << endl;
+    out << "\n";
 
     QString constituente("CONSTITUENTE");
     QString v_ang("V. ANGULAR[grad/seg]");
@@ -1008,9 +1016,9 @@ bool SPMmainWindow::saveHCInfoToDataBase(const QString &filePath) {
     out.setPadChar('-');
 
     out << constituente << "  " << v_ang << "  " << amp << "  " << fase << "  "
-        << faseC << "  " << origen << "  " << numDod << endl;
+        << faseC << "  " << origen << "  " << numDod << "\n";
     // out << "------------" << "  " << "--------------------" << "  " <<
-    // "-----------" << "  " << "----------" << endl;
+    // "-----------" << "  " << "----------" << "\n";
 
     foreach (HarmonicConstant hc, m_selectedHarmonicConstantVector) {
       out.setFieldWidth(constituente.length());
@@ -1073,7 +1081,7 @@ bool SPMmainWindow::saveHCInfoToDataBase(const QString &filePath) {
 
       out.setFieldWidth(0);
       out.setFieldAlignment(QTextStream::AlignCenter);
-      out << endl;
+      out << "\n";
     }
 
   } else {
@@ -2036,7 +2044,7 @@ m_central->tableModel()->measurementData()) { if (auxDateTime <= endDateTime){
                     }
                     if (auxDateTime == meas.measurementDateTime()){
                        out << meas.measurementDate().toString("yyyy/MM/dd") << "
-" << meas.measurementTime().toString("hh:mm") << " " << meas.seaLevel() << endl;
+" << meas.measurementTime().toString("hh:mm") << " " << meas.seaLevel() << "\n";
                        auxDateTime = auxDateTime.addSecs(timeInterval);
                     }
 
@@ -2047,7 +2055,7 @@ m_central->tableModel()->measurementData()) { if (auxDateTime <= endDateTime){
             foreach (TidesMeasurement meas,
 m_central->tableModel()->measurementData()) { out <<
 meas.measurementDate().toString("yyyy/MM/dd") << " " <<
-meas.measurementTime().toString("hh:mm") << " " << meas.seaLevel() << endl;
+meas.measurementTime().toString("hh:mm") << " " << meas.seaLevel() << "\n";
             }
         }
     }else{
@@ -2063,35 +2071,42 @@ void SPMmainWindow::saveHarmonicConstants(const QString &filePath) {
   if (file.open(QIODevice::WriteOnly | QIODevice::Text)) {
     QTextStream out(&file);
 
-    out << "CONSTANTES ARMONICAS" << endl;
-    out << endl;
+    out << "CONSTANTES ARMONICAS"
+        << "\n";
+    out << "\n";
 
     qreal latitud = m_metadataStorage.latitud();
     qreal longitud = m_metadataStorage.longitud();
 
-    out << "PROYECTO: " << m_metadataStorage.projectName() << endl;
-    out << "ESTACION: " << m_metadataStorage.stationName() << endl;
-    out << "SITUACION: " << m_metadataStorage.localizationName() << endl;
+    out << "PROYECTO: " << m_metadataStorage.projectName() << "\n";
+    out << "ESTACION: " << m_metadataStorage.stationName() << "\n";
+    out << "SITUACION: " << m_metadataStorage.localizationName() << "\n";
 
     out.setRealNumberNotation(QTextStream::FixedNotation);
     out.setRealNumberPrecision(3);
     if (latitud < 0.0)
-      out << "LATITUD: " << qFabs(latitud) << "S" << endl;
+      out << "LATITUD: " << qFabs(latitud) << "S"
+          << "\n";
     if (latitud > 0.0)
-      out << "LATITUD: " << latitud << "N" << endl;
+      out << "LATITUD: " << latitud << "N"
+          << "\n";
     if (latitud == 0.0)
       out << "LATITUD: "
-          << "0.000" << endl;
+          << "0.000"
+          << "\n";
 
     if (longitud < 0.0)
-      out << "LONGITUD: " << qFabs(longitud) << "W" << endl;
+      out << "LONGITUD: " << qFabs(longitud) << "W"
+          << "\n";
     if (longitud > 0.0)
-      out << "LONGITUD: " << longitud << "E" << endl;
+      out << "LONGITUD: " << longitud << "E"
+          << "\n";
     if (longitud == 0.0)
       out << "LONGITUD: "
-          << "0.000" << endl;
+          << "0.000"
+          << "\n";
 
-    out << endl;
+    out << "\n";
 
     QString constituente("CONSTITUENTE");
     QString v_ang("V. ANGULAR[grad/seg]");
@@ -2099,14 +2114,15 @@ void SPMmainWindow::saveHarmonicConstants(const QString &filePath) {
     QString fase("FASE[grad]");
     // QString faseC("FASE.C[grad]");
 
-    out << constituente << "  " << v_ang << "  " << amp << "  " << fase << endl;
+    out << constituente << "  " << v_ang << "  " << amp << "  " << fase << "\n";
     out << "------------"
         << "  "
         << "--------------------"
         << "  "
         << "-----------"
         << "  "
-        << "----------" << endl;
+        << "----------"
+        << "\n";
 
     foreach (HarmonicConstant hc, m_selectedHarmonicConstantVector) {
       out.setFieldWidth(constituente.length());
@@ -2150,7 +2166,7 @@ void SPMmainWindow::saveHarmonicConstants(const QString &filePath) {
 
       out.setFieldWidth(0);
       out.setFieldAlignment(QTextStream::AlignCenter);
-      out << endl;
+      out << "\n";
     }
 
   } else {

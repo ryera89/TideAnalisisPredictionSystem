@@ -139,10 +139,11 @@ void LoadDialog::getDataPoints() {
     for (int i = from - 1; i < to; i++) {
       QString str =
           m_importTextEdit->document()->findBlockByLineNumber(i).text();
-      QStringList dataPoint = str.split(QRegExp(tr("[\\s+%1%2%3]")
-                                                    .arg(dateSeparator)
-                                                    .arg(timeSeparator)
-                                                    .arg(levelSeparator)));
+      QStringList dataPoint =
+          str.split(QRegularExpression(tr("[\\s+%1%2%3]")
+                                           .arg(dateSeparator)
+                                           .arg(timeSeparator)
+                                           .arg(levelSeparator)));
       pointsOfData.push_back(dataPoint);
       ++pro;
       m_importProgressBar->setValue(pro);
@@ -169,7 +170,7 @@ void LoadDialog::getDataPoints() {
         /*for (int i  = 0; i < level.size(); ++i){
            if (level.at(i) == ",") level.replace(Q)
         }*/
-        level.replace(QRegExp(","), ".");
+        level.replace(QRegularExpression(","), ".");
 
         bool d_ok;
         QVariant heightVariant = level;
@@ -250,10 +251,11 @@ void LoadDialog::getDataPointAndAppendData() {
     for (int i = from - 1; i < to; i++) {
       QString str =
           m_importTextEdit->document()->findBlockByLineNumber(i).text();
-      QStringList dataPoint = str.split(QRegExp(tr("[\\s+%1%2%3]")
-                                                    .arg(dateSeparator)
-                                                    .arg(timeSeparator)
-                                                    .arg(levelSeparator)));
+      QStringList dataPoint =
+          str.split(QRegularExpression(tr("[\\s+%1%2%3]")
+                                           .arg(dateSeparator)
+                                           .arg(timeSeparator)
+                                           .arg(levelSeparator)));
       pointsOfData.push_back(dataPoint);
       ++pro;
       m_importProgressBar->setValue(pro);
@@ -280,7 +282,7 @@ void LoadDialog::getDataPointAndAppendData() {
         /*for (int i  = 0; i < level.size(); ++i){
            if (level.at(i) == ",") level.replace(Q)
         }*/
-        level.replace(QRegExp(","), ".");
+        level.replace(QRegularExpression(","), ".");
 
         bool d_ok;
         QVariant heightVariant = level;
@@ -327,10 +329,11 @@ void LoadDialog::setTopFieldValidValue(int value) {
 
   QString str =
       m_importTextEdit->document()->findBlockByLineNumber(value - 1).text();
-  QStringList dataPoint = str.split(QRegExp(tr("[\\s+%1%2%3]")
-                                                .arg(dateSeparator)
-                                                .arg(timeSeparator)
-                                                .arg(levelSeparator)));
+  QStringList dataPoint =
+      str.split(QRegularExpression(tr("[\\s+%1%2%3]")
+                                       .arg(dateSeparator)
+                                       .arg(timeSeparator)
+                                       .arg(levelSeparator)));
   m_fieldDateEdit->setRange(1, dataPoint.size());
   m_fieldTimeEdit->setRange(1, dataPoint.size());
   m_fieldHeightEdit->setRange(1, dataPoint.size());
@@ -389,18 +392,20 @@ void LoadDialog::fillFirstAndLastDate(int index) {
   QString str1 = m_importTextEdit->document()
                      ->findBlockByLineNumber(first - 1)
                      .text(); // Reading the line
-  QStringList dataPoint1 = str1.split(QRegExp(tr("[\\s+%1%2%3]")
-                                                  .arg(dateSeparator)
-                                                  .arg(timeSeparator)
-                                                  .arg(levelSeparator)));
+  QStringList dataPoint1 =
+      str1.split(QRegularExpression(tr("[\\s+%1%2%3]")
+                                        .arg(dateSeparator)
+                                        .arg(timeSeparator)
+                                        .arg(levelSeparator)));
 
   QString str2 = m_importTextEdit->document()
                      ->findBlockByLineNumber(last - 1)
                      .text(); // Reading the line
-  QStringList dataPoint2 = str2.split(QRegExp(tr("[\\s+%1%2%3]")
-                                                  .arg(dateSeparator)
-                                                  .arg(timeSeparator)
-                                                  .arg(levelSeparator)));
+  QStringList dataPoint2 =
+      str2.split(QRegularExpression(tr("[\\s+%1%2%3]")
+                                        .arg(dateSeparator)
+                                        .arg(timeSeparator)
+                                        .arg(levelSeparator)));
   if (index <= dataPoint1.size())
     m_firstPointDateEdit->setText(dataPoint1.at(index - 1));
   else
@@ -423,18 +428,20 @@ void LoadDialog::fillFirstAndLastTime(int index) {
   QString str1 = m_importTextEdit->document()
                      ->findBlockByLineNumber(first - 1)
                      .text(); // Reading the line
-  QStringList dataPoint1 = str1.split(QRegExp(tr("[\\s+%1%2%3]")
-                                                  .arg(dateSeparator)
-                                                  .arg(timeSeparator)
-                                                  .arg(levelSeparator)));
+  QStringList dataPoint1 =
+      str1.split(QRegularExpression(tr("[\\s+%1%2%3]")
+                                        .arg(dateSeparator)
+                                        .arg(timeSeparator)
+                                        .arg(levelSeparator)));
 
   QString str2 = m_importTextEdit->document()
                      ->findBlockByLineNumber(last - 1)
                      .text(); // Reading the line
-  QStringList dataPoint2 = str2.split(QRegExp(tr("[\\s+%1%2%3]")
-                                                  .arg(dateSeparator)
-                                                  .arg(timeSeparator)
-                                                  .arg(levelSeparator)));
+  QStringList dataPoint2 =
+      str2.split(QRegularExpression(tr("[\\s+%1%2%3]")
+                                        .arg(dateSeparator)
+                                        .arg(timeSeparator)
+                                        .arg(levelSeparator)));
 
   if (index <= dataPoint1.size())
     m_firstPointTimeEdit->setText(dataPoint1.at(index - 1));
@@ -458,18 +465,20 @@ void LoadDialog::fillFirstAndLastHeigth(int index) {
   QString str1 = m_importTextEdit->document()
                      ->findBlockByLineNumber(first - 1)
                      .text(); // Reading the line
-  QStringList dataPoint1 = str1.split(QRegExp(tr("[\\s+%1%2%3]")
-                                                  .arg(dateSeparator)
-                                                  .arg(timeSeparator)
-                                                  .arg(levelSeparator)));
+  QStringList dataPoint1 =
+      str1.split(QRegularExpression(tr("[\\s+%1%2%3]")
+                                        .arg(dateSeparator)
+                                        .arg(timeSeparator)
+                                        .arg(levelSeparator)));
 
   QString str2 = m_importTextEdit->document()
                      ->findBlockByLineNumber(last - 1)
                      .text(); // Reading the line
-  QStringList dataPoint2 = str2.split(QRegExp(tr("[\\s+%1%2%3]")
-                                                  .arg(dateSeparator)
-                                                  .arg(timeSeparator)
-                                                  .arg(levelSeparator)));
+  QStringList dataPoint2 =
+      str2.split(QRegularExpression(tr("[\\s+%1%2%3]")
+                                        .arg(dateSeparator)
+                                        .arg(timeSeparator)
+                                        .arg(levelSeparator)));
 
   if (index <= dataPoint1.size())
     m_firstPointHeigthEdit->setText(dataPoint1.at(index - 1));

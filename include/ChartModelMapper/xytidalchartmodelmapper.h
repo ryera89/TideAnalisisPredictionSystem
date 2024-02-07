@@ -6,7 +6,6 @@
 #include <QtCharts>
 class ReadOnlyTableModel;
 // TODO: impementar el update cuando se agregan filas
-using namespace QtCharts;
 
 class XYTidalChartModelMapper : public QObject {
   Q_OBJECT

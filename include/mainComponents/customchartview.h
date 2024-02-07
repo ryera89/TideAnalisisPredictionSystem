@@ -7,8 +7,6 @@
 #include <QWidget>
 #include <QtCharts>
 
-using namespace QtCharts;
-
 class customChartView : public QChartView {
   Q_OBJECT
 public:

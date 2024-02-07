@@ -29,7 +29,7 @@ ReportWindow::ReportWindow(QWidget *parent) : QMainWindow(parent) {
   QVBoxLayout *layout = new QVBoxLayout;
   layout->addWidget(m_reportEdit);
   layout->setAlignment(Qt::AlignCenter);
-  layout->setMargin(10);
+  // layout->setMargin(10);
 
   central->setLayout(layout);
 
@@ -50,9 +50,9 @@ ReportWindow::ReportWindow(QWidget *parent) : QMainWindow(parent) {
 void ReportWindow::setPageSize() {
   QPrinter printer(QPrinter::PrinterResolution);
   printer.setOutputFormat(QPrinter::PdfFormat);
-  printer.setPaperSize(QPrinter::A4);
-  m_reportEdit->document()->setPageSize(printer.paperRect().size());
-  m_reportEdit->setFixedWidth(printer.paperRect().size().width());
+  // printer.setPaperSize(QPrinter::A4);
+  // m_reportEdit->document()->setPageSize(printer.paperRect().size());
+  // m_reportEdit->setFixedWidth(printer.paperRect().size().width());
 }
 
 void ReportWindow::print() {
@@ -60,7 +60,7 @@ void ReportWindow::print() {
 
   QPrintDialog printDialog(printer, this);
   if (printDialog.exec() == QDialog::Accepted) {
-    this->reportEdit()->document()->setPageSize(printer->pageRect().size());
+    // this->reportEdit()->document()->setPageSize(printer->pageRect().size());
     this->reportEdit()->document()->print(printer);
   }
 }
@@ -74,10 +74,10 @@ void ReportWindow::printPDF() {
   QPrinter printer(QPrinter::PrinterResolution);
 
   printer.setOutputFormat(QPrinter::PdfFormat);
-  printer.setPaperSize(QPrinter::A4);
+  // printer.setPaperSize(QPrinter::A4);
   printer.setOutputFileName(fileName);
 
-  this->reportEdit()->document()->setPageSize(printer.pageRect().size());
+  // this->reportEdit()->document()->setPageSize(printer.pageRect().size());
 
   this->reportEdit()->print(&printer);
 }

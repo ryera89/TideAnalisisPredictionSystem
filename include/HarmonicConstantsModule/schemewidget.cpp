@@ -438,7 +438,7 @@ void SchemeWidget::interfazLayout() {
   tableLayout->setAlignment(buttonLay, Qt::AlignRight);
 
   m_tableFrame->setLayout(tableLayout);
-  m_tableFrame->layout()->setMargin(0);
+  // m_tableFrame->layout()->setMargin(0);
 
   QHBoxLayout *definiteLayout = new QHBoxLayout;
   // definiteLayout->addWidget(m_dataSelectionGroupBox);

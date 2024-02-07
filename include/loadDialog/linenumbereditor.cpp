@@ -47,7 +47,7 @@ int LineNumberEditor::lineNumberAreaWidth() {
     ++digits;
   }
 
-  int space = 3 + fontMetrics().width(QLatin1Char('9')) * digits;
+  int space = 3; //+ fontMetrics().width(QLatin1Char('9')) * digits;
 
   return space;
 }

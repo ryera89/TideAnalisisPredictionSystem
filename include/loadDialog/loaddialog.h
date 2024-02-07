@@ -15,7 +15,6 @@ class QHBoxLayout;
 class QGroupBox;
 class QComboBox;
 class QString;
-class QStringList;
 class QIntValidator;
 class QSpinBox;
 class QRadioButton;

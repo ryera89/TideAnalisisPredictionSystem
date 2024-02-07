@@ -232,7 +232,7 @@ void PredictorMainWindow::scanHCDataBase(const QString &hcDataBaseDir) {
     QStringList fechaFinList;
     foreach (QStringList strList, stripedFileNamesVector) {
       /*foreach(QString str, strList){
-          std::cout << str.toStdString() << std::endl;
+          std::cout << str.toStdString() << std::"\n";
       }*/
       provinciaList.push_back(strList.at(0));
       localidadList.push_back(strList.at(1));
@@ -434,12 +434,13 @@ void PredictorMainWindow::savePredicitionsToFile() {
     out.setRealNumberNotation(QTextStream::FixedNotation);
     out.setRealNumberPrecision(3);
 
-    out << "PRONÓSTICO DE MAREA A INTERVALOS REGULARES DE TIEMPO" << endl;
+    out << "PRONÓSTICO DE MAREA A INTERVALOS REGULARES DE TIEMPO"
+        << "\n";
 
-    out << "PROVINCIA: " << m_provincia << endl;
-    out << "LOCALIDAD: " << m_localidad << endl;
-    out << "LATITUD:   " << m_latitud << endl;
-    out << "LONGITUD:  " << m_longitud << endl;
+    out << "PROVINCIA: " << m_provincia << "\n";
+    out << "LOCALIDAD: " << m_localidad << "\n";
+    out << "LATITUD:   " << m_latitud << "\n";
+    out << "LONGITUD:  " << m_longitud << "\n";
 
     QString fecha("FECHA");
     QString hora("HORA");
@@ -467,7 +468,7 @@ void PredictorMainWindow::savePredicitionsToFile() {
 
     out.setFieldWidth(0);
     out.setFieldAlignment(QTextStream::AlignCenter);
-    out << endl;
+    out << "\n";
 
     foreach (TidesMeasurement tm, m_tidesDataModel->measurementData()) {
       out.setFieldWidth(10);
@@ -488,7 +489,7 @@ void PredictorMainWindow::savePredicitionsToFile() {
       out << tm.seaLevel();
 
       out.setFieldWidth(0);
-      out << endl;
+      out << "\n";
     }
   } else {
     QMessageBox::warning(this, tr("Error al escribir archivo"),
@@ -513,12 +514,13 @@ void PredictorMainWindow::saveHighLowWatersToFile() {
     out.setRealNumberNotation(QTextStream::FixedNotation);
     out.setRealNumberPrecision(3);
 
-    out << "PRONÓSTICO BAJAMARES Y PLEAMARES" << endl;
+    out << "PRONÓSTICO BAJAMARES Y PLEAMARES"
+        << "\n";
 
-    out << "PROVINCIA: " << m_provincia << endl;
-    out << "LOCALIDAD: " << m_localidad << endl;
-    out << "LATITUD:   " << m_latitud << endl;
-    out << "LONGITUD:  " << m_longitud << endl;
+    out << "PROVINCIA: " << m_provincia << "\n";
+    out << "LOCALIDAD: " << m_localidad << "\n";
+    out << "LATITUD:   " << m_latitud << "\n";
+    out << "LONGITUD:  " << m_longitud << "\n";
 
     QString fecha("FECHA");
     QString hora("HORA");
@@ -546,7 +548,7 @@ void PredictorMainWindow::saveHighLowWatersToFile() {
 
     out.setFieldWidth(0);
     out.setFieldAlignment(QTextStream::AlignCenter);
-    out << endl;
+    out << "\n";
 
     foreach (TidesMeasurement tm,
              m_tidesHighLowWaterDataModel->measurementData()) {
@@ -568,7 +570,7 @@ void PredictorMainWindow::saveHighLowWatersToFile() {
       out << tm.seaLevel();
 
       out.setFieldWidth(0);
-      out << endl;
+      out << "\n";
     }
   } else {
     QMessageBox::warning(this, tr("Error al escribir archivo"),
@@ -889,7 +891,7 @@ void PredictorMainWindow::interfazLayout() {
   rigthLayout->addWidget(m_hcDescriptionPlainTextEdit);
 
   m_chartWidget->setLayout(rigthLayout);
-  m_chartWidget->layout()->setMargin(0);
+  // m_chartWidget->layout()->setMargin(0);
 
   QHBoxLayout *mainLayout = new QHBoxLayout;
   mainLayout->addLayout(leftLayout);

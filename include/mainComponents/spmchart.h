@@ -3,8 +3,6 @@
 
 #include <QtCharts>
 
-using namespace QtCharts;
-
 class SPMChart : public QChart {
   Q_OBJECT
 public:

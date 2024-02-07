@@ -68,7 +68,7 @@ void customChartView::keyPressEvent(QKeyEvent *event) {
 
 void customChartView::wheelEvent(QWheelEvent *event) {
   this->chart()->scroll(event->angleDelta().y(), 0);
-  emit seriesPoint(event->pos());
+  // emit seriesPoint(event->pos());
 }
 
 void customChartView::mouseMoveEvent(QMouseEvent *event) {

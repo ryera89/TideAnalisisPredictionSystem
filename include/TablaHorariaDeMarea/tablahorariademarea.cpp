@@ -30,70 +30,70 @@ void TablaHorariaDeMarea::createTable(const TidalData &m_data) {
 
   QTableWidgetItem *item = new QTableWidgetItem;
   item->setData(Qt::DisplayRole, fecha);
-  item->setBackgroundColor(Qt::lightGray);
+  // item->setBackgroundColor(Qt::lightGray);
   item->setTextAlignment(Qt::AlignCenter);
   item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   this->setItem(0, 0, item);
 
   QTableWidgetItem *item1 = new QTableWidgetItem;
   item1->setData(Qt::DisplayRole, hora);
-  item1->setBackgroundColor(Qt::lightGray);
+  // item1->setBackgroundColor(Qt::lightGray);
   item1->setTextAlignment(Qt::AlignCenter);
   item1->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   this->setItem(0, 1, item1);
 
   QTableWidgetItem *item2 = new QTableWidgetItem;
   item2->setData(Qt::DisplayRole, suma);
-  item2->setBackgroundColor(Qt::lightGray);
+  // item2->setBackgroundColor(Qt::lightGray);
   item2->setTextAlignment(Qt::AlignCenter);
   item2->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   this->setItem(0, m_data.m_measurementTimes.size() + 1, item2);
 
   QTableWidgetItem *item3 = new QTableWidgetItem;
   item3->setData(Qt::DisplayRole, nivel_medio);
-  item3->setBackgroundColor(Qt::lightGray);
+  // item3->setBackgroundColor(Qt::lightGray);
   item3->setTextAlignment(Qt::AlignCenter);
   item3->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   this->setItem(0, m_data.m_measurementTimes.size() + 2, item3);
 
   QTableWidgetItem *item4 = new QTableWidgetItem;
   item4->setData(Qt::DisplayRole, extremos);
-  item4->setBackgroundColor(Qt::lightGray);
+  // item4->setBackgroundColor(Qt::lightGray);
   item4->setTextAlignment(Qt::AlignCenter);
   item4->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   this->setItem(0, m_data.m_measurementTimes.size() + 3, item4);
 
   QTableWidgetItem *item5 = new QTableWidgetItem;
   item5->setData(Qt::DisplayRole, diff);
-  item5->setBackgroundColor(Qt::lightGray);
+  // item5->setBackgroundColor(Qt::lightGray);
   item5->setTextAlignment(Qt::AlignCenter);
   item5->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   this->setItem(0, m_data.m_measurementTimes.size() + 5, item5);
 
   QTableWidgetItem *item6 = new QTableWidgetItem;
   item6->setData(Qt::DisplayRole, max);
-  item6->setBackgroundColor(Qt::lightGray);
+  // item6->setBackgroundColor(Qt::lightGray);
   item6->setTextAlignment(Qt::AlignCenter);
   item6->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   this->setItem(1, m_data.m_measurementTimes.size() + 3, item6);
 
   QTableWidgetItem *item7 = new QTableWidgetItem;
   item7->setData(Qt::DisplayRole, min);
-  item7->setBackgroundColor(Qt::lightGray);
+  // item7->setBackgroundColor(Qt::lightGray);
   item7->setTextAlignment(Qt::AlignCenter);
   item7->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   this->setItem(1, m_data.m_measurementTimes.size() + 4, item7);
 
   QTableWidgetItem *item8 = new QTableWidgetItem;
   item8->setData(Qt::DisplayRole, suma);
-  item8->setBackgroundColor(Qt::lightGray);
+  // item8->setBackgroundColor(Qt::lightGray);
   item8->setTextAlignment(Qt::AlignCenter);
   item8->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   this->setItem(this->rowCount() - 2, 0, item8);
 
   QTableWidgetItem *item9 = new QTableWidgetItem;
   item9->setData(Qt::DisplayRole, promedio);
-  item9->setBackgroundColor(Qt::lightGray);
+  // item9->setBackgroundColor(Qt::lightGray);
   item9->setTextAlignment(Qt::AlignCenter);
   item9->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
   this->setItem(this->rowCount() - 1, 0, item9);

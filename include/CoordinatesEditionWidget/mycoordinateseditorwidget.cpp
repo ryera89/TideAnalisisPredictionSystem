@@ -30,7 +30,7 @@ MyCoordinatesEditorWidget::MyCoordinatesEditorWidget(QWidget *parent)
 
   // this->setFrameStyle(QFrame::Box | QFrame::Raised);
   this->setLayout(editLayout);
-  this->layout()->setMargin(0);
+  // this->layout()->setMargin(0);
 
   connect(m_HemisphereComboBox, SIGNAL(currentIndexChanged(int)), this,
           SLOT(setHemisphere(int)));

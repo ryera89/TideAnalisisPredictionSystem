@@ -25,7 +25,7 @@ MeasurementUnitEditWidget::MeasurementUnitEditWidget(QWidget *parent)
   myLayout->setSpacing(0);
 
   this->setLayout(myLayout);
-  this->layout()->setMargin(0);
+  // this->layout()->setMargin(0);
 
   connect(m_spinBox, SIGNAL(valueChanged(double)), this,
           SLOT(spinBoxValueChanged(double)));

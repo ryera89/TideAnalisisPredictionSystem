@@ -808,42 +808,49 @@ void NonHarmonicCalcDialog::saveNonHarmonicConstants(const QString &filePath) {
   if (file.open(QIODevice::WriteOnly)) {
     QTextStream out(&file);
 
-    out << "CONSTANTES NO ARMONICAS" << endl;
-    out << endl;
+    out << "CONSTANTES NO ARMONICAS"
+        << "\n";
+    out << "\n";
 
     qreal latitud = m_metaData.latitud();
     qreal longitud = m_metaData.longitud();
 
-    out << "PROYECTO: " << m_metaData.projectName() << endl;
-    out << "ESTACION: " << m_metaData.stationName() << endl;
-    out << "SITUACION: " << m_metaData.localizationName() << endl;
+    out << "PROYECTO: " << m_metaData.projectName() << "\n";
+    out << "ESTACION: " << m_metaData.stationName() << "\n";
+    out << "SITUACION: " << m_metaData.localizationName() << "\n";
 
     if (latitud < 0.0)
-      out << "LATITUD: " << qFabs(latitud) << "S" << endl;
+      out << "LATITUD: " << qFabs(latitud) << "S"
+          << "\n";
     if (latitud > 0.0)
-      out << "LATITUD: " << latitud << "N" << endl;
+      out << "LATITUD: " << latitud << "N"
+          << "\n";
     if (latitud == 0.0)
       out << "LATITUD: "
-          << "0.000" << endl;
+          << "0.000"
+          << "\n";
 
     if (longitud < 0.0)
-      out << "LONGITUD: " << qFabs(longitud) << "W" << endl;
+      out << "LONGITUD: " << qFabs(longitud) << "W"
+          << "\n";
     if (longitud > 0.0)
-      out << "LONGITUD: " << longitud << "E" << endl;
+      out << "LONGITUD: " << longitud << "E"
+          << "\n";
     if (longitud == 0.0)
       out << "LONGITUD: "
-          << "0.000" << endl;
+          << "0.000"
+          << "\n";
 
-    out << endl;
+    out << "\n";
 
-    out << "TIPO DE MAREA: " << m_tipoMareaLineEdit->text() << endl;
-    out << "RELACION DE AMPLITUD: " << m_ampRelationLineEdit->text() << endl;
+    out << "TIPO DE MAREA: " << m_tipoMareaLineEdit->text() << "\n";
+    out << "RELACION DE AMPLITUD: " << m_ampRelationLineEdit->text() << "\n";
     out << "RELACION SEMIDIURNA: " << m_semidiurnalRelationLineEdit->text()
-        << endl;
+        << "\n";
 
     foreach (displayResultWidget *disp, m_displayResultWidgetVector) {
       if (!disp->lineEditText().isEmpty()) {
-        out << disp->title() << " " << disp->lineEditText() << endl;
+        out << disp->title() << " " << disp->lineEditText() << "\n";
       }
     }
 

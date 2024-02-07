@@ -44,7 +44,7 @@ TimeZoneSelection::TimeZoneSelection(QWidget *parent) : QFrame(parent) {
   lay->addWidget(m_DTSCheckBox);
 
   this->setLayout(lay);
-  this->layout()->setMargin(0);
+  // this->layout()->setMargin(0);
 }
 
 void TimeZoneSelection::setTimeZone(int index) {
