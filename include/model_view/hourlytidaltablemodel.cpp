@@ -1,14 +1,12 @@
 #include "hourlytidaltablemodel.h"
 
-int HourlyTidalTableModel::rowCount(const QModelIndex &/*parent*/) const
-{
-    return m_data->m_measurementDates.size() + 4;
+int HourlyTidalTableModel::rowCount(const QModelIndex & /*parent*/) const {
+  return m_data->m_measurementDates.size() + 4;
 }
 
-int HourlyTidalTableModel::columnCount(const QModelIndex &parent) const
-{
-    Q_UNUSED(parent)
-    return m_data->maxMeasurementNumberPerDay + 6;
+int HourlyTidalTableModel::columnCount(const QModelIndex &parent) const {
+  Q_UNUSED(parent)
+  return m_data->maxMeasurementNumberPerDay + 6;
 }
 
 /*QVariant HourlyTidalTableModel::data(const QModelIndex &index, int role) const
@@ -30,9 +28,11 @@ int HourlyTidalTableModel::columnCount(const QModelIndex &parent) const
                   index.column() <= m_data->maxMeasurementNumberPerDay){
               return QTime(index.column(),0);
           }
-          if (index.column() > 0 && index.column() < m_data->maxMeasurementNumberPerDay
-                  && index.row() > 1 && index.row() < m_data->m_measurementDates.size() + 2){
-              return m_data->m_measurements[index.column()
+          if (index.column() > 0 && index.column() <
+m_data->maxMeasurementNumberPerDay
+                  && index.row() > 1 && index.row() <
+m_data->m_measurementDates.size() + 2){ return
+m_data->m_measurements[index.column()
                       + m_data->m_measurementNumberPerDay[index.row()]];
           }
 

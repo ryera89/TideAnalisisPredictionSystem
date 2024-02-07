@@ -3,15 +3,13 @@
 
 #include <QTableView>
 
-class CustomTableView : public QTableView
-{
-    Q_OBJECT
+class CustomTableView : public QTableView {
+  Q_OBJECT
 public:
-    CustomTableView(QWidget *parent = 0): QTableView(parent){}
+  CustomTableView(QWidget *parent = 0) : QTableView(parent) {}
 
-
-    //Funciones Reimplementadas
-    //QSize sizeHint() const;
+  // Funciones Reimplementadas
+  // QSize sizeHint() const;
 };
 
 #endif // CUSTOMTABLEVIEW_H

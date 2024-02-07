@@ -6,35 +6,36 @@
 class QMenu;
 class QAction;
 
-class MyListView : public QListView
-{
-    Q_OBJECT
+class MyListView : public QListView {
+  Q_OBJECT
 public:
-    MyListView(QWidget *parent);
+  MyListView(QWidget *parent);
 
 protected:
-    void contextMenuEvent(QContextMenuEvent *event);
-    void currentChanged(const QModelIndex &current, const QModelIndex &previous);
-    //void keyPressEvent(QKeyEvent *event);
+  void contextMenuEvent(QContextMenuEvent *event);
+  void currentChanged(const QModelIndex &current, const QModelIndex &previous);
+  // void keyPressEvent(QKeyEvent *event);
 
 signals:
-    void currentIndexChanged(const QModelIndex &current, const QModelIndex &previous); //signal to notify that the current index has changed
-    void schemeDeleted(const QString &schemeName);
-
+  void currentIndexChanged(
+      const QModelIndex &current,
+      const QModelIndex
+          &previous); // signal to notify that the current index has changed
+  void schemeDeleted(const QString &schemeName);
 
 public slots:
-    void editItemName();
-    void insertNewItem();
-    void removeItem();
+  void editItemName();
+  void insertNewItem();
+  void removeItem();
 
 private:
-    QAction *m_addAction;
-    QAction *m_removeAction;
-    QAction *m_renameAction;
+  QAction *m_addAction;
+  QAction *m_removeAction;
+  QAction *m_renameAction;
 
-    QMenu *m_contextMenu;
+  QMenu *m_contextMenu;
 
-    void createContextMenu();
+  void createContextMenu();
 };
 
 #endif // MYLISTVIEW_H

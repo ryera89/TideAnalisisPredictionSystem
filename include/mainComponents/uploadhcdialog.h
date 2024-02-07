@@ -7,22 +7,21 @@ namespace Ui {
 class UploadHCDialog;
 }
 
-class UploadHCDialog : public QDialog
-{
-    Q_OBJECT
+class UploadHCDialog : public QDialog {
+  Q_OBJECT
 
 public:
-    explicit UploadHCDialog(QWidget *parent = 0);
-    ~UploadHCDialog();
+  explicit UploadHCDialog(QWidget *parent = 0);
+  ~UploadHCDialog();
 
-    QString provincia() const;
-    QString localidad() const;
+  QString provincia() const;
+  QString localidad() const;
 
 public slots:
-    void accept();
+  void accept();
 
 private:
-    Ui::UploadHCDialog *ui;
+  Ui::UploadHCDialog *ui;
 };
 
 #endif // UPLOADHCDIALOG_H

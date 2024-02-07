@@ -5,15 +5,13 @@
 
 using namespace QtCharts;
 
-class SPMChart : public QChart
-{
-    Q_OBJECT
+class SPMChart : public QChart {
+  Q_OBJECT
 public:
-    SPMChart(QGraphicsItem *parent = 0);
+  SPMChart(QGraphicsItem *parent = 0);
 
 public slots:
-    //void updateSeriesData();
-
+  // void updateSeriesData();
 };
 
 #endif // SPMCHART_H

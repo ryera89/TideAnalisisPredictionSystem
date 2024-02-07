@@ -1,9 +1,10 @@
 #include "mylistmodeldelegate.h"
-#include <QPainter>
 #include <QLineEdit>
 #include <QMessageBox>
+#include <QPainter>
 
-/*void MyListModelDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
+/*void MyListModelDelegate::paint(QPainter *painter, const QStyleOptionViewItem
+&option, const QModelIndex &index) const
 {
     QString str = index.model()->data(index,Qt::DisplayRole).toString();
     QStyleOptionViewItem myOption = option;
@@ -11,7 +12,8 @@
 
     initStyleOption(&myOption,index);
     painter->save();
-    painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    painter->setRenderHints(QPainter::Antialiasing |
+QPainter::TextAntialiasing);
 
     if (myOption.state & QStyle::State_Selected){
         painter->fillRect(myOption.rect,myOption.palette.highlight());
@@ -27,49 +29,53 @@
 
 }*/
 
-QWidget *MyListModelDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
-    Q_UNUSED(option);
-    Q_UNUSED(index);
-    QLineEdit *textEdit = new QLineEdit(parent);
+QWidget *MyListModelDelegate::createEditor(QWidget *parent,
+                                           const QStyleOptionViewItem &option,
+                                           const QModelIndex &index) const {
+  Q_UNUSED(option);
+  Q_UNUSED(index);
+  QLineEdit *textEdit = new QLineEdit(parent);
 
-    //connect(textEdit,SIGNAL(editingFinished()),this,SLOT(commitAndCloseEditor()));
-    return textEdit;
+  // connect(textEdit,SIGNAL(editingFinished()),this,SLOT(commitAndCloseEditor()));
+  return textEdit;
 }
 
-void MyListModelDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
-{
-    QString str = index.model()->data(index).toString();
-    QLineEdit *textEditor = qobject_cast<QLineEdit*>(editor);
+void MyListModelDelegate::setEditorData(QWidget *editor,
+                                        const QModelIndex &index) const {
+  QString str = index.model()->data(index).toString();
+  QLineEdit *textEditor = qobject_cast<QLineEdit *>(editor);
 
-    textEditor->setText(str);
+  textEditor->setText(str);
 }
 
-void MyListModelDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
-{
-    QLineEdit *textEditor = qobject_cast<QLineEdit*>(editor);
-    QString newName = textEditor->text(); //VAraiable que guarda el text de editor
-    QString oldName = model->data(index).toString(); //VAriable que el nombre viejo
+void MyListModelDelegate::setModelData(QWidget *editor,
+                                       QAbstractItemModel *model,
+                                       const QModelIndex &index) const {
+  QLineEdit *textEditor = qobject_cast<QLineEdit *>(editor);
+  QString newName = textEditor->text(); // VAraiable que guarda el text de
+                                        // editor
+  QString oldName =
+      model->data(index).toString(); // VAriable que el nombre viejo
 
-    QVector<QString> modelValues;
-    for (int i = 0; i < model->rowCount(); ++i){
-        QModelIndex auxIndex = model->index(i,0);
-        if (index != auxIndex)
-            modelValues.push_back(model->data(auxIndex).toString());
-    }
-    if (!modelValues.contains(textEditor->text())){
-        model->setData(index,textEditor->text());
-        emit schemeNameChanged(oldName,newName);
-    }else{
-        QMessageBox::information(0,tr("Esquema Duplicado"),tr("Ya existe un esquema con ese nombre."));
-        textEditor->setText(oldName);
-        model->setData(index,textEditor->text());
-    }
+  QVector<QString> modelValues;
+  for (int i = 0; i < model->rowCount(); ++i) {
+    QModelIndex auxIndex = model->index(i, 0);
+    if (index != auxIndex)
+      modelValues.push_back(model->data(auxIndex).toString());
+  }
+  if (!modelValues.contains(textEditor->text())) {
+    model->setData(index, textEditor->text());
+    emit schemeNameChanged(oldName, newName);
+  } else {
+    QMessageBox::information(0, tr("Esquema Duplicado"),
+                             tr("Ya existe un esquema con ese nombre."));
+    textEditor->setText(oldName);
+    model->setData(index, textEditor->text());
+  }
 }
 
-void MyListModelDelegate::commitAndCloseEditor()
-{
-    QLineEdit *editor = qobject_cast<QLineEdit*>(sender());
-    emit commitData(editor);
-    emit closeEditor(editor);
+void MyListModelDelegate::commitAndCloseEditor() {
+  QLineEdit *editor = qobject_cast<QLineEdit *>(sender());
+  emit commitData(editor);
+  emit closeEditor(editor);
 }

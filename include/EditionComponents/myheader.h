@@ -6,27 +6,26 @@ class QMenu;
 class QAction;
 class QContextMenuEvent;
 
-class MyHeader : public QHeaderView
-{
-    Q_OBJECT
+class MyHeader : public QHeaderView {
+  Q_OBJECT
 public:
-    MyHeader(Qt::Orientation orientation, QWidget *parent = 0);
+  MyHeader(Qt::Orientation orientation, QWidget *parent = 0);
 
 signals:
-    void removeRowActionTriggered(bool);
-    void insertRowActionTriggered(bool);
+  void removeRowActionTriggered(bool);
+  void insertRowActionTriggered(bool);
 
 protected:
-    void contextMenuEvent(QContextMenuEvent *event);
-    void mousePressEvent(QMouseEvent *event);
+  void contextMenuEvent(QContextMenuEvent *event);
+  void mousePressEvent(QMouseEvent *event);
 
 private:
-    QMenu *m_contextMenu;
+  QMenu *m_contextMenu;
 
-    QAction *m_removeRowAction;
-    QAction *m_insertRowAction;
+  QAction *m_removeRowAction;
+  QAction *m_insertRowAction;
 
-    void createContextMenu();
+  void createContextMenu();
 };
 
 #endif // MYHEADER_H

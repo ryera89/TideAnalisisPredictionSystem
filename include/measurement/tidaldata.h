@@ -1,58 +1,50 @@
 #ifndef TIDALDATA_H
 #define TIDALDATA_H
 
-#include <QObject>
 #include "measurement.h"
+#include <QObject>
 
-
-#include <QVector>
 #include <QHash>
 #include <QPointF>
-//#include <QMap>
+#include <QVector>
+// #include <QMap>
 
-class TidalData
-{
+class TidalData {
 public:
-    explicit TidalData(){}
-    TidalData(const QVector<TidesMeasurement> &measurements);
+  explicit TidalData() {}
+  TidalData(const QVector<TidesMeasurement> &measurements);
 
-    QVector<TidesMeasurement> m_measurements;
-    QVector<QDate> m_measurementDates;
-    QVector<QTime> m_measurementTimes;
+  QVector<TidesMeasurement> m_measurements;
+  QVector<QDate> m_measurementDates;
+  QVector<QTime> m_measurementTimes;
 
-    QHash<QDate,double> m_dateSums;
-    QHash<QDate,double> m_meanSeaLevel;
-    QHash<QDate,QPointF> m_extremes;
-    QHash<QDate,double> m_differences;
+  QHash<QDate, double> m_dateSums;
+  QHash<QDate, double> m_meanSeaLevel;
+  QHash<QDate, QPointF> m_extremes;
+  QHash<QDate, double> m_differences;
 
-    TidesMeasurement m_minimo; //Variable que guarda la minima medicion
-    TidesMeasurement m_maximo; //VAriable que guarda la maxima medicion
+  TidesMeasurement m_minimo; // Variable que guarda la minima medicion
+  TidesMeasurement m_maximo; // VAriable que guarda la maxima medicion
 
-    QHash<QDate,int> m_measurementNumberPerDay;
-    int maxMeasurementNumberPerDay;
+  QHash<QDate, int> m_measurementNumberPerDay;
+  int maxMeasurementNumberPerDay;
 
-    void setDataSource(const QVector<TidesMeasurement> &measurement);
-    //QVector<TidesMeasurement> data() const {return m_measurements;}
-
+  void setDataSource(const QVector<TidesMeasurement> &measurement);
+  // QVector<TidesMeasurement> data() const {return m_measurements;}
 
 private:
-    void findMeasurementDates();
-    void settingUpData();
+  void findMeasurementDates();
+  void settingUpData();
 
-    //void findTimeMean();
+  // void findTimeMean();
 
-    //void findMaxMeasurement();
-    //void findMinMeasurement();
+  // void findMaxMeasurement();
+  // void findMinMeasurement();
 
+  // QVector<QTime> m_measurementTimes;
 
-    //QVector<QTime> m_measurementTimes;
-
-
-
-    //QVector<QHash<QTime,double>> m_timeSums;
-    //QVector<QHash<QTime,double>> m_timeMean;
-
-
+  // QVector<QHash<QTime,double>> m_timeSums;
+  // QVector<QHash<QTime,double>> m_timeMean;
 };
 
 #endif // TIDALDATA_H

@@ -6,31 +6,31 @@
 class QLineEdit;
 class QPushButton;
 
-class displayResultWidget : public QGroupBox
-{
-    Q_OBJECT
+class displayResultWidget : public QGroupBox {
+  Q_OBJECT
 public:
-    explicit displayResultWidget(QWidget *parent = Q_NULLPTR);
-    explicit displayResultWidget(const QString &title, QWidget *parent = Q_NULLPTR);
+  explicit displayResultWidget(QWidget *parent = Q_NULLPTR);
+  explicit displayResultWidget(const QString &title,
+                               QWidget *parent = Q_NULLPTR);
 
-    void setLineEditText(const QString &text);
-    void setPushButtonStatus(bool status);
+  void setLineEditText(const QString &text);
+  void setPushButtonStatus(bool status);
 
-    bool pushButtonStatus() const;
+  bool pushButtonStatus() const;
 
-    QString lineEditText() const;
-    //QString groupBoxText() const;
+  QString lineEditText() const;
+  // QString groupBoxText() const;
 
 signals:
-    void pushButtonClicked();
+  void pushButtonClicked();
 
 private:
-    //QGroupBox *m_groupBox;
-    QLineEdit *m_lineEdit;
-    QPushButton *m_pushButton;
+  // QGroupBox *m_groupBox;
+  QLineEdit *m_lineEdit;
+  QPushButton *m_pushButton;
 
-    void createComponets();
-    void setIntefaceLayout();
+  void createComponets();
+  void setIntefaceLayout();
 };
 
 #endif // DISPLAYRESULTWIDGET_H

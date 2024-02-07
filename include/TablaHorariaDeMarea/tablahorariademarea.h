@@ -3,20 +3,18 @@
 
 #include <QTableWidget>
 #include <include/measurement/tidaldata.h>
-class TablaHorariaDeMarea : public QTableWidget
-{
-    Q_OBJECT
+class TablaHorariaDeMarea : public QTableWidget {
+  Q_OBJECT
 public:
-    TablaHorariaDeMarea(QWidget *parent = 0):QTableWidget(parent){}
-
+  TablaHorariaDeMarea(QWidget *parent = 0) : QTableWidget(parent) {}
 
 public slots:
-    void loadData(const TidalData &m_data);
+  void loadData(const TidalData &m_data);
 
 private:
-    void createTable(const TidalData &m_data);
-    void populateTable(const TidalData &m_data);
-    //TidalData *m_data;
+  void createTable(const TidalData &m_data);
+  void populateTable(const TidalData &m_data);
+  // TidalData *m_data;
 };
 
 #endif // TABLAHORARIADEMAREA_H

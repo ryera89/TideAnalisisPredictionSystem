@@ -1,22 +1,20 @@
 #include "crecimientomareaparactica.h"
 #include <QtMath>
 
-CrecimientoMareaParactica::CrecimientoMareaParactica(const HarmonicConstant &M2, const HarmonicConstant &N2):
-    m_M2(M2), m_N2(N2)
-{
-    calculate();
+CrecimientoMareaParactica::CrecimientoMareaParactica(const HarmonicConstant &M2,
+                                                     const HarmonicConstant &N2)
+    : m_M2(M2), m_N2(N2) {
+  calculate();
 }
 
-void CrecimientoMareaParactica::calculate()
-{
-    double deltaF = m_M2.phase() - m_N2.phase();
-    double t = 0.0;
-    if (deltaF <= 180){
-        t = 1.837*(deltaF)/24;
-    }else{
-        t = -1.837*(deltaF)/24;
-    }
+void CrecimientoMareaParactica::calculate() {
+  double deltaF = m_M2.phase() - m_N2.phase();
+  double t = 0.0;
+  if (deltaF <= 180) {
+    t = 1.837 * (deltaF) / 24;
+  } else {
+    t = -1.837 * (deltaF) / 24;
+  }
 
-    m_value = t;
-
+  m_value = t;
 }

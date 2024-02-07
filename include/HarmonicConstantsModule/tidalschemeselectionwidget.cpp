@@ -1,72 +1,71 @@
 #include "tidalschemeselectionwidget.h"
 
-#include <QVBoxLayout>
-#include <QScrollArea>
-#include <QTextEdit>
+#include <QApplication>
+#include <QCheckBox>
+#include <QComboBox>
 #include <QDataStream>
 #include <QFile>
-#include <QApplication>
-#include <QMessageBox>
 #include <QGroupBox>
-#include <QComboBox>
-#include <QVBoxLayout>
-#include <QCheckBox>
+#include <QMessageBox>
+#include <QScrollArea>
 #include <QSignalMapper>
+#include <QTextEdit>
+#include <QVBoxLayout>
 
-TidalSchemeSelectionWidget::TidalSchemeSelectionWidget(const QStringList &componentLabels, QWidget *parent):QWidget(parent)
-{
-    //m_componentGroupBox = new QGroupBox(tr("Componentes de Marea"),this);
+TidalSchemeSelectionWidget::TidalSchemeSelectionWidget(
+    const QStringList &componentLabels, QWidget *parent)
+    : QWidget(parent) {
+  // m_componentGroupBox = new QGroupBox(tr("Componentes de Marea"),this);
 
-    /*QFont font = m_componentGroupBox->font();
-    font.setPixelSize(12);
-    m_componentGroupBox->setFont(font);*/
+  /*QFont font = m_componentGroupBox->font();
+  font.setPixelSize(12);
+  m_componentGroupBox->setFont(font);*/
 
-    QWidget *myWidget = new QWidget;
-    createComponentsCheckBoxes(componentLabels); //Aqui se crean los checkboxes de los componentes
-    myWidget->setLayout(m_checkBoxLayout);
+  QWidget *myWidget = new QWidget;
+  createComponentsCheckBoxes(
+      componentLabels); // Aqui se crean los checkboxes de los componentes
+  myWidget->setLayout(m_checkBoxLayout);
 
-    QScrollArea *scrollArea =  new QScrollArea;
-    scrollArea->setWidget(myWidget);
-    scrollArea->setWidgetResizable(true);
+  QScrollArea *scrollArea = new QScrollArea;
+  scrollArea->setWidget(myWidget);
+  scrollArea->setWidgetResizable(true);
 
-    QVBoxLayout *mainLayout = new QVBoxLayout;
+  QVBoxLayout *mainLayout = new QVBoxLayout;
 
-    mainLayout->addWidget(scrollArea);
+  mainLayout->addWidget(scrollArea);
 
-    //m_componentGroupBox->setLayout(mainLayout);
+  // m_componentGroupBox->setLayout(mainLayout);
 
-    //QHBoxLayout *lay =  new QHBoxLayout;
+  // QHBoxLayout *lay =  new QHBoxLayout;
 
-    //lay->addWidget(m_componentGroupBox);
+  // lay->addWidget(m_componentGroupBox);
 
-    this->setLayout(mainLayout);
+  this->setLayout(mainLayout);
 }
 
-void TidalSchemeSelectionWidget::setCheckBoxesEnabledStatus(bool enable)
-{
-    foreach (QCheckBox *checkBoxPointer, m_componentsCheckBoxes) {
-        checkBoxPointer->setEnabled(enable);
+void TidalSchemeSelectionWidget::setCheckBoxesEnabledStatus(bool enable) {
+  foreach (QCheckBox *checkBoxPointer, m_componentsCheckBoxes) {
+    checkBoxPointer->setEnabled(enable);
+  }
+}
+
+void TidalSchemeSelectionWidget::setCheckBoxesStatus(
+    const QMap<QString, bool> &componentStatusMap) {
+  foreach (QCheckBox *checkBoxPointer, m_componentsCheckBoxes) {
+    if (componentStatusMap.contains(checkBoxPointer->text())) {
+      checkBoxPointer->setChecked(
+          componentStatusMap.value(checkBoxPointer->text()));
+    } else {
+      checkBoxPointer->setChecked(false);
     }
+  }
 }
 
-void TidalSchemeSelectionWidget::setCheckBoxesStatus(const QMap<QString, bool> &componentStatusMap)
-{
-    foreach (QCheckBox *checkBoxPointer, m_componentsCheckBoxes) {
-        if (componentStatusMap.contains(checkBoxPointer->text())){
-            checkBoxPointer->setChecked(componentStatusMap.value(checkBoxPointer->text()));
-        }else{
-            checkBoxPointer->setChecked(false);
-        }
-    }
+void TidalSchemeSelectionWidget::changingCheckBoxStatus(int i) {
+  QString label = m_componentsCheckBoxes.at(i)->text();
+  bool status = m_componentsCheckBoxes.at(i)->isChecked();
 
-}
-
-void TidalSchemeSelectionWidget::changingCheckBoxStatus(int i)
-{
-    QString label = m_componentsCheckBoxes.at(i)->text();
-    bool status = m_componentsCheckBoxes.at(i)->isChecked();
-
-    emit checkBoxStatusChanged(label,status);
+  emit checkBoxStatusChanged(label, status);
 }
 
 /*bool TidalSchemeSelectionWidget::readFile(const QString &filePath)
@@ -114,26 +113,30 @@ void TidalSchemeSelectionWidget::changingCheckBoxStatus(int i)
         return true;
     }
 
-    QMessageBox::information(this,tr("Marea"),tr("No se puede leer el archivo %1:\n%2.")
-                             .arg(file.fileName().arg(file.errorString())));
+    QMessageBox::information(this,tr("Marea"),tr("No se puede leer el archivo
+%1:\n%2.") .arg(file.fileName().arg(file.errorString())));
 
     return false;
 }*/
 
-void TidalSchemeSelectionWidget::createComponentsCheckBoxes(const QStringList &labels) //Aqui se crean los checkboxes del los componenetes
+void TidalSchemeSelectionWidget::createComponentsCheckBoxes(
+    const QStringList
+        &labels) // Aqui se crean los checkboxes del los componenetes
 {
-    m_checkBoxLayout = new QVBoxLayout;  //Layout que contine a los richTextCheckBoxes
+  m_checkBoxLayout =
+      new QVBoxLayout; // Layout que contine a los richTextCheckBoxes
 
-    QSignalMapper *mapper = new QSignalMapper(this);
+  QSignalMapper *mapper = new QSignalMapper(this);
 
-
-    foreach (QString str, labels) {
-        QCheckBox *componentCheckBoxes =  new QCheckBox;
-        componentCheckBoxes->setText(str);      //componentCheckBoxes->Label()->setText(QString('A'+ i) + "<sub>a</sub>");   //font size='5'
-        m_componentsCheckBoxes.push_back(componentCheckBoxes);
-        mapper->setMapping(componentCheckBoxes,m_componentsCheckBoxes.size() - 1);
-        m_checkBoxLayout->addWidget(componentCheckBoxes);
-        connect(componentCheckBoxes,SIGNAL(clicked(bool)),mapper,SLOT(map()));
-    }
-    connect(mapper,SIGNAL(mapped(int)),this,SLOT(changingCheckBoxStatus(int)));
+  foreach (QString str, labels) {
+    QCheckBox *componentCheckBoxes = new QCheckBox;
+    componentCheckBoxes->setText(
+        str); // componentCheckBoxes->Label()->setText(QString('A'+ i) +
+              // "<sub>a</sub>");   //font size='5'
+    m_componentsCheckBoxes.push_back(componentCheckBoxes);
+    mapper->setMapping(componentCheckBoxes, m_componentsCheckBoxes.size() - 1);
+    m_checkBoxLayout->addWidget(componentCheckBoxes);
+    connect(componentCheckBoxes, SIGNAL(clicked(bool)), mapper, SLOT(map()));
+  }
+  connect(mapper, SIGNAL(mapped(int)), this, SLOT(changingCheckBoxStatus(int)));
 }

@@ -1,8 +1,3 @@
 #include "spmchart.h"
 
-SPMChart::SPMChart(QGraphicsItem *parent):QChart(parent)
-{
-
-}
-
-
+SPMChart::SPMChart(QGraphicsItem *parent) : QChart(parent) {}

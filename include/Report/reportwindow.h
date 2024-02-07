@@ -7,30 +7,26 @@
 class QAction;
 class QMenu;
 
-class ReportWindow : public QMainWindow
-{
-    Q_OBJECT
+class ReportWindow : public QMainWindow {
+  Q_OBJECT
 public:
-    explicit ReportWindow(QWidget *parent = 0);
-    virtual void setPageSize();
-    QTextEdit* reportEdit() const{return m_reportEdit;}
-
+  explicit ReportWindow(QWidget *parent = 0);
+  virtual void setPageSize();
+  QTextEdit *reportEdit() const { return m_reportEdit; }
 
 signals:
 
 public slots:
-    virtual void print();
-    virtual void printPDF();
+  virtual void print();
+  virtual void printPDF();
 
 private:
-    QAction *m_printAction;
-    QAction *m_printAsPdfAction;
+  QAction *m_printAction;
+  QAction *m_printAsPdfAction;
 
-    QMenu *m_printMenu;
+  QMenu *m_printMenu;
 
-
-    QTextEdit *m_reportEdit;
-
+  QTextEdit *m_reportEdit;
 };
 
 #endif // REPORTWINDOW_H

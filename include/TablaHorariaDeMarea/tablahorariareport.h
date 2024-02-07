@@ -3,15 +3,14 @@
 
 #include "include/Report/reportwindow.h"
 
-class TablaHorariaReport : public ReportWindow
-{
-    Q_OBJECT
+class TablaHorariaReport : public ReportWindow {
+  Q_OBJECT
 public:
-    TablaHorariaReport(QWidget *parent = 0);
+  TablaHorariaReport(QWidget *parent = 0);
 
 public slots:
-    virtual void print();
-    virtual void printPDF();
+  virtual void print();
+  virtual void printPDF();
 };
 
 #endif // TABLAHORARIAREPORT_H

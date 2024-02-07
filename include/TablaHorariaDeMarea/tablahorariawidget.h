@@ -2,9 +2,9 @@
 #define TABLAHORARIAWIDGET_H
 
 #include <QWidget>
-//#include <QVector>
-#include "tablahorariademarea.h"
+// #include <QVector>
 #include "include/ProjectMetaData/projectmetadata.h"
+#include "tablahorariademarea.h"
 
 class QDateEdit;
 class QLabel;
@@ -13,70 +13,67 @@ class QGroupBox;
 class QPushButton;
 class QToolButton;
 
-class TablaHorariaWidget : public QWidget
-{
-    Q_OBJECT
+class TablaHorariaWidget : public QWidget {
+  Q_OBJECT
 public:
-    explicit TablaHorariaWidget(QWidget *parent = 0);
+  explicit TablaHorariaWidget(QWidget *parent = 0);
 
-    QSize sizeHint() const;
-
-
+  QSize sizeHint() const;
 
 signals:
 
 public slots:
-    void loadTableData(const TidalData &m_data);
-    void createTable();
-    void loadMetaData(const ProjectMetaData &metadata);
+  void loadTableData(const TidalData &m_data);
+  void createTable();
+  void loadMetaData(const ProjectMetaData &metadata);
 
 private slots:
-    void setIntervalState(bool enabledState);
-    void setMinimumEndDateEditValue(const QDate &date);
+  void setIntervalState(bool enabledState);
+  void setMinimumEndDateEditValue(const QDate &date);
 
-    void showInterval();
-    void showAllData(bool showAll);
+  void showInterval();
+  void showAllData(bool showAll);
 
 private:
-    TablaHorariaDeMarea *m_tablaHoraria;
+  TablaHorariaDeMarea *m_tablaHoraria;
 
-    QGroupBox *m_showDataGroupBox;
-    QGroupBox *m_intervalGroupBox;
-    QGroupBox *m_extremesGroupBox;
+  QGroupBox *m_showDataGroupBox;
+  QGroupBox *m_intervalGroupBox;
+  QGroupBox *m_extremesGroupBox;
 
-    QRadioButton *m_allRadioButton;
-    QRadioButton *m_customRadioButton;
+  QRadioButton *m_allRadioButton;
+  QRadioButton *m_customRadioButton;
 
-    QLabel *m_iniDateLabel;
-    QLabel *m_endDateLabel;
-    QLabel *m_maxLabel;
-    QLabel *m_minLabel;
+  QLabel *m_iniDateLabel;
+  QLabel *m_endDateLabel;
+  QLabel *m_maxLabel;
+  QLabel *m_minLabel;
 
-    QDateEdit *m_iniDateEdit;
-    QDateEdit *m_endDateEdit;
+  QDateEdit *m_iniDateEdit;
+  QDateEdit *m_endDateEdit;
 
-    QPushButton *m_applyPushButton;
+  QPushButton *m_applyPushButton;
 
-    QVector<int> m_notHiddenRows;
+  QVector<int> m_notHiddenRows;
 
-    TidesMeasurement m_maximo;
-    TidesMeasurement m_minimo;
+  TidesMeasurement m_maximo;
+  TidesMeasurement m_minimo;
 
-    TidesMeasurement m_maximoInInterval;
-    TidesMeasurement m_minimoInInterval;
+  TidesMeasurement m_maximoInInterval;
+  TidesMeasurement m_minimoInInterval;
 
-    QToolButton *m_printToolButton;
+  QToolButton *m_printToolButton;
 
-    QString m_nombreDelPuesto;
-    QString m_latitudStr;
-    QString m_longitudStr;
+  QString m_nombreDelPuesto;
+  QString m_latitudStr;
+  QString m_longitudStr;
 
-    void createComponents();
+  void createComponents();
 
-    void setSumAndMeanOfNotHiddenRows();
-    void setSumAndMeanOfAllRows();
+  void setSumAndMeanOfNotHiddenRows();
+  void setSumAndMeanOfAllRows();
 
-    int nonHiddenRowNumber();
+  int nonHiddenRowNumber();
 };
 
 #endif // TABLAHORARIAWIDGET_H

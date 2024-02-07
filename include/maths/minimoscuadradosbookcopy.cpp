@@ -1,6 +1,3 @@
 #include "minimoscuadradosbookcopy.h"
 
-MinimosCuadradosBookCopy::MinimosCuadradosBookCopy()
-{
-
-}
+MinimosCuadradosBookCopy::MinimosCuadradosBookCopy() {}

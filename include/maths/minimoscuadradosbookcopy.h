@@ -1,11 +1,9 @@
 #ifndef MINIMOSCUADRADOSBOOKCOPY_H
 #define MINIMOSCUADRADOSBOOKCOPY_H
 
-
-class MinimosCuadradosBookCopy
-{
+class MinimosCuadradosBookCopy {
 public:
-    MinimosCuadradosBookCopy();
+  MinimosCuadradosBookCopy();
 };
 
 #endif // MINIMOSCUADRADOSBOOKCOPY_H
