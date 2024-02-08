@@ -1,8 +1,8 @@
-#ifndef HARMONICCONSTANT_H
-#define HARMONICCONSTANT_H
+#pragma once
 
-#include "doodsonnumbers.h"
-#include <QString>
+#include <array>
+
+#include <QtCore/QString>
 
 class HarmonicConstant {
 public:
@@ -55,35 +55,34 @@ public:
   // SHALLOW_COMB_2 componentes 2MK3 f = pow(f(M2),2)*f(K1), u = 4ξ-4ν+ν’
   // SHALLOW_COMB_3 componentes MK4 // f = pow(f(M2),2)*f(K2), u = 2ξ-2ν-2ν’’
 
-  HarmonicConstant();
-  HarmonicConstant(const QString &name, const double &frequency,
-                   const DoodsonNumbers &doodsonNumber, Origin orig);
-  HarmonicConstant(const QString &name, const double &frequency,
-                   const double &C, const double &S,
-                   const DoodsonNumbers &doodsonNumber, Origin orig);
+  explicit HarmonicConstant(const QString &name, double frequency,
+                            const std::array<int, 7> &doodsonNumber,
+                            Origin orig);
+  explicit HarmonicConstant(const QString &name, double frequency,
+                            std::array<int, 7> &&doodsonNumber, Origin orig);
 
   // void setDescription(const QString &description){m_description =
   //  description;}
-  void setName(const QString &name) { m_name = name; }
-  void setFrequency(const double &frequency) { m_frequency = frequency; }
-  void setComponentValues(const double &C, const double &S);
-  void setAmplitud(const double &amp) { m_amplitud = amp; }
-  void setPhase(const double &fase) { m_phase = fase; }
-  void setCorrectedPhase(const double &cphase) { m_correctedPhase = cphase; }
-  void setOrigin(Origin orig) { m_origin = orig; }
+  void setName(const QString &name);
+  void setFrequency(double frequency);
+  void setComponentValues(double C, double S);
+  void setAmplitud(double amp);
+  void setPhase(double phase);
+  void setCorrectedPhase(double cphase);
+  void setOrigin(Origin orig);
 
   // QString description()const {return m_description;}
-  QString name() const { return m_name; }
-  double frequency() const { return m_frequency; }
-  double cosComponent() const { return m_C; }
-  double senComponent() const { return m_S; }
-  double amplitud() const { return m_amplitud; }
-  double phase() const { return m_phase; }
-  double correctedPhase() const { return m_correctedPhase; }
+  QString name() const;
+  double frequency() const;
+  double cosComponent() const;
+  double senComponent() const;
+  double amplitud() const;
+  double phase() const;
+  double correctedPhase() const;
 
-  Origin origin() const { return m_origin; }
+  Origin origin() const;
 
-  DoodsonNumbers doodsonNumbers() const { return m_doodsonNumber; }
+  const std::array<int, 7> &doodsonNumbers() const;
 
 private:
   QString m_name;
@@ -97,8 +96,6 @@ private:
   double m_phase;
   double m_correctedPhase;
 
-  DoodsonNumbers m_doodsonNumber;
+  std::array<int, 7> m_doodsonNumbers;
   Origin m_origin;
 };
-
-#endif // HARMONICCONSTANT_H

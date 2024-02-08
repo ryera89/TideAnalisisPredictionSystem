@@ -939,10 +939,10 @@ bool SPMmainWindow::saveHCToDataBase(const QString &filePath) {
       out << QString(hc.name()) << double(hc.frequency())
           << double(hc.amplitud()) << double(hc.phase())
           << double(hc.correctedPhase()) << int(hc.origin())
-          << int(hc.doodsonNumbers().D1()) << int(hc.doodsonNumbers().D2())
-          << int(hc.doodsonNumbers().D3()) << int(hc.doodsonNumbers().D4())
-          << int(hc.doodsonNumbers().D5()) << int(hc.doodsonNumbers().D6())
-          << int(hc.doodsonNumbers().Extended());
+          << int(hc.doodsonNumbers()[0]) << int(hc.doodsonNumbers()[1])
+          << int(hc.doodsonNumbers()[2]) << int(hc.doodsonNumbers()[3])
+          << int(hc.doodsonNumbers()[4]) << int(hc.doodsonNumbers()[5])
+          << int(hc.doodsonNumbers()[6]);
     }
 
     QApplication::restoreOverrideCursor();
@@ -1074,10 +1074,10 @@ bool SPMmainWindow::saveHCInfoToDataBase(const QString &filePath) {
 
       // out.setFieldWidth(numDod.length());
       out.setFieldAlignment(QTextStream::AlignCenter);
-      out << "(" << hc.doodsonNumbers().D1() << "," << hc.doodsonNumbers().D2()
-          << "," << hc.doodsonNumbers().D3() << "," << hc.doodsonNumbers().D4()
-          << "," << hc.doodsonNumbers().D5() << "," << hc.doodsonNumbers().D6()
-          << "," << hc.doodsonNumbers().Extended() << ")";
+      out << "(" << hc.doodsonNumbers()[0] << "," << hc.doodsonNumbers()[1]
+          << "," << hc.doodsonNumbers()[2] << "," << hc.doodsonNumbers()[3]
+          << "," << hc.doodsonNumbers()[4] << "," << hc.doodsonNumbers()[5]
+          << "," << hc.doodsonNumbers()[6] << ")";
 
       out.setFieldWidth(0);
       out.setFieldAlignment(QTextStream::AlignCenter);
@@ -2180,234 +2180,201 @@ void SPMmainWindow::saveHarmonicConstants(const QString &filePath) {
 
 void SPMmainWindow::harmonicConstantSet() {
 
-  // TODO: Revisar bien todas las constantes
+  // TODO: Check the correctness of this values
   // LUNAR_LONGPERIOD_1
-  HarmonicConstant m_Mm("Mm", 0.5443747, DoodsonNumbers(0, 1, 0, -1, 0, 0, 0),
+  HarmonicConstant m_Mm("Mm", 0.5443747, {0, 1, 0, -1, 0, 0, 0},
                         HarmonicConstant::LUNAR_LONGPERIOD_1);
-  HarmonicConstant m_Msf("Msf", 1.0158958, DoodsonNumbers(0, 2, -2, 0, 0, 0, 0),
+  HarmonicConstant m_Msf("Msf", 1.0158958, {0, 2, -2, 0, 0, 0, 0},
                          HarmonicConstant::LUNAR_LONGPERIOD_1);
 
   // LUNAR_LONGPERIOD_2
-  HarmonicConstant m_Mf("Mf", 1.0980331, DoodsonNumbers(0, 2, 0, 0, 0, 0, 0),
+  HarmonicConstant m_Mf("Mf", 1.0980331, {0, 2, 0, 0, 0, 0, 0},
                         HarmonicConstant::LUNAR_LONGPERIOD_2);
 
   // SOLAR
-  HarmonicConstant m_Ssa("Ssa", 0.0821373, DoodsonNumbers(0, 0, 2, 0, 0, 0, 0),
+  HarmonicConstant m_Ssa("Ssa", 0.0821373, {0, 0, 2, 0, 0, 0, 0},
                          HarmonicConstant::SOLAR);
-  HarmonicConstant m_Sa("Sa", 0.0410686, DoodsonNumbers(0, 0, 1, 0, 0, 0, 0),
+  HarmonicConstant m_Sa("Sa", 0.0410686, {0, 0, 1, 0, 0, 0, 0},
                         HarmonicConstant::SOLAR);
 
   // LUNAR_DIURNAL_1
-  HarmonicConstant m_O1("O1", 13.9430356, DoodsonNumbers(1, -2, 1, 0, 0, 0, 1),
+  HarmonicConstant m_O1("O1", 13.9430356, {1, -2, 1, 0, 0, 0, 1},
                         HarmonicConstant::LUNAR_DIURNAL_1);
-  HarmonicConstant m_Q1("Q1", 13.3986609, DoodsonNumbers(1, -3, 1, 1, 0, 0, 1),
+  HarmonicConstant m_Q1("Q1", 13.3986609, {1, -3, 1, 1, 0, 0, 1},
                         HarmonicConstant::LUNAR_DIURNAL_1);
-  HarmonicConstant m_2Q1("2Q1", 12.8542862,
-                         DoodsonNumbers(1, -4, 1, 2, 0, 0, 1),
+  HarmonicConstant m_2Q1("2Q1", 12.8542862, {1, -4, 1, 2, 0, 0, 1},
                          HarmonicConstant::LUNAR_DIURNAL_1);
-  HarmonicConstant m_RHO1("RHO1", 13.4715145,
-                          DoodsonNumbers(1, -3, 3, -1, 0, 0, 1),
+  HarmonicConstant m_RHO1("RHO1", 13.4715145, {1, -3, 3, -1, 0, 0, 1},
                           HarmonicConstant::LUNAR_DIURNAL_1);
-  HarmonicConstant m_SIGMA1("SIGMA1", 12.9271398,
-                            DoodsonNumbers(1, -4, 3, 0, 0, 0, 1),
+  HarmonicConstant m_SIGMA1("SIGMA1", 12.9271398, {1, -4, 3, 0, 0, 0, 1},
                             HarmonicConstant::LUNAR_DIURNAL_1);
 
   // LUNAR_DIURNAL_2
-  HarmonicConstant m_J1("J1", 15.5854433, DoodsonNumbers(1, 1, 1, -1, 0, 0, -1),
+  HarmonicConstant m_J1("J1", 15.5854433, {1, 1, 1, -1, 0, 0, -1},
                         HarmonicConstant::LUNAR_DIURNAL_2);
-  HarmonicConstant m_CHI1("CHI1", 14.5695476,
-                          DoodsonNumbers(1, -1, 3, -1, 0, 0, -1),
+  HarmonicConstant m_CHI1("CHI1", 14.5695476, {1, -1, 3, -1, 0, 0, -1},
                           HarmonicConstant::LUNAR_DIURNAL_2);
-  HarmonicConstant m_THETA1("THETA1", 15.5125897,
-                            DoodsonNumbers(1, 1, -1, 1, 0, 0, -1),
+  HarmonicConstant m_THETA1("THETA1", 15.5125897, {1, 1, -1, 1, 0, 0, -1},
                             HarmonicConstant::LUNAR_DIURNAL_2);
-  HarmonicConstant m_MP1("MP1", 14.0251729,
-                         DoodsonNumbers(1, -2, 3, 0, 0, 0, -1),
+  HarmonicConstant m_MP1("MP1", 14.0251729, {1, -2, 3, 0, 0, 0, -1},
                          HarmonicConstant::LUNAR_DIURNAL_2);
-  HarmonicConstant m_SO1("SO1", 16.0569644,
-                         DoodsonNumbers(1, 2, -1, 0, 0, 0, -1),
+  HarmonicConstant m_SO1("SO1", 16.0569644, {1, 2, -1, 0, 0, 0, -1},
                          HarmonicConstant::LUNAR_DIURNAL_2);
 
   // LUNAR_DIURNAL_3
-  HarmonicConstant m_OO1("OO1", 16.1391017,
-                         DoodsonNumbers(1, 2, 1, 0, 0, 0, -1),
+  HarmonicConstant m_OO1("OO1", 16.1391017, {1, 2, 1, 0, 0, 0, -1},
                          HarmonicConstant::LUNAR_DIURNAL_3);
-  HarmonicConstant m_KQ1("KQ1", 16.6834764,
-                         DoodsonNumbers(1, 3, 1, -1, 0, 0, -1),
+  HarmonicConstant m_KQ1("KQ1", 16.6834764, {1, 3, 1, -1, 0, 0, -1},
                          HarmonicConstant::LUNAR_DIURNAL_3);
 
   // SOLAR
-  HarmonicConstant m_P1("P1", 14.9589314, DoodsonNumbers(1, 0, -1, 0, 0, 0, 1),
+  HarmonicConstant m_P1("P1", 14.9589314, {1, 0, -1, 0, 0, 0, 1},
                         HarmonicConstant::SOLAR);
-  HarmonicConstant m_PI1("PI1", 14.9178647,
-                         DoodsonNumbers(1, 0, -2, 0, 0, 1, 1),
+  HarmonicConstant m_PI1("PI1", 14.9178647, {1, 0, -2, 0, 0, 1, 1},
                          HarmonicConstant::SOLAR);
-  HarmonicConstant m_PSI1("PSI1", 15.0821353,
-                          DoodsonNumbers(1, 0, 2, 0, 0, -1, -1),
+  HarmonicConstant m_PSI1("PSI1", 15.0821353, {1, 0, 2, 0, 0, -1, -1},
                           HarmonicConstant::SOLAR);
-  HarmonicConstant m_PHI1("PHI1", 15.1232059,
-                          DoodsonNumbers(1, 0, 3, 0, 0, 0, -1),
+  HarmonicConstant m_PHI1("PHI1", 15.1232059, {1, 0, 3, 0, 0, 0, -1},
                           HarmonicConstant::SOLAR);
-  HarmonicConstant m_S1("S1", 15.0000000, DoodsonNumbers(1, 0, 0, 0, 0, 0, 0),
+  HarmonicConstant m_S1("S1", 15.0000000, {1, 0, 0, 0, 0, 0, 0},
                         HarmonicConstant::SOLAR);
 
   // COMBINATION_DIURNAL_1
-  HarmonicConstant m_M1("M1", 14.4966939, DoodsonNumbers(1, -1, 1, 0, 0, 0, -1),
+  HarmonicConstant m_M1("M1", 14.4966939, {1, -1, 1, 0, 0, 0, -1},
                         HarmonicConstant::COMBINATION_DIURNAL_1);
 
   // COMBINATION_DIURNAL_2
-  HarmonicConstant m_K1("K1", 15.0410686, DoodsonNumbers(1, 0, 1, 0, 0, 0, -1),
+  HarmonicConstant m_K1("K1", 15.0410686, {1, 0, 1, 0, 0, 0, -1},
                         HarmonicConstant::COMBINATION_DIURNAL_2);
 
   // LUNAR_SEMIDIURNAL_1
-  HarmonicConstant m_M2("M2", 28.9841042, DoodsonNumbers(2, -2, 2, 0, 0, 0, 0),
+  HarmonicConstant m_M2("M2", 28.9841042, {2, -2, 2, 0, 0, 0, 0},
                         HarmonicConstant::LUNAR_SEMIDIURNAL_1);
-  HarmonicConstant m_N2("N2", 28.4397295, DoodsonNumbers(2, -3, 2, 1, 0, 0, 0),
+  HarmonicConstant m_N2("N2", 28.4397295, {2, -3, 2, 1, 0, 0, 0},
                         HarmonicConstant::LUNAR_SEMIDIURNAL_1);
-  HarmonicConstant m_2N2("2N2", 27.8953548,
-                         DoodsonNumbers(2, -4, 2, 2, 0, 0, 0),
+  HarmonicConstant m_2N2("2N2", 27.8953548, {2, -4, 2, 2, 0, 0, 0},
                          HarmonicConstant::LUNAR_SEMIDIURNAL_1);
-  HarmonicConstant m_NU2("NU2", 28.5125831,
-                         DoodsonNumbers(2, -3, 4, -1, 0, 0, 0),
+  HarmonicConstant m_NU2("NU2", 28.5125831, {2, -3, 4, -1, 0, 0, 0},
                          HarmonicConstant::LUNAR_SEMIDIURNAL_1);
-  HarmonicConstant m_LAMDA2("LAMDA2", 29.4556253,
-                            DoodsonNumbers(2, -1, 0, 1, 0, 0, 2),
+  HarmonicConstant m_LAMDA2("LAMDA2", 29.4556253, {2, -1, 0, 1, 0, 0, 2},
                             HarmonicConstant::LUNAR_SEMIDIURNAL_1);
-  HarmonicConstant m_MU2("MU2", 27.9682084,
-                         DoodsonNumbers(2, -4, 4, 0, 0, 0, 0),
+  HarmonicConstant m_MU2("MU2", 27.9682084, {2, -4, 4, 0, 0, 0, 0},
                          HarmonicConstant::LUNAR_SEMIDIURNAL_1);
 
   // LUNAR_SEMIDIURNAL_2
-  HarmonicConstant m_KJ2("KJ2", 30.6265120,
-                         DoodsonNumbers(2, 1, 2, -1, 0, 0, 0),
+  HarmonicConstant m_KJ2("KJ2", 30.6265120, {2, 1, 2, -1, 0, 0, 0},
                          HarmonicConstant::LUNAR_SEMIDIURNAL_2);
 
   // SOLAR
-  HarmonicConstant m_S2("S2", 30.0000000, DoodsonNumbers(2, 0, 0, 0, 0, 0, 0),
+  HarmonicConstant m_S2("S2", 30.0000000, {2, 0, 0, 0, 0, 0, 0},
                         HarmonicConstant::SOLAR);
-  HarmonicConstant m_T2("T2", 29.9589333, DoodsonNumbers(2, 0, -1, 0, 0, 1, 0),
+  HarmonicConstant m_T2("T2", 29.9589333, {2, 0, -1, 0, 0, 1, 0},
                         HarmonicConstant::SOLAR);
-  HarmonicConstant m_R2("R2", 30.0410667, DoodsonNumbers(2, 0, 1, 0, 0, -1, 2),
+  HarmonicConstant m_R2("R2", 30.0410667, {2, 0, 1, 0, 0, -1, 2},
                         HarmonicConstant::SOLAR);
 
   // COMBINATION_SEMIDIURNAL_1
-  HarmonicConstant m_L2("L2", 29.5284789, DoodsonNumbers(2, -1, 2, -1, 0, 0, 2),
+  HarmonicConstant m_L2("L2", 29.5284789, {2, -1, 2, -1, 0, 0, 2},
                         HarmonicConstant::COMBINATION_SEMIDIURNAL_1);
 
   // COMBINATION_SEMIDIURNAL_2
-  HarmonicConstant m_K2("K2", 30.0821373, DoodsonNumbers(2, 0, 2, 0, 0, 0, 0),
+  HarmonicConstant m_K2("K2", 30.0821373, {2, 0, 2, 0, 0, 0, 0},
                         HarmonicConstant::COMBINATION_SEMIDIURNAL_2);
 
   // LUNAR_TERDIURNAL
-  HarmonicConstant m_M3("M3", 43.4761563, DoodsonNumbers(3, -3, 3, 0, 0, 0, 0),
+  HarmonicConstant m_M3("M3", 43.4761563, {3, -3, 3, 0, 0, 0, 0},
                         HarmonicConstant::LUNAR_TERDIURNAL);
 
   // SOLAR
-  HarmonicConstant m_S3("S3", 45.0000000, DoodsonNumbers(3, 0, 0, 0, 0, 0, 0),
+  HarmonicConstant m_S3("S3", 45.0000000, {3, 0, 0, 0, 0, 0, 0},
                         HarmonicConstant::SOLAR);
 
   // SHALLOW_1
-  HarmonicConstant m_MNS2("MNS2", 27.4238337,
-                          DoodsonNumbers(2, -5, 4, 1, 0, 0, 0),
+  HarmonicConstant m_MNS2("MNS2", 27.4238337, {2, -5, 4, 1, 0, 0, 0},
                           HarmonicConstant::SHALLOW_1);
 
   // LUNAR_SEMIDIURNAL_1_2
-  HarmonicConstant m_2SM2("2SM2", 31.0158958,
-                          DoodsonNumbers(2, 2, -2, 0, 0, 0, 0),
+  HarmonicConstant m_2SM2("2SM2", 31.0158958, {2, 2, -2, 0, 0, 0, 0},
                           HarmonicConstant::LUNAR_SEMIDIURNAL_1_2);
 
   // SHALLOW_COMB_1
-  HarmonicConstant m_MK3("MK3", 44.0251729,
-                         DoodsonNumbers(3, -2, 3, 0, 0, 0, -1),
+  HarmonicConstant m_MK3("MK3", 44.0251729, {3, -2, 3, 0, 0, 0, -1},
                          HarmonicConstant::SHALLOW_COMB_1);
 
   // SHALLOW_COMB_2
-  HarmonicConstant m_2MK3("2MK3", 42.9271398,
-                          DoodsonNumbers(3, -4, 3, 0, 0, 0, 1),
+  HarmonicConstant m_2MK3("2MK3", 42.9271398, {3, -4, 3, 0, 0, 0, 1},
                           HarmonicConstant::SHALLOW_COMB_2);
 
   // COMBINATION_DIURNAL_2
-  HarmonicConstant m_SK3("SK3", 45.0410686,
-                         DoodsonNumbers(3, 0, 1, 0, 0, 0, -1),
+  HarmonicConstant m_SK3("SK3", 45.0410686, {3, 0, 1, 0, 0, 0, -1},
                          HarmonicConstant::COMBINATION_DIURNAL_2);
 
   // LUNAR_DIURNAL_1
-  HarmonicConstant m_SO3("SO3", 43.9430356,
-                         DoodsonNumbers(3, -2, 1, 0, 0, 0, 1),
+  HarmonicConstant m_SO3("SO3", 43.9430356, {3, -2, 1, 0, 0, 0, 1},
                          HarmonicConstant::LUNAR_DIURNAL_1);
 
   // SHALLOW_1
-  HarmonicConstant m_M4("M4", 57.9682084, DoodsonNumbers(4, -4, 4, 0, 0, 0, 0),
+  HarmonicConstant m_M4("M4", 57.9682084, {4, -4, 4, 0, 0, 0, 0},
                         HarmonicConstant::SHALLOW_1);
 
   // LUNAR_SEMIDIURNAL_1
-  HarmonicConstant m_MS4("MS4", 58.9841042,
-                         DoodsonNumbers(4, -2, 2, 0, 0, 0, 0),
+  HarmonicConstant m_MS4("MS4", 58.9841042, {4, -2, 2, 0, 0, 0, 0},
                          HarmonicConstant::LUNAR_SEMIDIURNAL_1);
 
   // SHALLOW_1
-  HarmonicConstant m_MN4("MN4", 57.4238337,
-                         DoodsonNumbers(4, -5, 4, 1, 0, 0, 0),
+  HarmonicConstant m_MN4("MN4", 57.4238337, {4, -5, 4, 1, 0, 0, 0},
                          HarmonicConstant::SHALLOW_1);
 
   // SHALLOW_COMB_3
-  HarmonicConstant m_MK4("MK4", 59.0662415,
-                         DoodsonNumbers(4, -2, 4, 0, 0, 0, 1),
+  HarmonicConstant m_MK4("MK4", 59.0662415, {4, -2, 4, 0, 0, 0, 1},
                          HarmonicConstant::SHALLOW_COMB_3);
 
   // SOLAR
-  HarmonicConstant m_S4("S4", 60.0000000, DoodsonNumbers(4, 0, 0, 0, 0, 0, 0),
+  HarmonicConstant m_S4("S4", 60.0000000, {4, 0, 0, 0, 0, 0, 0},
                         HarmonicConstant::SOLAR);
 
   // SHALLOW_2
-  HarmonicConstant m_M6("M6", 86.9523127, DoodsonNumbers(6, -6, 6, 0, 0, 0, 0),
+  HarmonicConstant m_M6("M6", 86.9523127, {6, -6, 6, 0, 0, 0, 0},
                         HarmonicConstant::SHALLOW_2);
 
   // SHALLOW_1
-  HarmonicConstant m_2MS6("2MS6", 87.9682084,
-                          DoodsonNumbers(6, -4, 4, 0, 0, 0, 0),
+  HarmonicConstant m_2MS6("2MS6", 87.9682084, {6, -4, 4, 0, 0, 0, 0},
                           HarmonicConstant::SHALLOW_1);
 
   // SHALLOW_2
-  HarmonicConstant m_2MN6("2MN6", 86.4079380,
-                          DoodsonNumbers(6, -7, 6, 1, 0, 0, 0),
+  HarmonicConstant m_2MN6("2MN6", 86.4079380, {6, -7, 6, 1, 0, 0, 0},
                           HarmonicConstant::SHALLOW_2);
 
   // LUNAR_SEMIDIURNAL_1
-  HarmonicConstant m_2SM6("2SM6", 88.9841042,
-                          DoodsonNumbers(6, -2, 2, 0, 0, 0, 0),
+  HarmonicConstant m_2SM6("2SM6", 88.9841042, {6, -2, 2, 0, 0, 0, 0},
                           HarmonicConstant::LUNAR_SEMIDIURNAL_1);
 
   // SHALLOW_1
-  HarmonicConstant m_MSN6("MSN6", 87.4238337,
-                          DoodsonNumbers(6, -5, 4, 1, 0, 0, 0),
+  HarmonicConstant m_MSN6("MSN6", 87.4238337, {6, -5, 4, 1, 0, 0, 0},
                           HarmonicConstant::SHALLOW_1);
 
   // SOLAR
-  HarmonicConstant m_S6("S6", 90.0000000, DoodsonNumbers(6, 0, 0, 0, 0, 0, 0),
+  HarmonicConstant m_S6("S6", 90.0000000, {6, 0, 0, 0, 0, 0, 0},
                         HarmonicConstant::SOLAR);
 
   // SHALLOW_3
-  HarmonicConstant m_M8("M8", 115.9364169, DoodsonNumbers(8, -8, 8, 0, 0, 0, 0),
+  HarmonicConstant m_M8("M8", 115.9364169, {8, -8, 8, 0, 0, 0, 0},
                         HarmonicConstant::SHALLOW_3);
 
   // SHALLOW_2
-  HarmonicConstant m_3MS8("3MS8", 116.9523127,
-                          DoodsonNumbers(8, -6, 6, 0, 0, 0, 0),
+  HarmonicConstant m_3MS8("3MS8", 116.9523127, {8, -6, 6, 0, 0, 0, 0},
                           HarmonicConstant::SHALLOW_2);
 
   // SHALLOW_1
-  HarmonicConstant m_2MS8("2(MS)8", 117.9682084,
-                          DoodsonNumbers(6, -4, 4, 0, 0, 0, 0),
+  HarmonicConstant m_2MS8("2(MS)8", 117.9682084, {6, -4, 4, 0, 0, 0, 0},
                           HarmonicConstant::SHALLOW_1);
 
   // SHALLOW_2
-  HarmonicConstant m_2MSN8("2MSN8", 116.4079380,
-                           DoodsonNumbers(8, -7, 6, 1, 0, 0, 0),
+  HarmonicConstant m_2MSN8("2MSN8", 116.4079380, {8, -7, 6, 1, 0, 0, 0},
                            HarmonicConstant::SHALLOW_2);
 
   // SOLAR
-  HarmonicConstant m_S8("S6", 120.0000000, DoodsonNumbers(8, 0, 0, 0, 0, 0, 0),
+  HarmonicConstant m_S8("S6", 120.0000000, {8, 0, 0, 0, 0, 0, 0},
                         HarmonicConstant::SOLAR);
 
   m_harmonicConstantVector.clear();
@@ -2489,8 +2456,8 @@ void SPMmainWindow::findHarmonicConstantPhase(int timeOffset, double longitud,
   timeOffset *= -1;
   longitud *= -1.0;
 
-  double k = cphase + hc.frequency() * timeOffset -
-             hc.doodsonNumbers().D1() * longitud;
+  double k =
+      cphase + hc.frequency() * timeOffset - hc.doodsonNumbers()[0] * longitud;
   determineAngleModulus(k);
 
   hc.setPhase(k);

@@ -29,16 +29,24 @@ private:
   Ui::AlcanceLimiteWindow *ui;
 
   // Puesto A
-  HarmonicConstant m_M2_A;
-  HarmonicConstant m_S2_A;
-  HarmonicConstant m_K1_A;
-  HarmonicConstant m_O1_A;
+  HarmonicConstant m_M2_A{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
+  HarmonicConstant m_S2_A{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
+  HarmonicConstant m_K1_A{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
+  HarmonicConstant m_O1_A{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
 
   // Puesto B
-  HarmonicConstant m_M2_B;
-  HarmonicConstant m_S2_B;
-  HarmonicConstant m_K1_B;
-  HarmonicConstant m_O1_B;
+  HarmonicConstant m_M2_B{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
+  HarmonicConstant m_S2_B{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
+  HarmonicConstant m_K1_B{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
+  HarmonicConstant m_O1_B{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
 
   QGeoCoordinate m_puestoACoordinate;
   QGeoCoordinate m_puestoBCoordinate;

@@ -1026,21 +1026,21 @@ bool PredictorMainWindow::loadHCFromDataBaseFile(const QString &filePath) {
     double hcPhase;
     double hcCorrectedPhase;
     int origin;
-    int D1;
-    int D2;
-    int D3;
-    int D4;
-    int D5;
-    int D6;
-    int Dext;
+    int d1;
+    int d2;
+    int d3;
+    int d4;
+    int d5;
+    int d6;
+    int dext;
 
     HarmonicConstant::Origin hcOrigin;
 
     for (quint32 i = 0; i < dataNumber; ++i) {
 
       in >> hcName >> hcFrequency >> hcAmplitud >> hcPhase >>
-          hcCorrectedPhase >> origin >> D1 >> D2 >> D3 >> D4 >> D5 >> D6 >>
-          Dext;
+          hcCorrectedPhase >> origin >> d1 >> d2 >> d3 >> d4 >> d5 >> d6 >>
+          dext;
 
       switch (origin) {
       case 0: // SOLAR componentes de origen solar f = 1.0 u = 0.0
@@ -1116,7 +1116,7 @@ bool PredictorMainWindow::loadHCFromDataBaseFile(const QString &filePath) {
       default:
         break;
       }
-      DoodsonNumbers dodsonNum(D1, D2, D3, D4, D5, D6, Dext);
+      std::array<int, 7> dodsonNum = {d1, d2, d3, d4, d5, d6, dext};
 
       HarmonicConstant hc(hcName, hcFrequency, dodsonNum, hcOrigin);
       // hc.setName(hcName);
@@ -1256,13 +1256,13 @@ void PredictorMainWindow::displayHCDescriptions() {
 
     cur = table->cellAt(i, 6).firstCursorPosition();
     cur.setBlockFormat(cellFormat);
-    cur.insertText("(" + QString::number(hc.doodsonNumbers().D1()) + ", " +
-                       QString::number(hc.doodsonNumbers().D2()) + ", " +
-                       QString::number(hc.doodsonNumbers().D3()) + ", " +
-                       QString::number(hc.doodsonNumbers().D4()) + ", " +
-                       QString::number(hc.doodsonNumbers().D5()) + ", " +
-                       QString::number(hc.doodsonNumbers().D6()) + ", " +
-                       QString::number(hc.doodsonNumbers().Extended()) + ")",
+    cur.insertText("(" + QString::number(hc.doodsonNumbers()[0]) + ", " +
+                       QString::number(hc.doodsonNumbers()[1]) + ", " +
+                       QString::number(hc.doodsonNumbers()[2]) + ", " +
+                       QString::number(hc.doodsonNumbers()[3]) + ", " +
+                       QString::number(hc.doodsonNumbers()[4]) + ", " +
+                       QString::number(hc.doodsonNumbers()[5]) + ", " +
+                       QString::number(hc.doodsonNumbers()[6]) + ")",
                    textFormat);
 
     ++i;

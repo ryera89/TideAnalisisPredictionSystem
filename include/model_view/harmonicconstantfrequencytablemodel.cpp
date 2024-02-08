@@ -7,7 +7,9 @@ HarmonicConstantFrequencyTableModel::HarmonicConstantFrequencyTableModel(
             << "Velocidad Angular"
             << "Descripcion";
 
-  m_data = QVector<HarmonicConstant>(28, HarmonicConstant());
+  m_data = QVector<HarmonicConstant>(
+      28, HarmonicConstant("name", 0.0, {0, 0, 0, 0, 0, 0, 0},
+                           HarmonicConstant::Origin::SOLAR));
 }
 
 HarmonicConstantFrequencyTableModel::HarmonicConstantFrequencyTableModel(
@@ -139,7 +141,8 @@ bool HarmonicConstantFrequencyTableModel::insertRows(
     int row, int count, const QModelIndex &parent) {
   beginInsertRows(parent, row, row + count - 1);
   for (int i = 0; i < count; ++i) {
-    m_data.insert(row, HarmonicConstant());
+    m_data.insert(row, HarmonicConstant("name", 0.0, {0, 0, 0, 0, 0, 0, 0},
+                                        HarmonicConstant::Origin::SOLAR));
     ++row;
   }
   endInsertRows();
@@ -149,7 +152,8 @@ bool HarmonicConstantFrequencyTableModel::insertRows(
 bool HarmonicConstantFrequencyTableModel::insertRow(int row,
                                                     const QModelIndex &parent) {
   beginInsertRows(parent, row, row);
-  m_data.insert(row, HarmonicConstant());
+  m_data.insert(row, HarmonicConstant("name", 0.0, {0, 0, 0, 0, 0, 0, 0},
+                                      HarmonicConstant::Origin::SOLAR));
   endInsertRows();
   return true;
 }

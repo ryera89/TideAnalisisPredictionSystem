@@ -1,14 +1,14 @@
 #include "nodalfactorformulas.h"
 
-double V0(const DoodsonNumbers &doodsonN,
+double V0(const std::array<int, 7> &doodsonN,
           const AstronomicalMeanLongitudes &astroLong) {
-  double aux1 = doodsonN.D1() * astroLong.solarHourAngle();
-  double aux2 = doodsonN.D2() * astroLong.moonLongitude();
-  double aux3 = doodsonN.D3() * astroLong.sunLongitude();
-  double aux4 = doodsonN.D4() * astroLong.lunarPerigeeLongitude();
-  double aux5 = doodsonN.D5() * astroLong.lunarAscendingNodeLongitude();
-  double aux6 = doodsonN.D6() * astroLong.perihlionLongitude();
-  double aux7 = doodsonN.Extended() * 90.0;
+  double aux1 = doodsonN[0] * astroLong.solarHourAngle();
+  double aux2 = doodsonN[1] * astroLong.moonLongitude();
+  double aux3 = doodsonN[2] * astroLong.sunLongitude();
+  double aux4 = doodsonN[3] * astroLong.lunarPerigeeLongitude();
+  double aux5 = doodsonN[4] * astroLong.lunarAscendingNodeLongitude();
+  double aux6 = doodsonN[5] * astroLong.perihlionLongitude();
+  double aux7 = doodsonN[6] * 90.0;
 
   return aux1 + aux2 + aux3 + aux4 + aux5 + aux6 + aux7;
 }
@@ -242,16 +242,18 @@ double NodalAmplitudeFactor(const HarmonicConstant &hc,
                        // sin(I)*pow(sin(I/2),2)/0.0164, u = -2ξ-ν
     return NodalAmplitudeFactor_OO1_KQ1(astrolong.I());
     break;
-  case HarmonicConstant::COMBINATION_DIURNAL_1: // COMBINATION_DIURNAL_1
-                                                // componente M1 f =
-                                                // sin(I)*pow(cos(I/2),2)/(0.3800*Qa)
-                                                // = f(O1)/Qa, u = ξ-ν+Q
+  case HarmonicConstant::
+      COMBINATION_DIURNAL_1: // COMBINATION_DIURNAL_1
+                             // componente M1 f =
+                             // sin(I)*pow(cos(I/2),2)/(0.3800*Qa)
+                             // = f(O1)/Qa, u = ξ-ν+Q
     return NodalAmplitudeFactor_M1(astrolong.I(), astrolong.Qa());
     break;
-  case HarmonicConstant::COMBINATION_DIURNAL_2: // COMBINATION_DIURNAL_2
-                                                // componentes K1, SK3, f =
-                                                // sqrt(0.8965*pow(sin(2I),2)+0.6001*sin(2I)cos(ν)
-                                                // + 0.1006),u = - ν’
+  case HarmonicConstant::
+      COMBINATION_DIURNAL_2: // COMBINATION_DIURNAL_2
+                             // componentes K1, SK3, f =
+                             // sqrt(0.8965*pow(sin(2I),2)+0.6001*sin(2I)cos(ν)
+                             // + 0.1006),u = - ν’
     return NodalAmplitudeFactor_K1_SK3(astrolong.I(), astrolong.v());
     break;
   case HarmonicConstant::
@@ -339,16 +341,18 @@ double NodalAngleFactor(const HarmonicConstant &hc,
                        // sin(I)*pow(sin(I/2),2)/0.0164, u = -2ξ-ν
     return NodalAngleFactor_OO1_KQ1(astrolong.ep(), astrolong.v());
     break;
-  case HarmonicConstant::COMBINATION_DIURNAL_1: // COMBINATION_DIURNAL_1
-                                                // componente M1 f =
-                                                // sin(I)*pow(cos(I/2),2)/(0.3800*Qa)
-                                                // = f(O1)/Qa, u = ξ-ν+Q
+  case HarmonicConstant::
+      COMBINATION_DIURNAL_1: // COMBINATION_DIURNAL_1
+                             // componente M1 f =
+                             // sin(I)*pow(cos(I/2),2)/(0.3800*Qa)
+                             // = f(O1)/Qa, u = ξ-ν+Q
     return NodalAngleFactor_M1(astrolong.ep(), astrolong.v(), astrolong.Q());
     break;
-  case HarmonicConstant::COMBINATION_DIURNAL_2: // COMBINATION_DIURNAL_2
-                                                // componentes K1, SK3, f =
-                                                // sqrt(0.8965*pow(sin(2I),2)+0.6001*sin(2I)cos(ν)
-                                                // + 0.1006),u = - ν’
+  case HarmonicConstant::
+      COMBINATION_DIURNAL_2: // COMBINATION_DIURNAL_2
+                             // componentes K1, SK3, f =
+                             // sqrt(0.8965*pow(sin(2I),2)+0.6001*sin(2I)cos(ν)
+                             // + 0.1006),u = - ν’
     return NodalAngleFactor_K1_SK3(astrolong.vPrima());
     break;
   case HarmonicConstant::

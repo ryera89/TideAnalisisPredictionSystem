@@ -2,7 +2,6 @@
 #define NODALFACTORFORMULAS_H
 
 #include "astronomicalmeanlongitudes.h"
-#include "doodsonnumbers.h"
 #include "harmonicconstant.h"
 #include <QtMath>
 
@@ -13,7 +12,7 @@ QDateTime determineDataSerieMidPoint(const QDateTime &begin,
 // Parametros  T   s   h   p   N   Ps   90
 // Doodson No  d1  d2  d3  d4  d5  d6   dext
 // Formula     d1*T + d2*s + d3*h + d4*p + d5*N + d6*Ps + dext*90
-double V0(const DoodsonNumbers &doodsonN,
+double V0(const std::array<int, 7> &doodsonN,
           const AstronomicalMeanLongitudes &astroLong);
 // Formula para el calculo del factor nodal de las componentes lunares de largo
 // periodo Mm y Msf f = [2/3-pow(sin(I),2)]/0.5021

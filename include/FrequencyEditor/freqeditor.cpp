@@ -126,7 +126,8 @@ bool FreqEditor::readFile(const QString &filePath) {
 
     for (int i = 0; i < rowNumber; ++i) {
       in >> name >> frequency >> description;
-      datos.push_back(HarmonicConstant());
+      datos.push_back(HarmonicConstant("name", 0.0, {0, 0, 0, 0, 0, 0, 0},
+                                       HarmonicConstant::Origin::SOLAR));
     }
 
     m_frequencyModel->setAllData(datos);

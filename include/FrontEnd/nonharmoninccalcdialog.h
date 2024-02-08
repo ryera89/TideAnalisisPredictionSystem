@@ -1,10 +1,10 @@
 #ifndef NONHARMONINCCALCDIALOG_H
 #define NONHARMONINCCALCDIALOG_H
 
-#include "displayresultwidget.h"
 #include "../HarmonicConstantClass/harmonicconstant.h"
 #include "../MeasurementUnitEditWidget/measurementuniteditwidget.h"
 #include "../ProjectMetaData/projectmetadata.h"
+#include "displayresultwidget.h"
 #include <QDialog>
 #include <QSignalMapper>
 class QLabel;
@@ -78,18 +78,31 @@ private:
 
   QSignalMapper *m_mapper;
 
-  HarmonicConstant m_M2; // Semidiurnal
-  HarmonicConstant m_S2;
-  HarmonicConstant m_N2;
-  HarmonicConstant m_K2;
+  // Semidiurnal
+  HarmonicConstant m_M2{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
+  HarmonicConstant m_S2{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
+  HarmonicConstant m_N2{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
+  HarmonicConstant m_K2{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
 
-  HarmonicConstant m_K1; // Diurnal
-  HarmonicConstant m_O1;
-  HarmonicConstant m_P1;
-  HarmonicConstant m_Q1;
+  // Diurnal
+  HarmonicConstant m_K1{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
+  HarmonicConstant m_O1{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
+  HarmonicConstant m_P1{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
+  HarmonicConstant m_Q1{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
 
-  HarmonicConstant m_M4; // Bajo Fondo
-  HarmonicConstant m_M6;
+  // Shallows
+  HarmonicConstant m_M4{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
+  HarmonicConstant m_M6{
+      "name", 0.0, {0, 0, 0, 0, 0, 0, 0}, HarmonicConstant::Origin::SOLAR};
 
   ProjectMetaData m_metaData;
 

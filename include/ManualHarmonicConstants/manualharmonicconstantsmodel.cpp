@@ -7,7 +7,9 @@ ManualHarmonicConstantsModel::ManualHarmonicConstantsModel(QObject *parent)
             << "Amplitud[m]"
             << "Fase[°]";
 
-  m_data = QVector<HarmonicConstant>(60, HarmonicConstant());
+  m_data = QVector<HarmonicConstant>(
+      60, HarmonicConstant("name", 0.0, {0, 0, 0, 0, 0, 0, 0},
+                           HarmonicConstant::Origin::SOLAR));
 }
 
 ManualHarmonicConstantsModel::ManualHarmonicConstantsModel(

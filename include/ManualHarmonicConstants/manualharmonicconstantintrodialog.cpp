@@ -102,7 +102,7 @@ void ManualHarmonicConstantIntroDialog::determineCorrectedPhaseForHCVector() {
     double phase = m_hcVector.at(i).phase();
 
     double cphase = phase - m_hcVector.at(i).frequency() * timeOffset +
-                    m_hcVector.at(i).doodsonNumbers().D1() * longitud;
+                    m_hcVector.at(i).doodsonNumbers()[0] * longitud;
 
     m_hcVector[i].setCorrectedPhase(cphase);
   }
@@ -202,10 +202,10 @@ bool ManualHarmonicConstantIntroDialog::saveHCToDataBase(
       out << QString(hc.name()) << double(hc.frequency())
           << double(hc.amplitud()) << double(hc.phase())
           << double(hc.correctedPhase()) << int(hc.origin())
-          << int(hc.doodsonNumbers().D1()) << int(hc.doodsonNumbers().D2())
-          << int(hc.doodsonNumbers().D3()) << int(hc.doodsonNumbers().D4())
-          << int(hc.doodsonNumbers().D5()) << int(hc.doodsonNumbers().D6())
-          << int(hc.doodsonNumbers().Extended());
+          << int(hc.doodsonNumbers()[0]) << int(hc.doodsonNumbers()[1])
+          << int(hc.doodsonNumbers()[2]) << int(hc.doodsonNumbers()[3])
+          << int(hc.doodsonNumbers()[4]) << int(hc.doodsonNumbers()[5])
+          << int(hc.doodsonNumbers()[6]);
     }
 
     QApplication::restoreOverrideCursor();
@@ -337,10 +337,10 @@ bool ManualHarmonicConstantIntroDialog::saveHCInfoToDataBase(
 
       // out.setFieldWidth(numDod.length());
       out.setFieldAlignment(QTextStream::AlignCenter);
-      out << "(" << hc.doodsonNumbers().D1() << "," << hc.doodsonNumbers().D2()
-          << "," << hc.doodsonNumbers().D3() << "," << hc.doodsonNumbers().D4()
-          << "," << hc.doodsonNumbers().D5() << "," << hc.doodsonNumbers().D6()
-          << "," << hc.doodsonNumbers().Extended() << ")";
+      out << "(" << hc.doodsonNumbers()[0] << "," << hc.doodsonNumbers()[1]
+          << "," << hc.doodsonNumbers()[2] << "," << hc.doodsonNumbers()[3]
+          << "," << hc.doodsonNumbers()[4] << "," << hc.doodsonNumbers()[5]
+          << "," << hc.doodsonNumbers()[6] << ")";
 
       out.setFieldWidth(0);
       out.setFieldAlignment(QTextStream::AlignCenter);
