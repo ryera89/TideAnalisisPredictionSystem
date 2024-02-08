@@ -1,7 +1,7 @@
 #ifndef METADATAPAGE_H
 #define METADATAPAGE_H
 
-#include "include/ProjectMetaData/projectmetadata.h"
+#include "../ProjectMetaData/projectmetadata.h"
 #include <QWizardPage>
 
 class QLabel;

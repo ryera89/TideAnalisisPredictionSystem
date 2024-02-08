@@ -3,10 +3,10 @@
 
 #include <QDialog>
 
+#include "../ProjectMetaData/metadatawidget.h"
+#include "../ProjectMetaData/projectmetadata.h"
+#include "../model_view/tablemodel.h"
 #include "editiontable.h"
-#include "include/ProjectMetaData/metadatawidget.h"
-#include "include/ProjectMetaData/projectmetadata.h"
-#include "include/model_view/tablemodel.h"
 
 class QLabel;
 class QTimeEdit;

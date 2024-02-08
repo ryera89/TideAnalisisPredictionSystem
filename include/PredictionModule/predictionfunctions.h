@@ -1,9 +1,9 @@
 #ifndef PREDICTIONFUNCTIONS_H
 #define PREDICTIONFUNCTIONS_H
 
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/nodalfactorformulas.h"
-#include "include/measurement/measurement.h"
+#include "../HarmonicConstantClass/harmonicconstant.h"
+#include "../HarmonicConstantClass/nodalfactorformulas.h"
+#include "../measurement/measurement.h"
 #include <QVector>
 #include <QtCore>
 

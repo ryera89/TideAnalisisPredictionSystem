@@ -1,16 +1,16 @@
 #include "spmmainwindow.h"
 
-#include "include/HarmonicConstantsModule/schemewidget.h"
-#include "include/ProjectMetaData/metadatadialog.h"
+#include "../ProjectMetaData/metadatadialog.h"
+#include "../schemewidget.h"
 // #include "include/HarmonicConstantsModule/FrequencyEditor/freqeditor.h"
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/nodalfactorformulas.h"
-#include "include/HarmonicConstantsModule/Model_View/harmonicconstantfrequencytablemodel.h"
-#include "include/NonHarmonicConstantsModule/FrontEnd/nonharmoninccalcdialog.h"
-#include "include/maths/customfitsvd.h"
-#include "include/maths/customminsqr.h"
-#include "include/maths/fitsvd.h"
-#include "include/maths/minsqr.h"
-#include "include/measurement/tidaldata.h"
+#include "../FrontEnd/nonharmoninccalcdialog.h"
+#include "../HarmonicConstantClass/nodalfactorformulas.h"
+#include "../Model_View/harmonicconstantfrequencytablemodel.h"
+#include "../maths/customfitsvd.h"
+#include "../maths/customminsqr.h"
+#include "../maths/fitsvd.h"
+#include "../maths/minsqr.h"
+#include "../measurement/tidaldata.h"
 #include <QHBoxLayout>
 #include <QtMath>
 #include <iostream>

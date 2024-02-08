@@ -8,7 +8,7 @@
 #include <QtConcurrent>
 #include <iostream>
 
-#include "include/mainComponents/spmmainwindow.h"
+#include "../mainComponents/spmmainwindow.h"
 
 PredictorMainWindow::PredictorMainWindow(const QString &hcDataBaseDir,
                                          QWidget *parent)

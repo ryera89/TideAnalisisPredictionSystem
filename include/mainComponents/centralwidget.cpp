@@ -1,8 +1,8 @@
 #include "centralwidget.h"
+#include "../ChartModelMapper/xytidalchartmodelmapper.h"
+#include "../PredictionModule/predictormainwindow.h"
+#include "../measurement/measurement.h"
 #include "displayeddatalabels.h"
-#include "include/ChartModelMapper/xytidalchartmodelmapper.h"
-#include "include/PredictionModule/predictormainwindow.h"
-#include "include/measurement/measurement.h"
 #include <QSlider>
 #include <QSpinBox>
 #include <QTableView>

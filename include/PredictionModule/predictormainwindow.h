@@ -1,11 +1,11 @@
 #ifndef PREDICTORMAINWINDOW_H
 #define PREDICTORMAINWINDOW_H
 
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
-#include "include/TablaHorariaDeMarea/tablahorariawidget.h"
-#include "include/mainComponents/customchartview.h"
-#include "include/model_view/readonlytabledelegate.h"
-#include "include/model_view/readonlytablemodel.h"
+#include "../HarmonicConstantClass/harmonicconstant.h"
+#include "../TablaHorariaDeMarea/tablahorariawidget.h"
+#include "../mainComponents/customchartview.h"
+#include "../model_view/readonlytabledelegate.h"
+#include "../model_view/readonlytablemodel.h"
 #include "mytableview.h"
 #include "predictonsettingswidget.h"
 #include <QHash>

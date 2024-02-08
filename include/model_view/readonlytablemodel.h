@@ -1,8 +1,8 @@
 #ifndef READONLYTABLEMODEL_H
 #define READONLYTABLEMODEL_H
 
+#include "../measurement/tidaldata.h"
 #include <QAbstractTableModel>
-#include <include/measurement/tidaldata.h>
 
 class ReadOnlyTableModel : public QAbstractTableModel {
   Q_OBJECT

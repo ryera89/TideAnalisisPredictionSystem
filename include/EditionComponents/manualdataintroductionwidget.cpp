@@ -1,5 +1,5 @@
 #include "manualdataintroductionwidget.h"
-#include "include/model_view/tidaltabledelegate.h"
+#include "../model_view/tidaltabledelegate.h"
 
 #include <iostream>
 

@@ -1,13 +1,13 @@
 #ifndef REPORTWIZARD_H
 #define REPORTWIZARD_H
 
+#include "../HarmonicConstantClass/harmonicconstant.h"
+#include "../ProjectMetaData/projectmetadata.h"
 #include "ceroprofpage.h"
 #include "chapaspage.h"
 #include "conclusionpage.h"
 #include "finalpage.h"
 #include "generalidadespage.h"
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
-#include "include/ProjectMetaData/projectmetadata.h"
 #include "intropage.h"
 #include "metadatapage.h"
 #include <QWizard>

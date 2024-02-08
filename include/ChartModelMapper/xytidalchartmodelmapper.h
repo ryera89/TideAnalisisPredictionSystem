@@ -1,7 +1,7 @@
 #ifndef XYTIDALCHARTMODELMAPPER_H
 #define XYTIDALCHARTMODELMAPPER_H
 
-#include "include/model_view/tablemodel.h"
+#include "../model_view/tablemodel.h"
 #include <QObject>
 #include <QtCharts>
 class ReadOnlyTableModel;

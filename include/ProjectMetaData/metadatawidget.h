@@ -3,8 +3,8 @@
 
 /*Facilities for project metadata introduction and edition*/
 
-#include "include/CoordinatesEditionWidget/mycoordinateseditorwidget.h"
-#include "include/MeasurementUnitEditWidget/measurementuniteditwidget.h"
+#include "../CoordinatesEditionWidget/mycoordinateseditorwidget.h"
+#include "../MeasurementUnitEditWidget/measurementuniteditwidget.h"
 #include "timezoneselection.h"
 #include <QWidget>
 

@@ -3,13 +3,13 @@
 
 #include <QWidget>
 
+#include "../EditionComponents/editiontable.h"
+#include "../PredictionModule/mytableview.h"
+#include "../SelectionRangeLabel/selectionrangelabel.h"
+#include "../model_view/readonlytablemodel.h"
+#include "../model_view/tablemodel.h"
+#include "../model_view/tidaltabledelegate.h"
 #include "customchartview.h"
-#include "include/EditionComponents/editiontable.h"
-#include "include/PredictionModule/mytableview.h"
-#include "include/SelectionRangeLabel/selectionrangelabel.h"
-#include "include/model_view/readonlytablemodel.h"
-#include "include/model_view/tablemodel.h"
-#include "include/model_view/tidaltabledelegate.h"
 #include "spmchart.h"
 #include <QHBoxLayout>
 #include <QPlainTextEdit>

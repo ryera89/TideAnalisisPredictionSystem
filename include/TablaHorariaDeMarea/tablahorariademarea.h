@@ -1,8 +1,8 @@
 #ifndef TABLAHORARIADEMAREA_H
 #define TABLAHORARIADEMAREA_H
 
+#include "../measurement/tidaldata.h"
 #include <QTableWidget>
-#include <include/measurement/tidaldata.h>
 class TablaHorariaDeMarea : public QTableWidget {
   Q_OBJECT
 public:

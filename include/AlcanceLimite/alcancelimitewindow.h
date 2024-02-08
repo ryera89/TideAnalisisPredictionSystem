@@ -1,7 +1,7 @@
 #ifndef ALCANCELIMITEWINDOW_H
 #define ALCANCELIMITEWINDOW_H
 
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
+#include "../HarmonicConstantClass/harmonicconstant.h"
 #include <QMainWindow>
 #include <QtPositioning/QGeoCoordinate>
 

@@ -1,8 +1,8 @@
 #ifndef LOADDIALOG_H
 #define LOADDIALOG_H
 
-#include "include/ProjectMetaData/metadatawidget.h"
-#include "include/ProjectMetaData/projectmetadata.h"
+#include "../ProjectMetaData/metadatawidget.h"
+#include "../ProjectMetaData/projectmetadata.h"
 #include "linenumbereditor.h" //Custom Text Editor with line Numbers
 #include <QDialog>
 
@@ -20,7 +20,7 @@ class QSpinBox;
 class QRadioButton;
 class QProgressBar;
 
-#include "include/measurement/measurement.h"
+#include "../measurement/measurement.h"
 #include <QVector>
 
 class LoadDialog : public QDialog {

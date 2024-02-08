@@ -1,7 +1,7 @@
 #ifndef HOURLYTIDALTABLEMODEL_H
 #define HOURLYTIDALTABLEMODEL_H
 
-#include "include/measurement/tidaldata.h"
+#include "../measurement/tidaldata.h"
 #include <QAbstractTableModel>
 
 class HourlyTidalTableModel : public QAbstractTableModel {

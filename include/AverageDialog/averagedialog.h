@@ -1,7 +1,7 @@
 #ifndef AVERAGEDIALOG_H
 #define AVERAGEDIALOG_H
 
-#include "include/measurement/measurement.h"
+#include "../measurement/measurement.h"
 #include <QDialog>
 
 namespace Ui {

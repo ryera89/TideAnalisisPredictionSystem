@@ -1,5 +1,5 @@
 #include "xytidalchartmodelmapper.h"
-#include "include/model_view/readonlytablemodel.h"
+#include "../model_view/readonlytablemodel.h"
 #include <iostream>
 
 XYTidalChartModelMapper::XYTidalChartModelMapper(QAbstractTableModel *model,

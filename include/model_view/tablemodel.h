@@ -1,7 +1,7 @@
 #ifndef TABLEMODEL_H
 #define TABLEMODEL_H
 
-#include "include/measurement/measurement.h"
+#include "../measurement/measurement.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <QPointF>

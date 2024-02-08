@@ -1,24 +1,24 @@
 #ifndef SPMMAINWINDOW_H
 #define SPMMAINWINDOW_H
 
+#include "../TablaHorariaDeMarea/tablahorariawidget.h"
+#include "../loadDialog/loaddialog.h"
 #include "centralwidget.h"
-#include "include/TablaHorariaDeMarea/tablahorariawidget.h"
-#include "include/loadDialog/loaddialog.h"
 #include <QMainWindow>
 #include <QMenuBar>
 // #include "include/ChartModelMapper/xytidalchartmodelmapper.h"
-#include "include/AlcanceLimite/alcancelimitewindow.h"
-#include "include/AverageDialog/averagedialog.h"
-#include "include/EditionComponents/manualdataintroductionwidget.h"
-#include "include/FilterFacilities/FilterDialog/filtersdialog.h"
-#include "include/HarmonicConstantsModule/HarmonicConstantClass/harmonicconstant.h"
-#include "include/HarmonicConstantsModule/ManualHarmonicConstants/manualharmonicconstantintrodialog.h"
-#include "include/NivelacionAcuatica/NivelacionAcuaticaWidget/nivelacionacuaticawidget.h"
-#include "include/PredictionModule/predictormainwindow.h"
-#include "include/Presentation/widget.h"
-#include "include/ProjectMetaData/projectmetadata.h"
-#include "include/Report/reportwizard.h"
-#include "include/SamplingDialog/samplingdialog.h"
+#include "../AlcanceLimite/alcancelimitewindow.h"
+#include "../AverageDialog/averagedialog.h"
+#include "../EditionComponents/manualdataintroductionwidget.h"
+#include "../FilterDialog/filtersdialog.h"
+#include "../HarmonicConstantClass/harmonicconstant.h"
+#include "../ManualHarmonicConstants/manualharmonicconstantintrodialog.h"
+#include "../NivelacionAcuaticaWidget/nivelacionacuaticawidget.h"
+#include "../PredictionModule/predictormainwindow.h"
+#include "../Presentation/widget.h"
+#include "../ProjectMetaData/projectmetadata.h"
+#include "../Report/reportwizard.h"
+#include "../SamplingDialog/samplingdialog.h"
 #include "uploadhcdialog.h"
 #include <QtConcurrent/QtConcurrent>
 

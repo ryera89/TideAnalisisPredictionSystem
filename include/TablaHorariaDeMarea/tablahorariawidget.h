@@ -3,7 +3,7 @@
 
 #include <QWidget>
 // #include <QVector>
-#include "include/ProjectMetaData/projectmetadata.h"
+#include "../ProjectMetaData/projectmetadata.h"
 #include "tablahorariademarea.h"
 
 class QDateEdit;

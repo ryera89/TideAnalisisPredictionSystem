@@ -1,7 +1,7 @@
 #ifndef PROJECTMETADATA_H
 #define PROJECTMETADATA_H
 
-#include "include/MeasurementUnitEditWidget/measurementuniteditwidget.h"
+#include "../MeasurementUnitEditWidget/measurementuniteditwidget.h"
 #include <QString>
 
 class ProjectMetaData {

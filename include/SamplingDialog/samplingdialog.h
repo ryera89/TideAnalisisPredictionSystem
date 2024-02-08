@@ -1,7 +1,7 @@
 #ifndef SAMPLINGDIALOG_H
 #define SAMPLINGDIALOG_H
 
-#include "include/measurement/measurement.h"
+#include "../measurement/measurement.h"
 #include <QDate>
 #include <QDialog>
 #include <QMap>
