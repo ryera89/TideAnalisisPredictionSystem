@@ -79,4 +79,8 @@ target_link_libraries(${PROJECT_NAME}
   Qt::PrintSupport
 )
 
+if(NOT TARGET THAAP)
+    add_subdirectory(lib/THAAP)
+endif()
+
 

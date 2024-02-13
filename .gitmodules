@@ -1,0 +1,4 @@
+[submodule "lib/THAAP"]
+	path = lib/THAAP
+	url = git@github.com:ryera89/TidalHarmonicAnalysis.git
+
